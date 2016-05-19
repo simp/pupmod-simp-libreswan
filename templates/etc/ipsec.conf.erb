@@ -1,0 +1,139 @@
+# /etc/ipsec.conf - Libreswan IPsec configuration file
+#
+# This file is controlled by puppet.  Changes should be done through hiera.
+#
+# This file holds only the config setup section of ipsec.conf.
+# Connection information should be placed in seperate files in the directory
+# defined by ipsec::ipsecdir (default /etc/ipsec.d)
+# There is information on the possible values in the manual page, "man ipsec.conf"
+#  or at https://libreswan.org
+#
+
+config setup
+<% if scope['ipsec::ipsecdir'] != 'undef' then -%>
+  ipsecdir = <%= scope['ipsec::ipsecdir'] %>
+<% end -%>
+<% if scope['ipsec::myid'] != 'undef' then -%>
+  myid = <%= scope['ipsec::myid'] %>
+<% end -%>
+<% if scope['ipsec::interfaces'] != 'undef' then -%>
+  interfaces = <%= scope['ipsec::interfaces'] %>
+<% end -%>
+<% if scope['ipsec::listen'] != 'undef' then -%>
+  listen = <%= scope['ipsec::listen'] %>
+<% end -%>
+<% if scope['ipsec::ikeport'] != 'undef' then -%>
+  ikeport = <%= scope['ipsec::ikeport'] %>
+<% end -%>
+<% if scope['ipsec::nat_ikeport'] != 'undef' then -%>
+  nat-ikeport = <%= scope['ipsec::nat_ikeport'] %>
+<% end -%>
+<% if scope['ipsec::keep_alive'] != 'undef' then -%>
+  keep-alive = <%= scope['ipsec::keep_alive'] %>
+<% end -%>
+<% if scope['ipsec::myvendorid'] != 'undef' then -%>
+  myvendorid = <%= scope['ipsec::myvendorid'] %>
+<% end -%>
+<% if scope['ipsec::nhelpers'] != 'undef' then -%>
+  nhelpers = <%= scope['ipsec::nhelpers'] %>
+<% end -%>
+<% if scope['ipsec::plutofork'] != 'undef' then -%>
+  plutofork = <%= scope['ipsec::plutofork'] %>
+<% end -%>
+<% if scope['ipsec::crlcheckinterval'] != 'undef' then -%>
+  crlcheckinterval = <%= scope['ipsec::crlcheckinterval'] %>
+<% end -%>
+<% if scope['ipsec::strictcrlpolicy'] != 'undef' then -%>
+  strictcrlpolicy = <%= scope['ipsec::strictcrlpolicy'] %>
+<% end -%>
+<% if scope['ipsec::syslog'] != 'undef' then -%>
+  syslog = <%= scope['ipsec::syslog'] %>
+<% end -%>
+<% if scope['ipsec::klipsdebug'] != 'undef' then -%>
+  klipsdebug = <%= scope['ipsec::klipsdebug'] %>
+<% end -%>
+# Do not enable debug options to debug configuration issues!
+# plutodebug "all", "none" or a combation from below:
+# "raw crypt parsing emitting control controlmore kernel pfkey
+#  natt x509 dpd dns oppo oppoinfo private".
+# Note: "private" is not included with "all", as it can show confidential
+#       information. It must be specifically specified
+# examples:
+# plutodebug="control parsing"
+# plutodebug="all crypt"
+# Again: only enable plutodebug when asked by a developer
+<% if scope['ipsec::plutodebug'] != 'undef' then -%>
+  plutodebug = <%= scope['ipsec::plutodebug'] %>
+<% end -%>
+<% if scope['ipsec::uniqueids'] != 'undef' then -%>
+  uniqueids = <%= scope['ipsec::uniqueids'] %>
+<% end -%>
+<% if scope['ipsec::plutorestartoncrash'] != 'undef' then -%>
+  plutorestartoncrash = <%= scope['ipsec::plutorestartoncrash'] %>
+<% end -%>
+# Normally, pluto logs via syslog. If you want to log to a file,
+# specify below or to disable logging, eg for embedded systems, use
+# the file name /dev/null
+# Note: SElinux policies might prevent pluto writing to a log file at
+#       an unusual location.
+<% if scope['ipsec::plutostderrlog'] != 'undef' then -%>
+  plutostderrlog = <%= scope['ipsec::plutostderrlog'] %>
+<% end -%>
+<% if scope['ipsec::plutostderrlogtime'] != 'undef' then -%>
+  plutostderrlogtime = <%= scope['ipsec::plutostderrlogtime'] %>
+<% end -%>
+<% if scope['ipsec::force_busy'] != 'undef' then -%>
+  force-busy = <%= scope['ipsec::force_busy'] %>
+<% end -%>
+# Enable core dumps (might require system changes, like ulimit -C)
+# This is required for abrtd to work properly
+# Note: SElinux policies might prevent pluto writing the core at
+#       unusual locations
+<% if scope['ipsec::dumpdir'] != 'undef' then -%>
+  dumpdir = <%= scope['ipsec::dumpdir'] %>
+<% end -%>
+<% if scope['ipsec::statsbin'] != 'undef' then -%>
+  statsbin = <%= scope['ipsec::statsbin'] %>
+<% end -%>
+<% if scope['ipsec::secretsfile'] != 'undef' then -%>
+  secretsfile = <%= scope['ipsec::secretsfile'] %>
+<% end -%>
+<% if scope['ipsec::perpeerlog'] != 'undef' then -%>
+  perpeerlog = <%= scope['ipsec::perpeerlog'] %>
+<% end -%>
+<% if scope['ipsec::perpeerlogdir'] != 'undef' then -%>
+  perpeerlogdir = <%= scope['ipsec::perpeerlogdir'] %>
+<% end -%>
+<% if scope['ipsec::fragicmp'] != 'undef' then -%>
+  fragicmp = <%= scope['ipsec::fragicmpleft'] %>
+<% end -%>
+<% if scope['ipsec::hidetos'] != 'undef' then -%>
+  hidetos = <%= scope['ipsec::hidetos'] %>
+<% end -%>
+<% if scope['ipsec::overridemtu'] != 'undef' then -%>
+  overridemtu = <%= scope['ipsec::overridemtu'] %>
+<% end -%>
+# which IPsec stack to use, "netkey" (the default), "klips" or "mast".
+# For MacOSX use "bsd"
+# protostack =  "netkey"
+<% if scope['ipsec::protostack'] != 'undef'  then -%>
+  protostack = <%= scope['ipsec::protostack'] %>
+<% end -%>
+#
+# NAT-TRAVERSAL support
+# exclude networks used on server side by adding %v4:!a.b.c.0/24
+# It seems that T-Mobile in the US and Rogers/Fido in Canada are
+# using 25/8 as "private" address space on their wireless networks.
+# This range has never been announced via BGP (at least upto 2015)
+#	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
+<% if scope['ipsec::virtual_private'] != 'undef' then -%>
+     <% if scope['ipsec::virtual_private'].size > 1 then %>
+  virtual_private = %v4:<%= scope['ipsec::virtual_private'].join(",%v4:")%>
+     <% else %>
+  virtual_private = %v4:<%= scope['ipsec::virtual_private'].to_s%>
+     <% end %>
+<% end -%>
+#
+# You must add your IPsec connections as separate files in the ipsecdir
+#  (defined above (default /etc/ipsec.d/ )
+include <%= scope['ipsec::ipsecdir'] %>/*.conf
