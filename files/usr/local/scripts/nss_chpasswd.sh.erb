@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+#
+#
+clean_up(){ 
+  if [[ -d $tmpdir ]]; then
+    rm -rf $tmpdir
+  fi
+}
+error() {
+  local parent_lineno="$1"
+  local message="$2"
+  local code="${3:-1}"
+  if [[ -n "$message" ]] ; then
+    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+  else
+    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+  fi
+  clean_up
+  exit "${code}"
+}
+trap 'error ${LINENO}' ERR
+
+umask 0077
+
+if [[ "$#" -ne 4 ]]; then
+    echo "Illegal number of parameters"
+    exit -3
+fi
+
+token="$4"
+export PATH="$5:/usr/bin:/usr/sbin:/bin:/sbin"
+oldpass="$3"
+passwd="$2"
+ipsecdir="$1"
+
+if [[ ! -d $ipsecdir ]]; then
+  echo "No directory $ipsecdir found"
+  exit -1
+fi
+
+if [[ $passwd == "" ]]; then
+  echo "No Password"
+  exit -2
+fi
+
+
+day=`date +%y%m%d%H%M%S`
+tmpdir = $ipsecdir/$day
+
+if  [[ -d $tmpdir ]]; then
+  echo "temp dir $tmpdir already exists."
+  exit  10
+fi
+
+mkdir -p $tmpdir
+
+nss_pwdfile=$ipsecdir/nsspasswd
+case $oldpasswd in
+none|None|NONE)
+  echo "" > $tmpdir/op
+  ;;
+*)
+  echo $oldpasswd > $tmpdir/op
+  ;;
+esac
+
+echo $passwd > $tmpdir/np
+
+modutil -force -change $token -dbdir "sql:${ipsecdir}" -newpwfile ${tmpdir}/np -pwfile ${tmpdir}/op > ${tmpdir}/modutil.output
+rv=$?
+
+if [[ $rv !=  0 ]]; then
+  clean_up
+  message=`cat ${tmpdir}/modutil.output`
+  error "modutil" ${message} $rv
+fi
+
+echo "${token}:${passwd}" > ${nss_pwdfile}
+
+clean_up
