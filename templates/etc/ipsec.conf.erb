@@ -1,0 +1,139 @@
+# /etc/ipsec.conf - Libreswan IPsec configuration file
+#
+# This file is controlled by puppet.  Changes should be done through hiera.
+#
+# This file holds only the config setup section of ipsec.conf.
+# Connection information should be placed in seperate files in the directory
+# defined by libreswan::ipsecdir (default /etc/ipsec.d)
+# There is information on the possible values in the manual page, "man ipsec.conf"
+#  or at https://libreswan.org
+#
+
+config setup
+<% if scope['libreswan::ipsecdir'] != "undef" then -%>
+  ipsecdir = <%= scope['libreswan::ipsecdir'] %>
+<% end -%>
+<% if scope['libreswan::myid'] != "undef" then -%>
+  myid = <%= scope['libreswan::myid'] %>
+<% end -%>
+<% if scope['libreswan::interfaces'] != "undef" then -%>
+  interfaces = <%= scope['libreswan::interfaces'] %>
+<% end -%>
+<% if scope['libreswan::listen'] != "undef" then -%>
+  listen = <%= scope['libreswan::listen'] %>
+<% end -%>
+<% if scope['libreswan::ikeport'] != "undef" then -%>
+  ikeport = <%= scope['libreswan::ikeport'] %>
+<% end -%>
+<% if scope['libreswan::nat_ikeport'] != "undef" then -%>
+  nat-ikeport = <%= scope['libreswan::nat_ikeport'] %>
+<% end -%>
+<% if scope['libreswan::keep_alive'] != "undef" then -%>
+  keep-alive = <%= scope['libreswan::keep_alive'] %>
+<% end -%>
+<% if scope['libreswan::myvendorid'] != "undef" then -%>
+  myvendorid = <%= scope['libreswan::myvendorid'] %>
+<% end -%>
+<% if scope['libreswan::nhelpers'] != "undef" then -%>
+  nhelpers = <%= scope['libreswan::nhelpers'] %>
+<% end -%>
+<% if scope['libreswan::plutofork'] != "undef" then -%>
+  plutofork = <%= scope['libreswan::plutofork'] %>
+<% end -%>
+<% if scope['libreswan::crlcheckinterval'] != "undef" then -%>
+  crlcheckinterval = <%= scope['libreswan::crlcheckinterval'] %>
+<% end -%>
+<% if scope['libreswan::strictcrlpolicy'] != "undef" then -%>
+  strictcrlpolicy = <%= scope['libreswan::strictcrlpolicy'] %>
+<% end -%>
+<% if scope['libreswan::syslog'] != "undef" then -%>
+  syslog = <%= scope['libreswan::syslog'] %>
+<% end -%>
+<% if scope['libreswan::klipsdebug'] != "undef" then -%>
+  klipsdebug = <%= scope['libreswan::klipsdebug'] %>
+<% end -%>
+# Do not enable debug options to debug configuration issues!
+# plutodebug "all", "none" or a combation from below:
+# "raw crypt parsing emitting control controlmore kernel pfkey
+#  natt x509 dpd dns oppo oppoinfo private".
+# Note: "private" is not included with "all", as it can show confidential
+#       information. It must be specifically specified
+# examples:
+# plutodebug="control parsing"
+# plutodebug="all crypt"
+# Again: only enable plutodebug when asked by a developer
+<% if scope['libreswan::plutodebug'] != "undef" then -%>
+  plutodebug = <%= scope['libreswan::plutodebug'] %>
+<% end -%>
+<% if scope['libreswan::uniqueids'] != "undef" then -%>
+  uniqueids = <%= scope['libreswan::uniqueids'] %>
+<% end -%>
+<% if scope['libreswan::plutorestartoncrash'] != "undef" then -%>
+  plutorestartoncrash = <%= scope['libreswan::plutorestartoncrash'] %>
+<% end -%>
+# Normally, pluto logs via syslog. If you want to log to a file,
+# specify below or to disable logging, eg for embedded systems, use
+# the file name /dev/null
+# Note: SElinux policies might prevent pluto writing to a log file at
+#       an unusual location.
+<% if scope['libreswan::plutostderrlog'] != "undef" then -%>
+  plutostderrlog = <%= scope['libreswan::plutostderrlog'] %>
+<% end -%>
+<% if scope['libreswan::plutostderrlogtime'] != "undef" then -%>
+  plutostderrlogtime = <%= scope['libreswan::plutostderrlogtime'] %>
+<% end -%>
+<% if scope['libreswan::force_busy'] != "undef" then -%>
+  force-busy = <%= scope['libreswan::force_busy'] %>
+<% end -%>
+# Enable core dumps (might require system changes, like ulimit -C)
+# This is required for abrtd to work properly
+# Note: SElinux policies might prevent pluto writing the core at
+#       unusual locations
+<% if scope['libreswan::dumpdir'] != "undef" then -%>
+  dumpdir = <%= scope['libreswan::dumpdir'] %>
+<% end -%>
+<% if scope['libreswan::statsbin'] != "undef" then -%>
+  statsbin = <%= scope['libreswan::statsbin'] %>
+<% end -%>
+<% if scope['libreswan::secretsfile'] != "undef" then -%>
+  secretsfile = <%= scope['libreswan::secretsfile'] %>
+<% end -%>
+<% if scope['libreswan::perpeerlog'] != "undef" then -%>
+  perpeerlog = <%= scope['libreswan::perpeerlog'] %>
+<% end -%>
+<% if scope['libreswan::perpeerlogdir'] != "undef" then -%>
+  perpeerlogdir = <%= scope['libreswan::perpeerlogdir'] %>
+<% end -%>
+<% if scope['libreswan::fragicmp'] != "undef" then -%>
+  fragicmp = <%= scope['libreswan::fragicmpleft'] %>
+<% end -%>
+<% if scope['libreswan::hidetos'] != "undef" then -%>
+  hidetos = <%= scope['libreswan::hidetos'] %>
+<% end -%>
+<% if scope['libreswan::overridemtu'] != "undef" then -%>
+  overridemtu = <%= scope['libreswan::overridemtu'] %>
+<% end -%>
+# which IPsec stack to use, "netkey" (the default), "klips" or "mast".
+# For MacOSX use "bsd"
+# protostack =  "netkey"
+<% if scope['libreswan::protostack'] != "undef"  then -%>
+  protostack = <%= scope['libreswan::protostack'] %>
+<% end -%>
+#
+# NAT-TRAVERSAL support
+# exclude networks used on server side by adding %v4:!a.b.c.0/24
+# It seems that T-Mobile in the US and Rogers/Fido in Canada are
+# using 25/8 as "private" address space on their wireless networks.
+# This range has never been announced via BGP (at least upto 2015)
+#	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
+<% if scope['libreswan::virtual_private'] != "undef" then -%>
+     <% if scope['libreswan::virtual_private'].size > 1 then %>
+  virtual_private = %v4:<%= scope['libreswan::virtual_private'].join(",%v4:")%>
+     <% else %>
+  virtual_private = %v4:<%= scope['libreswan::virtual_private'].to_s%>
+     <% end %>
+<% end -%>
+#
+# You must add your IPsec connections as separate files in the ipsecdir 
+#  (defined above (default /etc/ipsec.d/ )
+include <%= scope['libreswan::ipsecdir'] %>/*.conf
