@@ -1,0 +1,8 @@
+---
+fixtures:
+  symlinks:
+    iptables: "../iptables"
+    havaged:  "../havaged"
+    simplib:   "../simplib"
+    stdlib:   "../stdlib"
+    ipsec: "#{source_dir}"
