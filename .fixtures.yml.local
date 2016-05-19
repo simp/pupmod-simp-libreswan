@@ -1,0 +1,7 @@
+---
+fixtures:
+  symlinks:
+    stdlib:   "../stdlib"
+    iptables: "../iptables"
+    simplib:   "../simplib"
+    ipsec_tunnel: "#{source_dir}"

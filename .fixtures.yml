@@ -1,0 +1,8 @@
+---
+fixtures:
+  repositories:
+    stdlib:   "https://github.com/puppetlabs/puppetlabs-stdlib.git"
+    iptables: "https://github.com/simp/pupmod-simp-iptables.git"
+    simplib:   "https://github.com/simp/pupmod-simp-simplib.git"
+  symlinks:
+    ipsec_tunnel: "#{source_dir}"

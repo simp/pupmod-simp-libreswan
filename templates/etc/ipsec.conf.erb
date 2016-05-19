@@ -1,0 +1,139 @@
+# /etc/ipsec.conf - Libreswan IPsec configuration file
+#
+# This file is controlled by puppet.  Changes should be done through hiera.
+#
+# This file holds only the config setup section of ipsec.conf.
+# Connection information should be placed in seperate files in the directory
+# defined by ipsec_tunnel::ipsecdir (default /etc/ipsec.d)
+# There is information on the possible values in the manual page, "man ipsec.conf"
+#  or at https://libreswan.org
+#
+
+config setup
+<% if scope['ipsec_tunnel::ipsecdir'] != "undef" then -%>
+  ipsecdir = <%= scope['ipsec_tunnel::ipsecdir'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::myid'] != "undef" then -%>
+  myid = <%= scope['ipsec_tunnel::myid'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::interfaces'] != "undef" then -%>
+  interfaces = <%= scope['ipsec_tunnel::interfaces'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::listen'] != "undef" then -%>
+  listen = <%= scope['ipsec_tunnel::listen'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::ikeport'] != "undef" then -%>
+  ikeport = <%= scope['ipsec_tunnel::ikeport'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::nat_ikeport'] != "undef" then -%>
+  nat-ikeport = <%= scope['ipsec_tunnel::nat_ikeport'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::keep_alive'] != "undef" then -%>
+  keep-alive = <%= scope['ipsec_tunnel::keep_alive'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::myvendorid'] != "undef" then -%>
+  myvendorid = <%= scope['ipsec_tunnel::myvendorid'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::nhelpers'] != "undef" then -%>
+  nhelpers = <%= scope['ipsec_tunnel::nhelpers'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::plutofork'] != "undef" then -%>
+  plutofork = <%= scope['ipsec_tunnel::plutofork'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::crlcheckinterval'] != "undef" then -%>
+  crlcheckinterval = <%= scope['ipsec_tunnel::crlcheckinterval'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::strictcrlpolicy'] != "undef" then -%>
+  strictcrlpolicy = <%= scope['ipsec_tunnel::strictcrlpolicy'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::syslog'] != "undef" then -%>
+  syslog = <%= scope['ipsec_tunnel::syslog'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::klipsdebug'] != "undef" then -%>
+  klipsdebug = <%= scope['ipsec_tunnel::klipsdebug'] %>
+<% end -%>
+# Do not enable debug options to debug configuration issues!
+# plutodebug "all", "none" or a combation from below:
+# "raw crypt parsing emitting control controlmore kernel pfkey
+#  natt x509 dpd dns oppo oppoinfo private".
+# Note: "private" is not included with "all", as it can show confidential
+#       information. It must be specifically specified
+# examples:
+# plutodebug="control parsing"
+# plutodebug="all crypt"
+# Again: only enable plutodebug when asked by a developer
+<% if scope['ipsec_tunnel::plutodebug'] != "undef" then -%>
+  plutodebug = <%= scope['ipsec_tunnel::plutodebug'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::uniqueids'] != "undef" then -%>
+  uniqueids = <%= scope['ipsec_tunnel::uniqueids'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::plutorestartoncrash'] != "undef" then -%>
+  plutorestartoncrash = <%= scope['ipsec_tunnel::plutorestartoncrash'] %>
+<% end -%>
+# Normally, pluto logs via syslog. If you want to log to a file,
+# specify below or to disable logging, eg for embedded systems, use
+# the file name /dev/null
+# Note: SElinux policies might prevent pluto writing to a log file at
+#       an unusual location.
+<% if scope['ipsec_tunnel::plutostderrlog'] != "undef" then -%>
+  plutostderrlog = <%= scope['ipsec_tunnel::plutostderrlog'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::plutostderrlogtime'] != "undef" then -%>
+  plutostderrlogtime = <%= scope['ipsec_tunnel::plutostderrlogtime'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::force_busy'] != "undef" then -%>
+  force-busy = <%= scope['ipsec_tunnel::force_busy'] %>
+<% end -%>
+# Enable core dumps (might require system changes, like ulimit -C)
+# This is required for abrtd to work properly
+# Note: SElinux policies might prevent pluto writing the core at
+#       unusual locations
+<% if scope['ipsec_tunnel::dumpdir'] != "undef" then -%>
+  dumpdir = <%= scope['ipsec_tunnel::dumpdir'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::statsbin'] != "undef" then -%>
+  statsbin = <%= scope['ipsec_tunnel::statsbin'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::secretsfile'] != "undef" then -%>
+  secretsfile = <%= scope['ipsec_tunnel::secretsfile'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::perpeerlog'] != "undef" then -%>
+  perpeerlog = <%= scope['ipsec_tunnel::perpeerlog'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::perpeerlogdir'] != "undef" then -%>
+  perpeerlogdir = <%= scope['ipsec_tunnel::perpeerlogdir'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::fragicmp'] != "undef" then -%>
+  fragicmp = <%= scope['ipsec_tunnel::fragicmpleft'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::hidetos'] != "undef" then -%>
+  hidetos = <%= scope['ipsec_tunnel::hidetos'] %>
+<% end -%>
+<% if scope['ipsec_tunnel::overridemtu'] != "undef" then -%>
+  overridemtu = <%= scope['ipsec_tunnel::overridemtu'] %>
+<% end -%>
+# which IPsec stack to use, "netkey" (the default), "klips" or "mast".
+# For MacOSX use "bsd"
+# protostack =  "netkey"
+<% if scope['ipsec_tunnel::protostack'] != "undef"  then -%>
+  protostack = <%= scope['ipsec_tunnel::protostack'] %>
+<% end -%>
+#
+# NAT-TRAVERSAL support
+# exclude networks used on server side by adding %v4:!a.b.c.0/24
+# It seems that T-Mobile in the US and Rogers/Fido in Canada are
+# using 25/8 as "private" address space on their wireless networks.
+# This range has never been announced via BGP (at least upto 2015)
+#	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
+<% if scope['ipsec_tunnel::virtual_private'] != "undef" then -%>
+     <% if scope['ipsec_tunnel::virtual_private'].size > 1 then %>
+  virtual_private = %v4:<%= scope['ipsec_tunnel::virtual_private'].join(",%v4:")%>
+     <% else %>
+  virtual_private = %v4:<%= scope['ipsec_tunnel::virtual_private'].to_s%>
+     <% end %>
+<% end -%>
+#
+# You must add your IPsec connections as separate files in the ipsecdir 
+#  (defined above (default /etc/ipsec.d/ )
+include <%= scope['ipsec_tunnel::ipsecdir'] %>/*.conf
