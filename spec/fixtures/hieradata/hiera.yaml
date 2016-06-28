@@ -1,0 +1,11 @@
+--- 
+  !ruby/sym backends: 
+    - rspec
+    - yaml
+  !ruby/sym yaml: 
+    !ruby/sym datadir: /home/jgreulich/ipsec/pupmod-simp-libreswan/spec/fixtures/hieradata
+  !ruby/sym hierarchy: 
+    - "%{custom_hiera}"
+    - "%{spec_title}"
+    - "%{module_name}"
+    - default
