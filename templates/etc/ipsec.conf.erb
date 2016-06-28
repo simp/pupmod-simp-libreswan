@@ -1,0 +1,121 @@
+# /etc/ipsec.conf - Libreswan IPsec configuration file
+#
+# This file is controlled by puppet.  Changes should be done through hiera.
+#
+# This file holds only the config setup section of ipsec.conf.
+# Connection information should be placed in seperate files in the directory
+# defined by libreswan::ipsecdir (default /etc/ipsec.d)
+# There is information on the possible values in the manual page, "man ipsec.conf"
+#  or at https://libreswan.org
+#
+
+config setup
+  ipsecdir = <%= scope['::libreswan::ipsecdir'] %>
+<% if @myid  then -%>
+  myid = <%= scope['::libreswan::myid'] %>
+<% end -%>
+<% if @interfaces  then -%>
+  interfaces = <%= scope['::libreswan::interfaces'] %>
+<% end -%>
+<% if @listen  then -%>
+  listen = <%= scope['::libreswan::listen'] %>
+<% end -%>
+  ikeport = <%= scope['::libreswan::ikeport'] %>
+  nat-ikeport = <%= scope['::libreswan::nat_ikeport'] %>
+<% if @keep_alive  then -%>
+  keep-alive = <%= @keep_alive %>
+<% end -%>
+<% if @myvendorid  then -%>
+  myvendorid = <%= @myvendorid %>
+<% end -%>
+<% if @nhelpers  then -%>
+  nhelpers = <%= @nhelpers %>
+<% end -%>
+<% if @plutofork  then -%>
+  plutofork = <%= @plutofork %>
+<% end -%>
+<% if @crlcheckinterval  then -%>
+  crlcheckinterval = <%= @crlcheckinterval %>
+<% end -%>
+<% if @strictcrlpolicy  then -%>
+  strictcrlpolicy = <%= @strictcrlpolicy %>
+<% end -%>
+<% if @syslog  then -%>
+  syslog = <%= @syslog %>
+<% end -%>
+  klipsdebug = <%= scope['::libreswan::klipsdebug'] %>
+# Do not enable debug options to debug configuration issues!
+# plutodebug "all", "none" or a combation from below:
+# "raw crypt parsing emitting control controlmore kernel pfkey
+#  natt x509 dpd dns oppo oppoinfo private".
+# Note: "private" is not included with "all", as it can show confidential
+#       information. It must be specifically specified
+# examples:
+# plutodebug="control parsing"
+# plutodebug="all crypt"
+# Again: only enable plutodebug when asked by a developer
+  plutodebug = <%= scope['::libreswan::plutodebug'] %>
+<% if @uniqueids  then -%>
+  uniqueids = <%= @uniqueids %>
+<% end -%>
+<% if @plutorestartoncrash  then -%>
+  plutorestartoncrash = <%= @plutorestartoncrash %>
+<% end -%>
+# Normally, pluto logs via syslog. If you want to log to a file,
+# specify below or to disable logging, eg for embedded systems, use
+# the file name /dev/null
+# Note: SElinux policies might prevent pluto writing to a log file at
+#       an unusual location.
+<% if @plutostderrlog  then -%>
+  plutostderrlog = <%= @plutostderrlog %>
+<% end -%>
+<% if @plutostderrlogtime  then -%>
+  plutostderrlogtime = <%= @plutostderrlogtime %>
+<% end -%>
+<% if @force_busy  then -%>
+  force-busy = <%= @force_busy %>
+<% end -%>
+# Enable core dumps (might require system changes, like ulimit -C)
+# This is required for abrtd to work properly
+# Note: SElinux policies might prevent pluto writing the core at
+#       unusual locations
+  dumpdir = <%= scope['::libreswan::dumpdir'] %>
+<% if @statsbin  then -%>
+  statsbin = <%= @statsbin %>
+<% end -%>
+  secretsfile = <%= scope['::libreswan::secretsfile'] %>
+<% if @perpeerlog  then -%>
+  perpeerlog = <%= @perpeerlog %>
+<% end -%>
+  perpeerlogdir = <%= scope['::libreswan::perpeerlogdir'] %>
+<% if @fragicmp  then -%>
+  fragicmp = <%= @fragicmp %>
+<% end -%>
+<% if @hidetos  then -%>
+  hidetos = <%= @hidetos %>
+<% end -%>
+<% if @overridemtu  then -%>
+  overridemtu = <%= @overridemtu %>
+<% end -%>
+# which IPsec stack to use, "netkey" (the default), "klips" or "mast".
+# For MacOSX use "bsd"
+# protostack =  "netkey"
+  protostack = <%= scope['::libreswan::protostack'] %>
+#
+# NAT-TRAVERSAL support
+# exclude networks used on server side by adding %v4:!a.b.c.0/24
+# It seems that T-Mobile in the US and Rogers/Fido in Canada are
+# using 25/8 as "private" address space on their wireless networks.
+# This range has never been announced via BGP (at least upto 2015)
+#	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
+<% if scope['::libreswan::virtual_private']  then -%>
+     <% if scope['::libreswan::virtual_private'].size > 1 then %>
+  virtual_private = %v4:<%= scope['::libreswan::virtual_private'].join(",%v4:")%>
+     <% else %>
+  virtual_private = %v4:<%= scope['::libreswan::virtual_private'].to_s%>
+     <% end %>
+<% end -%>
+#
+# You must add your IPsec connections as separate files in the ipsecdir
+#  (defined above (default /etc/ipsec.d/ )
+include <%= scope['::libreswan::ipsecdir'] %>/*.conf
