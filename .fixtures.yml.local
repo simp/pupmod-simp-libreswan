@@ -1,0 +1,12 @@
+---
+fixtures:
+  symlinks:
+    haveged:  "../haveged"
+    stdlib:   "../stdlib"
+    iptables: "../iptables"
+    simplib:  "../simplib"
+    pki:      "../pki"
+    compliance:      "../compliance"
+    auditd:      "../auditd"
+
+    libreswan: "#{source_dir}"
