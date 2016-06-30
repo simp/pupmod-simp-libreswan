@@ -1,0 +1,47 @@
+{
+  "name": "simp-libreswan",
+  "version": "0.1.0",
+  "author": "simp",
+  "summary": "Manages IPSec VPN Tunnels",
+  "license": "Apache-2.0",
+  "source": "https://github.com/simp/pupmod-simp-libreswan",
+  "project_page": "https://github.com/simp/pupmod-simp-libreswan",
+  "issues_url": "https://simp-project.atlassian.net",
+  "tags": [ "simp", "pki", "ipsec" ],
+  "dependencies": [
+    {
+      "name": "simp/puppet-haveged",
+      "version_requirement": ">= 0.3.0 < 1.0.0"
+    },
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.1.0"
+    },
+    {
+      "name": "simp/iptables",
+      "version_requirement": ">= 4.1.0"
+    },
+    {
+      "name": "simp/pki",
+      "version_requirement": ">= 4.0.0"
+    },
+    {
+      "name": "simp/simplib",
+      "version_requirement": ">= 1.0.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    }
+  ]
+}
