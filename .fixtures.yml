@@ -1,0 +1,27 @@
+---
+fixtures:
+  repositories:
+    stdlib:   "https://github.com/puppetlabs/puppetlabs-stdlib.git"
+    iptables: "https://github.com/simp/pupmod-simp-iptables.git"
+    simplib:   "https://github.com/simp/pupmod-simp-simplib.git"
+    pki:   "https://github.com/simp/pupmod-simp-pki.git"
+    auditd: "git://github.com/simp/pupmod-simp-auditd"
+    common: "git://github.com/simp/pupmod-simp-common"
+    augeasproviders:
+      repo : "git://github.com/simp/augeasproviders"
+      branch : "simp-master"
+    augeasproviders_core:
+      repo : "git://github.com/simp/augeasproviders_core"
+      branch : "simp-master"
+    augeasproviders_grub:
+      repo : "git://github.com/simp/augeasproviders_grub"
+      branch : "simp-master"
+    compliance: "https://github.com/trevor-vaughan/pupmod-compliance"
+    simpcat: "git://github.com/simp/pupmod-simp-concat"
+    logrotate: "git://github.com/simp/pupmod-simp-logrotate"
+    rsyslog: "git://github.com/simp/pupmod-simp-rsyslog"
+    haveged:
+      repo : "https://github.com/simp/puppet-haveged.git"
+      branch : "simp-master"
+  symlinks:
+    libreswan: "#{source_dir}"
