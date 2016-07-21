@@ -1,0 +1,5 @@
+Requires: pupmod-haveged
+Requires: pupmod-iptables >= 4.1.0-3
+Requires: pupmod-pki >= 4.1.0-0
+Requires: pupmod-simplib
+Requires: puppetlabs-stdlib >= 4.1.0-1.SIMP
