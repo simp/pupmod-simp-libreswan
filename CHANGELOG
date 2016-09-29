@@ -1,2 +1,5 @@
+* Wed Sep 28 2016 Chris Tessmer <chris.tessmer@onyxpoint.com> - 0.1.1-0
+- Fix Forge `haveged` dependency name
+
 * Thu Jun 30 2016 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 0.1.0-0
 - Initial release for CentOS 7 only
