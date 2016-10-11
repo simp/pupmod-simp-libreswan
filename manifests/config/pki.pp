@@ -15,7 +15,6 @@ class libreswan::config::pki {
     nsspassword  =>  $::libreswan::nsspassword,
     token        =>  $::libreswan::token,
     use_fips     =>  $::libreswan::use_fips,
-    init_command =>  '/sbin/ipsec initnss',
     require      =>  File['/etc/ipsec.conf'],
     notify       =>  Class[Libreswan::Config::Pki::Nsspki]
   }

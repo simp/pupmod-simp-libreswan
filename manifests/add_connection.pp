@@ -1,27 +1,25 @@
-# Define to set up connection files in the ipsec
+# Define to create a connection file in the ipsec configuration
 # directory. The name of the connection must be unique.
 #
-# You can can set up defaults for your connections by using the name
-# default. This will create a file default.conf with a conn %default
-# header and all settings will be used as defaults for any connection.
+# You can can set up defaults for all of your connections by using the
+# name 'default'. This will create a file default.conf with a
+# 'conn %default' header.  Then, all settings in default.conf will be
+# used as defaults for connections specified in other files.
 #
-# Not all settings from libreswan that are available for connections
-# are defined here. A connection can also be created by placing a file
-# in the correct format in the ipsec directory and giving it a .conf suffix.
+# Not all available, connection-related, libreswan settings are defined
+# here. However, should you need a missing setting you can manually
+# create a correctly-formatted, connection configuration file in the
+# ipsec configuration directory.  This file must have a ".conf" suffix.
 #
-# @param dir [AbsolutePath] The absolute path to the IPSEC directory.
-#   All the other parameters are possible values for the "conn" section
-#   in the ipsec configuration. You can define as many different
-#   connects as needed.
+# NOTE: Manually generated configuration files are not managed by Puppet.
 #
-#   Read the Libreswan Documentation for details of the settings
-#   https://libreswan.org/man/ipsec.conf.5.html the
-#      CONN:SETTINGS section
+# @param dir [AbsolutePath] The absolute path to the ipsec configuration
+# directory.
 #
-#   The following settings, because they have defaults other than
-#   what was set in libreswan will always appear in a connection file.
-#   you can still override the defaults by passing in different data
-#   in the definition parameters.
+# The following parameters correspond to libreswan settings for which
+# the default values are different from the libreswan defaults. You
+# can override the defaults by passing in different data in the
+# definition parameters.
 #
 # @param keyingtries [Integer] The number of times a connection will try to
 #    reconnect before exiting.
@@ -31,44 +29,19 @@
 #
 # @param phase2alg [String] the ciphers used in the second part of the connection.
 #
-# The rest of the parameters are undef. See Libreswan documentation
-# or defaults and definitions.
+# The rest of the parameters map one-to-one to libreswan settings and
+# are undef. Any undef parameter will not appear in the generated
+# configuration file for the connection. See libreswan documentation for
+# the setting defaults when omitted from a connection's configuration.
+#   https://libreswan.org/man/ipsec.conf.5.html, the CONN:SETTINGS section
 #
-# @param authby [Undef]
-# @param auto [Undef]
-# @param connaddrfamily [Undef]
-# @param left [String] The IP Address of the local connection.
-# @param left [Undef]
-# @param leftca [Undef]
-# @param leftcert [Undef]
-# @param leftid [Undef]
-# @param leftprotoport [Undef]
-# @param leftrsasigkey [Undef]
-# @param leftsendcert [Undef]
-# @param leftsourceip [Undef]
-# @param leftsubnet [Undef]
-# @param leftsubnets [Undef]
-# @param leftupdown [Undef]
-# @param phase2 [Undef]
-# @param phase2alg [Undef]
-# @param rightsendcert [Undef]
-# @param right [Undef]
-# @param rightca [Undef]
-# @param rightcert [Undef]
-# @param rightid [Undef]
-# @param rightprotoport [Undef]
-# @param rightrsasigkey [Undef]
-# @param rightsourceip [Undef]
-# @param rightsubnet [Undef]
-# @param rightsubnets [Undef]
-# @param rightupdown [Undef]
-# @param type [String] The type of connection: passthrough, tunnel
 #
 define libreswan::add_connection (
   $dir                = '/etc/ipsec.d',
   $keyingtries        = '10',
   $ike                = 'aes-sha2;dh24',
   $phase2alg          = 'aes-sha2;dh24',
+  # TODO reorder parameters more logically
   $left               = undef,
   $right              = undef,
   $connaddrfamily     = undef,
@@ -104,7 +77,7 @@ define libreswan::add_connection (
   $ikev2              = undef,
   $phase2             = undef,
   $ikepad             = undef,
-  $ike_frag           = undef,
+  $fragmentation      = undef,
   $sha2_truncbug      = undef,
   $narrowing          = undef,
   $sareftrack         = undef,
@@ -129,15 +102,11 @@ define libreswan::add_connection (
 ) {
   include 'libreswan'
 
-  case $right {
-    undef  :  {}
-    '%any' :  {}
-    '%defaultroute' :  {}
-    '%opportunistic' :  {}
-    '%opportunisticgroup' :  {}
-    '%group' :  {}
-    default  :  {validate_ipv4_address($right)}
-  }
+  # TODO reorder validations more logically
+
+  #TODO left/right validations do not allow magic values to identify an
+  # interface: %<interface name>, e.g. %eth0
+  #TODO validate is a valid IP addr but not a masked routing address
   case $left {
     undef  :  {}
     '%any' :  {}
@@ -145,71 +114,146 @@ define libreswan::add_connection (
     '%opportunistic' :  {}
     '%opportunisticgroup' :  {}
     '%group' :  {}
-    default :  {validate_ipv4_address($left)}
+    default  :  {
+      validate_string($left) # must be single IP address
+      validate_net_list($left)
+    }
   }
-  case $leftprotoport {
-    undef  : {}
-    '%any' : {}
-    default : { validate_port($leftprotoport)}
+  
+  case $right {
+    undef  :  {}
+    '%any' :  {}
+    '%defaultroute' :  {}
+    '%opportunistic' :  {}
+    '%opportunisticgroup' :  {}
+    '%group' :  {}
+    default :  {
+      validate_string($right) # must be single IP address
+      validate_net_list($right)
+    }
   }
-  case $rightprotoport {
-    undef  : {}
-    '%any' : {}
-    default : { validate_port($rightprotoport)}
+
+  # TODO Create custom validator to allow following types of permutations:
+  #   *protoport=17   *protoport=17/1701  *protoport=17/%any  *protoport=tcp
+  #   *protoport=tcp/22  *protoport=tcp/%any
+  if $leftprotoport { validate_string($leftprotoport)}
+  if $rightprotoport { validate_string($rightprotoport)}
+
+  #TODO validate is a valid IP addr but not a masked routing address
+  if $leftsourceip {
+    validate_string($leftsourceip)
+    validate_net_list($leftsourceip)
   }
-  if $leftsourceip       { validate_ipv4_address($leftsourceip)}
-  if $rightsourceip      { validate_ipv4_address($rightsourceip)}
+  if $rightsourceip {
+    validate_string($rightsourceip)
+    validate_net_list($rightsourceip)
+  }
   if $leftupdown         { validate_string($leftupdown)}
   if $rightupdown        { validate_string($rightupdown)}
-  if $authby             { validate_array_member($authby, ['rsasig','secrets'])}
+  if $authby             { validate_array_member($authby, ['rsasig','secret', 'secret|rsasig', 'never', 'null'])}
   if $auto               { validate_array_member($auto, ['add','start','ondemand','ignore'])}
   if $leftcert           { validate_string($leftcert)}
   if $rightcert          { validate_string($rightcert)}
-  if $leftrsasigkey      { validate_array_member($leftrsasigkey, ['%cert','%none','%dns','%dnsonload','%dnsondemand'])}
-  if $leftrsasigkey2     { validate_array_member($leftrsasigkey2, ['%cert','%none','%dns','%dnsonload','%dnsondemand'])}
-  if $rightrsasigkey     { validate_array_member($rightrsasigkey, ['%cert','%none','%dns','%dnsonload','%dnsondemand'])}
-  if $rightrsasigkey2    { validate_array_member($rightrsasigkey2, ['%cert','%none','%dns','%dnsonload','%dnsondemand'])}
-  if $leftsendcert       { validate_array_member($leftsendcert, ['yes','no','never','always','ifasked'])}
-  if $rightsendcert      { validate_array_member($rightsendcert, ['yes','no','never','always','ifasked'])}
+  if $leftrsasigkey      { validate_string($leftrsasigkey) }
+  if $leftrsasigkey2     { validate_string($leftrsasigkey2) }
+  if $rightrsasigkey     { validate_string($rightrsasigkey) }
+  if $rightrsasigkey2    { validate_string($rightrsasigkey2) }
+  if $leftsendcert       { validate_array_member($leftsendcert, ['yes','no','never','always','sendifasked'])}
+  if $rightsendcert      { validate_array_member($rightsendcert, ['yes','no','never','always','sendifasked'])}
   if $leftid             { validate_string($leftid)}
   if $rightid            { validate_string($rightid)}
   if $leftca             { validate_string($leftca)}
   if $rightca            { validate_string($rightca)}
-  if $connaddrfamily     { validate_re($connaddrfamily,'^(ipv4|ipv6)$',"${ connaddrfamily} is not supported for hidetos") }
+  if $connaddrfamily     { validate_re($connaddrfamily,'^(ipv4|ipv6)$',"${connaddrfamily} is not supported for connaddrfamily") }
   if $type               { validate_array_member($type, ['tunnel','transport','passthough','reject','drop'])}
-  if $leftsubnets        { validate_net_list($leftsubnets)}
-  if $rightsubnets       { validate_net_list($rightsubnets)}
-  if $leftsubnet         { validate_net_list($leftsubnet)}
-  if $rightsubnet        { validate_net_list($rightsubnet)}
-  if $leftaddresspool    { validate_net_list($leftaddresspool)}
-  if $rightaddresspool   { validate_net_list($rightaddresspool)}
-  if $leftnexthop        { validate_ipv4_address($leftnexthop)}
-  if $rightnexthop       { validate_ipv4_address($rightnexthop)}
+
+  # *subnets can be a single value in a String or multiple values in an Array
+  if $leftsubnets        { validate_net_list($leftsubnets) }
+  if $rightsubnets       { validate_net_list($rightsubnets) }
+
+  if $leftsubnet         {
+    validate_string($leftsubnet)  # Single CIDR
+    validate_net_list($leftsubnet, '(vhost:|vnet:|%priv|%no)')
+  }
+  if $rightsubnet        {
+    validate_string($rightsubnet) # Single CIDR
+    validate_net_list($rightsubnet, '(vhost:|vnet:|%priv|%no)')
+  }
+
+  # *addresspool is really supposed to be only 2 IP address values in an Array
+  #TODO validate full IP addresses (CIDR notation not allowed)
+  #TODO validation Array length is 2
+  #
+  if $leftaddresspool {
+    validate_array($leftaddresspool)
+    validate_net_list($leftaddresspool)
+  }
+  if $rightaddresspool {
+    validate_array($rightaddresspool)
+    validate_net_list($rightaddresspool)
+  }
+
+  #TODO when validate_net_list() regex logic is fixed....
+  # if $leftnexthop {
+  #   validate_string
+  #   validate_net_list($leftnexthop, '^(%direct|%defaultroute)$')
+  # }
+  case $leftnexthop {
+    undef           : {}
+    '%direct'       : {}
+    '%defaultroute' : {}
+    default         : {
+      validate_string($leftnexthop)
+      validate_net_list($leftnexthop)
+    }
+  }
+
+  #TODO when validate_net_list() regex logic is fixed....
+  # if $rightnexthop {
+  #   validate_string
+  #   validate_net_list($rightnexthop, '^(%direct|%defaultroute)$')
+  # }
+  case $rightnexthop {
+    undef           : {}
+    '%direct'       : {}
+    '%defaultroute' : {}
+    default         : {
+      validate_string($rightnexthop)
+      validate_net_list($rightnexthop)
+    }
+  }
+
   if $ikev2              { validate_array_member($ikev2, ['insist','permit','propose','never','yes', 'no'])}
-  if $ikepad             { validate_re($ikepad,'^(yes|no)$',"${ ikepad} is not supported for ikepad") }
-  if $narrowing          { validate_re($narrowing,'^(yes|no)$',"${ narrowing} is not supported for narrowing") }
-  if $sha2_truncbug      { validate_re($sha2_truncbug,'^(yes|no)$',"${ sha2_truncbug} is not supported for sha2_truncbug") }
-  if $nat_ikev1_method   { validate_array_member($nat_ikev1_method, ['draft','rfc','both'])}
-  if $ike_frag           { validate_array_member($ike_frag, ['yes','no','force'])}
+  if $ikepad             { libreswan_validate_yesno($ikepad) }
+  if $narrowing          { libreswan_validate_yesno($narrowing) }
+  if $phase2             { validate_array_member($phase2, ['esp', 'ah'])}
+  if $sha2_truncbug      { libreswan_validate_yesno($sha2_truncbug) }
+  if $nat_ikev1_method   { validate_array_member($nat_ikev1_method, ['drafts','rfc','both'])}
+  if $fragmentation      { validate_array_member($fragmentation, ['yes','no','force'])}
   if $sareftrack         { validate_array_member($sareftrack, ['yes','no','conntrack'])}
-  if $leftxauthserver    { validate_re($leftxauthserver,'^(yes|no)$',"${ leftxauthserver} is not supported for leftxauthserver") }
-  if $rightxauthserver   { validate_re($rightxauthserver,'^(yes|no)$',"${ rightxauthserver} is not supported for rightxauthserver") }
-  if $leftxauthusername  { validate_re($leftxauthusername,'^(yes|no)$',"${ leftxauthusername} is not supported for leftxauthusername") }
-  if $rightxauthusername { validate_re($rightxauthusername,'^(yes|no)$',"${ rightxauthusername} is not supported for rightxauthusername") }
-  if $leftxauthclient    { validate_re($leftxauthclient,'^(yes|no)$',"${ leftxauthclient} is not supported for leftxauthclient") }
-  if $rightxauthclient   { validate_re($rightxauthclient,'^(yes|no)$',"${ rightxauthclient} is not supported for rightxauthclient") }
-  if $leftmodecfgserver  { validate_re($leftmodecfgserver,'^(yes|no)$',"${ leftmodecfgserver} is not supported for leftmodecfgserver") }
-  if $rightmodecfgserver { validate_re($rightmodecfgserver,'^(yes|no)$',"${ rightmodecfgserver} is not supported for rightmodecfgserver") }
-  if $leftmodecfgclient  { validate_re($leftmodecfgclient,'^(yes|no)$',"${ leftmodecfgclient} is not supported for leftmodecfgclient") }
-  if $rightmodecfgclient { validate_re($rightmodecfgclient,'^(yes|no)$',"${ rightmodecfgclient} is not supported for rightmodecfgclient") }
-  if $xauthby            { validate_array_member($xauthby, ['file','pam','alwaysok'])}
-  if $xauthfail          { validate_array_member($xauthby, ['hard','soft'])}
-  if $modecfgpull        { validate_re($modecfgpull,'^(yes|no)$',"${ modecfgpull} is not supported for modecfgpull") }
-  if $modecfgdns1        { validate_ipv4_address($modecfgdns1)}
-  if $modecfgdns2        { validate_ipv4_address($modecfgdns2)}
+  if $leftxauthserver    { libreswan_validate_yesno($leftxauthserver) }
+  if $rightxauthserver   { libreswan_validate_yesno($rightxauthserver) }
+  if $leftxauthusername  { validate_string($leftxauthusername) }
+  if $rightxauthusername { validate_string($rightxauthusername) }
+  if $leftxauthclient    { libreswan_validate_yesno($leftxauthclient) }
+  if $rightxauthclient   { libreswan_validate_yesno($rightxauthclient) }
+  if $leftmodecfgserver  { libreswan_validate_yesno($leftmodecfgserver) }
+  if $rightmodecfgserver { libreswan_validate_yesno($rightmodecfgserver) }
+  if $leftmodecfgclient  { libreswan_validate_yesno($leftmodecfgclient) }
+  if $rightmodecfgclient { libreswan_validate_yesno($rightmodecfgclient) }
+  if $xauthby            { validate_array_member($xauthby, ['file','pam','alwaysok']) }
+  if $xauthfail          { validate_array_member($xauthfail, ['hard','soft']) }
+  if $modecfgpull        { libreswan_validate_yesno($modecfgpull) }
+  if $modecfgdns1        {
+    validate_string($modecfgdns1)
+    validate_net_list($modecfgdns1)
+  }
+  if $modecfgdns2        {
+    validate_string($modecfgdns2)
+    validate_net_list($modecfgdns2)
+  }
   if $modecfgdomain      { validate_string($modecfgdomain)}
   if $modecfgbanner      { validate_string($modecfgbanner)}
-
 
   validate_string($phase2alg)
   validate_string($ike)

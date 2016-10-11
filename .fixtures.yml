@@ -12,6 +12,10 @@ fixtures:
       repo: "https://github.com/simp/augeasproviders_grub"
       branch: "simp-master"
     compliance_markup: "https://github.com/simp/pupmod-simp-compliance_markup"
+# Use tagged 1.0.2 version to work around compliance_map() problem with version 2
+#    compliance_markup:
+#      repo: "https://github.com/simp/pupmod-simp-compliance_markup"
+#      branch: "1.0.2"
     haveged:
       repo: "https://github.com/simp/puppet-haveged"
       branch: "simp-master"
