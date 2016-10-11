@@ -1,6 +1,5 @@
-# This class will ensure that the
-# the PKI certificates are loaded into the NSS Database used
-# by the IPSEC process.
+# This class will ensure that the PKI certificates are loaded into the
+# NSS Database used by the IPSEC process.
 # It is called when the certificates change or when the data
 # base is initialized.
 #
@@ -12,8 +11,8 @@ class libreswan::config::pki::nsspki {
   $key    = "${::libreswan::certsource}/pki/private/${::fqdn}.pem"
 
 
-  # Currently for version 3.15 the secrets file must be updated with
-  # name of the certificate to use from the NSS database.
+  # Currently for libreswan version 3.15 the secrets file must be
+  # updated with name of the certificate to use from the NSS database.
   file { $::libreswan::secretsfile:
     ensure  => file,
     owner   => root,

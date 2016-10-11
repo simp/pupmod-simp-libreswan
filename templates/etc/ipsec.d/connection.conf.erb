@@ -1,5 +1,6 @@
+<%-# TODO order settings more logically -%>
 conn <%= @conn_name %>
-#Left Side Settings
+# Left Side Settings
 <% if @left then -%>
   left = <%= @left %>
 <% end -%>
@@ -13,7 +14,7 @@ conn <%= @conn_name %>
   leftcert = <%= @leftcert %>
 <% end -%>
 <% if @leftca then -%>
-  leftca = <%= @lefta %>
+  leftca = <%= @leftca %>
 <% end -%>
 <% if @leftprotoport then -%>
   leftprotoport = <%= @leftprotoport %>
@@ -30,7 +31,35 @@ conn <%= @conn_name %>
 <% if @leftsendcert then -%>
   leftsendcert = <%= @leftsendcert %>
 <% end -%>
-#Right Side Settings
+<% if @leftsubnet then -%>
+  leftsubnet = <%= @leftsubnet %>
+<% end -%>
+<% if @leftsubnets then -%>
+  leftsubnets = {<%= @leftsubnets.join(' ') %>}
+<% end -%>
+<% if @leftnexthop then -%>
+  leftnexthop = <%= @leftnexthop %>
+<% end -%>
+<% if @leftaddresspool then -%>
+  leftaddresspool = <%= @leftaddresspool.join('-') %>
+<% end -%>
+<% if @leftxauthserver then -%>
+  leftxauthserver = <%= @leftxauthserver %>
+<% end -%>
+<% if @leftxauthusername then -%>
+  leftxauthusername = <%= @leftxauthusername %>
+<% end -%>
+<% if @leftxauthclient then -%>
+  leftxauthclient = <%= @leftxauthclient %>
+<% end -%>
+<% if @leftmodecfgserver then -%>
+  leftmodecfgserver = <%= @leftmodecfgserver %>
+<% end -%>
+<% if @leftmodecfgclient then -%>
+  leftmodecfgclient = <%= @leftmodecfgclient %>
+<% end -%>
+
+# Right Side Settings
 <% if @right then -%>
   right = <%= @right %>
 <% end -%>
@@ -61,7 +90,38 @@ conn <%= @conn_name %>
 <% if @rightsendcert then -%>
   rightsendcert = <%= @rightsendcert %>
 <% end -%>
-# Universal settings
+<% if @rightsubnet then -%>
+  rightsubnet = <%= @rightsubnet %>
+<% end -%>
+<% if @rightsubnets then -%>
+  rightsubnets = {<%= @rightsubnets.join(' ') %>}
+<% end -%>
+<% if @rightnexthop then -%>
+  rightnexthop = <%= @rightnexthop %>
+<% end -%>
+<% if @rightaddresspool then -%>
+  rightaddresspool = <%= @rightaddresspool.join('-') %>
+<% end -%>
+<% if @rightxauthserver then -%>
+  rightxauthserver = <%= @rightxauthserver %>
+<% end -%>
+<% if @rightxauthusername then -%>
+  rightxauthusername = <%= @rightxauthusername %>
+<% end -%>
+<% if @rightxauthclient then -%>
+  rightxauthclient = <%= @rightxauthclient %>
+<% end -%>
+<% if @rightmodecfgserver then -%>
+  rightmodecfgserver = <%= @rightmodecfgserver %>
+<% end -%>
+<% if @rightmodecfgclient then -%>
+  rightmodecfgclient = <%= @rightmodecfgclient %>
+<% end -%>
+
+# Universal Settings
+<% if @connaddrfamily then -%>
+  connaddrfamily = <%= @connaddrfamily %>
+<% end -%>
 <% if @authby then -%>
   authby = <%= @authby %>
 <% end -%>
@@ -89,50 +149,17 @@ conn <%= @conn_name %>
 <% if @narrowing then -%>
   narrowing = <%= @narrowing %>
 <% end -%>
-<% if @ikevpad then -%>
-  ikevpad = <%= @ikevpad %>
+<% if @ikepad then -%>
+  ikepad = <%= @ikepad %>
 <% end -%>
-<% if @ike_frag then -%>
-  ikev-frag = <%= @ikev_frag %>
+<% if @fragmentation then -%>
+  fragmentation = <%= @fragmentation %>
 <% end -%>
 <% if @sha2_truncbug then -%>
   sha2-truncbug = <%= @sha2_truncbug %>
 <% end -%>
 <% if @nat_ikev1_method then -%>
   nat-ikev1-method = <%= @nat_ikev1_method %>
-<% end -%>
-<% if @leftaddresspool then -%>
-  leftaddresspool = <%= @leftaddresspool %>
-<% end -%>
-<% if @rightaddresspool then -%>
-  rightaddresspool = <%= @rightaddresspool %>
-<% end -%>
-<% if @leftxauthserver then -%>
-  leftxauthserver = <%= @leftxauthserver %>
-<% end -%>
-<% if @rightxauthserver then -%>
-  rightxauthserver = <%= @rightxauthserver %>
-<% end -%>
-<% if @leftxauthusername then -%>
-  leftxauthusername = <%= @leftxauthusername %>
-<% end -%>
-<% if @rightxauthusername then -%>
-  rightxauthusername = <%= @rightxauthusername %>
-<% end -%>
-<% if @leftauthclient then -%>
-  leftauthclient = <%= @leftauthclient %>
-<% end -%>
-<% if @rightxauthclient then -%>
-  rightxauthclient = <%= @rightxauthclient %>
-<% end -%>
-<% if @leftmodecfgserver then -%>
-  leftmodecfgserver = <%= @leftmodecfgserver %>
-<% end -%>
-<% if @rightmodecfgserver then -%>
-  rightmodecfgserver = <%= @rightmodecfgserver %>
-<% end -%>
-<% if @leftmodecfgclient then -%>
-  leftmodecfgclient = <%= @leftmodecfgclient %>
 <% end -%>
 <% if @xauthby then -%>
   xauthby = <%= @xauthby %>
@@ -154,4 +181,7 @@ conn <%= @conn_name %>
 <% end -%>
 <% if @modecfgbanner then -%>
   modecfgbanner = <%= @modecfgbanner %>
+<% end -%>
+<% if @keyingtries then -%>
+  keyingtries = <%= @keyingtries %>
 <% end -%>
