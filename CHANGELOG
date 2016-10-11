@@ -1,3 +1,13 @@
+* Wed Oct 12 2016 Liz Nemsick <lnemsick.simp@gmail.com> - 1.0.0-0
+- Fix several bugs in the following categories:
+  - Use of wrong variables (cut and paste errors or typos)
+  - Improper parameter validations
+  - Parameters not being used in erb files.
+  - OBE names of ipsec settings.
+  - Missing quotes/braces around settings that can contain whitespace
+- Expose more ipsec settings.
+- Allow IPv6 addresses
+
 * Wed Sep 28 2016 Chris Tessmer <chris.tessmer@onyxpoint.com> - 0.1.1-0
 - Fix Forge `haveged` dependency name
 
