@@ -1,10 +1,10 @@
 #!/bin/bash
 #
 #  This script is called from the pupmod-simp-libreswan
-#  module.  It is used to set the password on the NSS 
+#  module.  It is used to set the password on the NSS
 #  database used by libreswan.
 #
-clean_up(){ 
+clean_up(){
   if [ -d $tmpdir ]; then
     rm -rf $tmpdir
   fi
@@ -45,10 +45,10 @@ fi
 mkdir -p $tmpdir
 # Determine the old password
 case $oldpasswd in
-[nN][oO][nN][eE]) 
+[nN][oO][nN][eE])
   echo "" > $tmpdir/op
   ;;
-*) 
+*)
   echo $oldpasswd > $tmpdir/op
   ;;
 esac
