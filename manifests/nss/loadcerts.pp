@@ -41,7 +41,7 @@ define libreswan::nss::loadcerts(
       $p12pwd = 'pass:'
       exec { "Convert ${nickname} to P12" :
         command     => "openssl pkcs12 -export -in ${cert} -inkey ${key} -out ${p12cert} -passout ${p12pwd} -name ${nickname}",
-        path        => ['/bin', '/sbin'],
+        path        => ['/bin', '/sbin', '/usr/bin'],
         notify      => Exec["Load ${nickname} to ${dbdir}"],
         require     => File["${dbdir}/pki"],
         refreshonly => true
@@ -49,14 +49,14 @@ define libreswan::nss::loadcerts(
       exec { "Load ${nickname} to ${dbdir}" :
         command     => "pk12util -i ${p12cert} -h \"${token}\" -d sql:${dbdir} -k ${nsspwd_file} -W \"\" -n ${nickname}",
         refreshonly => true,
-        path        => ['/bin', '/sbin'],
+        path        => ['/bin', '/sbin', '/usr/bin'],
       }
     }
     'P12': {
       exec { "Load ${nickname} to ${dbdir}" :
         command     => "pk12util -i ${cert} -h \"${token}\" -d sql:${dbdir} -k ${nsspwd_file} -W \"\" -n ${nickname}",
         refreshonly => true,
-        path        => ['/bin', '/sbin'],
+        path        => ['/bin', '/sbin', '/usr/bin'],
       }
     }
     default: {

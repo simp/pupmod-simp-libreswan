@@ -28,8 +28,8 @@ Please read our [Contribution Guide](https://simp-project.atlassian.net/wiki/dis
 
 This module is optimally designed for use within a larger SIMP ecosystem, but it can be used independently:
 * When included within the SIMP ecosystem, security compliance settings will be managed from the Puppet server.
-* If used independently, all SIMP-managed security subsystems are disabled by default and must be explicitly opted into by administrators.  Please review the `client_nets` and `$enable_*` parameters in `manifests/init.pp` for details.
-
+* If used independently, all SIMP-managed security subsystems are disabled by default and must be explicitly opted into by administrators.  Please review the the `client_nets`, `simp_firewall`, `nssdb_password`, and
+ `use_*` parameters in `manifests/init.pp` for details.
 
 ## Module Description
 
@@ -132,7 +132,7 @@ the directory.  You will need to remove it manually.
 
 ## Limitations
 
-Currently this has only been tested with RedHat 7.
+Currently this has only been tested with Centos 6 and 7.
 
 ## Development
 

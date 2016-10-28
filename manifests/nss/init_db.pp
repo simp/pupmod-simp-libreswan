@@ -12,16 +12,10 @@
 #
 # @param destroyexisting [Boolean] If true, it will remove the existing database before running the init command.
 #
-# @param init_command [String]
-#   This is the command that will be executed to initialize the database. It defaults
-#   to the ipsec command installed by libreswan. Libre Swan does not explain, what if anything
-#   it does differently or in addition the NSS commands (modutil, certutil)
-#
 define libreswan::nss::init_db(
   $dbdir,
   $password,
   $destroyexisting = false,
-  $init_command    = '/sbin/ipsec initnss',
   $use_fips        = false,
   $token           = 'NSS Certificate DB',
   $nsspassword     = "${dbdir}/nsspassword",
@@ -42,6 +36,18 @@ define libreswan::nss::init_db(
       path    => ['/bin', '/sbin'],
       before  => Exec["init_nssdb ${dbdir}"],
     }
+  }
+
+  if $::operatingsystem in ['RedHat', 'CentOS'] {
+    if (versioncmp($::operatingsystemmajrelease,'7') < 0) {
+      $init_command    = '/usr/sbin/ipsec initnss'
+    }
+    else {
+      $init_command    = '/sbin/ipsec initnss'
+    }
+  }
+  else {
+    fail("Operating System '${::operatingsystem}' is not supported by ${module_name}")
   }
 
   exec { "init_nssdb ${dbdir}":
@@ -71,7 +77,7 @@ define libreswan::nss::init_db(
     exec { "nssdb in fips mode ${dbdir}":
       command => "modutil -dbdir sql:${dbdir} -fips true",
       onlyif  =>  "modutil -dbdir sql:${dbdir} -chkfips false",
-      path    => ['/bin', '/sbin'],
+      path    => ['/bin', '/sbin', '/usr/bin'],
       require => Exec["init_nssdb ${dbdir}"]
     }
   }
@@ -79,7 +85,7 @@ define libreswan::nss::init_db(
     exec { "make sure nssdb not in fips mode ${dbdir}":
       command => "modutil  -dbdir sql:${dbdir} -fips false",
       onlyif  => "modutil -dbdir sql:${dbdir} -chkfips true",
-      path    => ['/bin', '/sbin'],
+      path    => ['/bin', '/sbin', '/usr/bin'],
       require => Exec["init_nssdb ${dbdir}"]
     }
   }
