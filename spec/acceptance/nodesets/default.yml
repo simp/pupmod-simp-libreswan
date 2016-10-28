@@ -7,8 +7,8 @@ HOSTS:
       - libreswan
       - default
     platform:   el-7-x86_64
-    box:        puppetlabs/centos-7.0-64-nocm
-    box_url:    https://vagrantcloud.com/puppetlabs/boxes/centos-7.0-64-nocm
+    box:        centos/7
+    box_url:    https://vagrantcloud.com/puppetlabs/boxes/centos-7.2-64-nocm
     hypervisor: vagrant
   right:
     roles:
@@ -17,8 +17,8 @@ HOSTS:
       - agent
       - libreswan
     platform:   el-7-x86_64
-    box:        puppetlabs/centos-7.0-64-nocm
-    box_url:    https://vagrantcloud.com/puppetlabs/boxes/centos-7.0-64-nocm
+    box:        centos/7
+    box_url:    https://vagrantcloud.com/puppetlabs/boxes/centos-7.2-64-nocm
     hypervisor: vagrant
 CONFIG:
   log_level: verbose

@@ -1,5 +1,20 @@
 require 'spec_helper_acceptance'
 
+#FIXME this code is brittle!
+def get_private_network_interface(host)
+  interfaces = fact_on(host, 'interfaces').split(',')
+   
+  # remove interfaces we know are not the private network interface
+  interfaces.delete_if do |ifc| 
+    ifc == 'lo' or
+    ifc.include?('ip_') or # IPsec tunnel
+    ifc == 'enp0s3' or     # public interface for puppetlabs/centos-7.2-64-nocm virtual box
+    ifc == 'eth0'          # public interface for centos/7 virtual box
+  end
+  fail("Expecting one interface for the private network: #{interfaces.join(' ')}") unless interfaces.size == 1
+  interfaces[0]
+end
+
 test_name 'libreswan class'
 
 describe 'libreswan class' do
@@ -16,9 +31,11 @@ describe 'libreswan class' do
       class { 'libreswan': }
     EOS
   }
-  let(:leftip) { fact_on( left, 'ipaddress_enp0s8' ) }
+  let(:leftinterface) { get_private_network_interface(left) }
+  let(:leftip) { fact_on(left, %(ipaddress_#{leftinterface})) }
   let(:leftfqdn) { fact_on( left, 'fqdn' ) }
-  let(:rightip) { fact_on( right, 'ipaddress_enp0s8' ) }
+  let(:rightinterface) { get_private_network_interface(right) }
+  let(:rightip) { fact_on(right, %(ipaddress_#{rightinterface})) }
   let(:rightfqdn) { fact_on( right, 'fqdn' ) }
   let(:leftconnection) {
     <<-EOS
@@ -69,7 +86,7 @@ pki_dir : '/etc/pki/simp-testing/pki'
 libreswan::pkiroot : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
 libreswan::use_simp_pki : true
-libreswan::interfaces : "ipsec0=enp0s8"
+libreswan::interfaces : ["ipsec0=#{leftip}"]
 libreswan::listen : '#{leftip}'
   EOS
   }
@@ -80,12 +97,12 @@ pki_dir : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
 libreswan::use_simp_pki : true
 libreswan::pkiroot : '/etc/pki/simp-testing/pki'
-libreswan::interfaces : "ipsec0=enp0s8"
+libreswan::interfaces : ["ipsec0=#{rightip}"]
 libreswan::listen : '#{rightip}'
     EOM
   }
 
-  context 'default parameters' do
+  context 'tunnel using certs' do
     # Generate ALL of the entropy.
     it 'should install haveged' do
       [left, right].flatten.each do |node|
@@ -125,7 +142,7 @@ libreswan::listen : '#{rightip}'
         apply_manifest_on( left, leftconnection, :catch_failures => true)
         apply_manifest_on( right, rightconnection, :catch_failures => true)
       end
-      it "should apply manifests idemptently" do
+      it "should apply manifests idempotently" do
         apply_manifest_on( left, leftconnection, :catch_changes => true)
         apply_manifest_on( right, rightconnection, :catch_changes => true)
       end
