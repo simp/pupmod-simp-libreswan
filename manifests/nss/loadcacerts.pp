@@ -28,14 +28,14 @@ define libreswan::nss::loadcacerts(
     'PEM': {
       exec { "Load ${nickname} to ${dbdir}" :
         command     => "certutil -A -a -i ${cert} -h \"${token}\" -d sql:${dbdir} -f ${nsspwd_file} -n ${nickname} -t \'C,,\'",
-        path        => ['/bin', '/sbin'],
+        path        => ['/bin', '/sbin', '/usr/bin'],
         refreshonly => true
       }
     }
     'DER': {
       exec { "Load ${nickname} to ${dbdir}" :
         command     => "certutil -A -i ${cert} -h \"${token}\" -d sql:${dbdir} -f ${nsspwd_file} -n ${nickname} -t \'C,,\'",
-        path        => ['/bin', '/sbin'],
+        path        => ['/bin', '/sbin', '/usr/bin'],
         refreshonly => true
       }
     }
