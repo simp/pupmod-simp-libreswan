@@ -6,20 +6,28 @@ describe 'libreswan::nss::init_db', :type => :define do
         let(:facts) do
           facts
         end
-        let(:common_params) { { :dbdir => '/etc/ipsec.d', :nsspassword => '/etc/ipsec.d/nsspassword', :password => 'mypassword', :init_command => '/sbin/ipsec init_nssdb', :token => 'NSS Certificate DB' } }
+        let(:common_params) { { :dbdir => '/etc/ipsec.d', :nsspassword => '/etc/ipsec.d/nsspassword',
+          :password => 'mypassword', :token => 'NSS Certificate DB' } }
+        let(:init_command) {
+          if os == 'centos-6-x86_64' or os == 'redhat-6-x86_64'
+            '/usr/sbin/ipsec initnss'
+          else
+            '/sbin/ipsec initnss'
+          end
+        }
         describe "destroy existing database" do
           let(:title  ){ 'IPSEC NSS DB' }
           let(:params) { common_params.merge({ :destroyexisting => true }) }
           it { is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
             :creates => "#{params[:dbdir]}/cert9.db",
             :before  => "File[#{params[:nsspassword]}]",
-            :command => "#{params[:init_command]}",
+            :command => init_command,
             })
           }
           it { is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
             :creates => "#{params[:dbdir]}/cert9.db",
             :before  => "File[#{params[:nsspassword]}]",
-            :command => "#{params[:init_command]}",
+            :command => init_command,
             })
           }
           it { is_expected.to contain_exec("Remove NSS database #{params[:dbdir]}").with({
@@ -37,7 +45,7 @@ describe 'libreswan::nss::init_db', :type => :define do
           it { is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
             :creates => "#{params[:dbdir]}/cert9.db",
             :before  => "File[#{params[:nsspassword]}]",
-            :command => "#{params[:init_command]}",
+            :command => init_command,
             })
           }
         end
