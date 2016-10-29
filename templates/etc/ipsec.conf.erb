@@ -6,22 +6,26 @@
 # Connection information should be placed in seperate files in the directory
 # defined by libreswan::ipsecdir (default /etc/ipsec.d)
 # There is information on the possible values in the manual page, "man ipsec.conf"
-#  or at https://libreswan.org
+# or at https://libreswan.org
 #
-
+<%-# TODO order settings to match Libreswan documentation -%>
 config setup
-  ipsecdir = <%= scope['::libreswan::ipsecdir'] %>
+  ipsecdir = <%= @ipsecdir %>
 <% if @myid  then -%>
-  myid = <%= scope['::libreswan::myid'] %>
+  myid = <%= @myid %>
 <% end -%>
+<%-# Quotes are required because this may be an array of whitespace-separated interfaces -%>
 <% if @interfaces  then -%>
-  interfaces = <%= scope['::libreswan::interfaces'] %>
+  interfaces = "<%= @interfaces.join(' ') %>"
 <% end -%>
 <% if @listen  then -%>
-  listen = <%= scope['::libreswan::listen'] %>
+  listen = <%= @listen %>
 <% end -%>
-  ikeport = <%= scope['::libreswan::ikeport'] %>
-  nat-ikeport = <%= scope['::libreswan::nat_ikeport'] %>
+  ikeport = <%= @ikeport %>
+<% if @nflog_all  then -%>
+  nflog-all = <%= @nflog_all %>
+<% end -%>
+  nat-ikeport = <%= @nat_ikeport %>
 <% if @keep_alive  then -%>
   keep-alive = <%= @keep_alive %>
 <% end -%>
@@ -40,54 +44,78 @@ config setup
 <% if @strictcrlpolicy  then -%>
   strictcrlpolicy = <%= @strictcrlpolicy %>
 <% end -%>
+<% if @ocsp_enable  then -%>
+  ocsp-enable = <%= @ocsp_enable %>
+<% end -%>
+<% if @ocsp_strict  then -%>
+  ocsp-strict = <%= @ocsp_strict %>
+<% end -%>
+<% if @ocsp_timeout  then -%>
+  ocsp-timeout = <%= @ocsp_timeout %>
+<% end -%>
+<% if @ocsp_uri  then -%>
+  ocsp-uri = <%= @ocsp_uri %>
+<% end -%>
+<% if @ocsp_trustname  then -%>
+  ocsp-trustname = <%= @ocsp_trustname %>
+<% end -%>
 <% if @syslog  then -%>
   syslog = <%= @syslog %>
 <% end -%>
-  klipsdebug = <%= scope['::libreswan::klipsdebug'] %>
-# Do not enable debug options to debug configuration issues!
-# plutodebug "all", "none" or a combation from below:
-# "raw crypt parsing emitting control controlmore kernel pfkey
-#  natt x509 dpd dns oppo oppoinfo private".
-# Note: "private" is not included with "all", as it can show confidential
-#       information. It must be specifically specified
-# examples:
-# plutodebug="control parsing"
-# plutodebug="all crypt"
-# Again: only enable plutodebug when asked by a developer
-  plutodebug = <%= scope['::libreswan::plutodebug'] %>
+  klipsdebug = <%= @klipsdebug %>
+  # Do not enable debug options to debug configuration issues!
+  # plutodebug "all", "none" or a combination from below:
+  # "raw crypt parsing emitting control controlmore kernel pfkey
+  #  natt x509 dpd dns oppo oppoinfo private".
+  # Note: "private" is not included with "all", as it can show confidential
+  #       information. It must be specifically specified
+  # examples:
+  # plutodebug="control parsing"
+  # plutodebug="all crypt"
+  # Again: only enable plutodebug when asked by a developer
+  plutodebug = <%= @plutodebug %>
 <% if @uniqueids  then -%>
   uniqueids = <%= @uniqueids %>
 <% end -%>
 <% if @plutorestartoncrash  then -%>
   plutorestartoncrash = <%= @plutorestartoncrash %>
 <% end -%>
-# Normally, pluto logs via syslog. If you want to log to a file,
-# specify below or to disable logging, eg for embedded systems, use
-# the file name /dev/null
-# Note: SElinux policies might prevent pluto writing to a log file at
-#       an unusual location.
-<% if @plutostderrlog  then -%>
-  plutostderrlog = <%= @plutostderrlog %>
+  # Normally, pluto logs via syslog. If you want to log to a file,
+  # specify below or to disable logging, eg for embedded systems, use
+  # the file name /dev/null
+  # Note: SElinux policies might prevent pluto writing to a log file at
+  #       an unusual location.
+<% if @logfile  then -%>
+  logfile = <%= @logfile %>
+<% else -%>
+  #logfile=/var/log/pluto.log
 <% end -%>
-<% if @plutostderrlogtime  then -%>
-  plutostderrlogtime = <%= @plutostderrlogtime %>
+<% if @logappend  then -%>
+  logappend = <%= @logappend %>
 <% end -%>
-<% if @force_busy  then -%>
-  force-busy = <%= @force_busy %>
+<% if @logtime  then -%>
+  logtime = <%= @logtime %>
 <% end -%>
-# Enable core dumps (might require system changes, like ulimit -C)
-# This is required for abrtd to work properly
-# Note: SElinux policies might prevent pluto writing the core at
-#       unusual locations
-  dumpdir = <%= scope['::libreswan::dumpdir'] %>
+<% if @ddos_mode  then -%>
+  ddos-mode = <%= @ddos_mode %>
+<% end -%>
+<% if @ddos_ike_treshold  then -%>
+  ddos-ike-treshold = <%= @ddos_ike_treshold %>
+<% end -%>
+  # Enable core dumps (might require system changes, like ulimit -C)
+  # This is required for abrtd to work properly
+  # Note: SElinux policies might prevent pluto writing the core at
+  #       unusual locations
+  dumpdir = <%= @dumpdir %>
+<%-# Quotes are required because this may be an executable with command line options/args -%>
 <% if @statsbin  then -%>
-  statsbin = <%= @statsbin %>
+  statsbin = "<%= @statsbin %>"
 <% end -%>
-  secretsfile = <%= scope['::libreswan::secretsfile'] %>
+  secretsfile = <%= @secretsfile %>
 <% if @perpeerlog  then -%>
   perpeerlog = <%= @perpeerlog %>
 <% end -%>
-  perpeerlogdir = <%= scope['::libreswan::perpeerlogdir'] %>
+  perpeerlogdir = <%= @perpeerlogdir %>
 <% if @fragicmp  then -%>
   fragicmp = <%= @fragicmp %>
 <% end -%>
@@ -97,25 +125,43 @@ config setup
 <% if @overridemtu  then -%>
   overridemtu = <%= @overridemtu %>
 <% end -%>
-# which IPsec stack to use, "netkey" (the default), "klips" or "mast".
-# For MacOSX use "bsd"
-# protostack =  "netkey"
-  protostack = <%= scope['::libreswan::protostack'] %>
-#
-# NAT-TRAVERSAL support
-# exclude networks used on server side by adding %v4:!a.b.c.0/24
-# It seems that T-Mobile in the US and Rogers/Fido in Canada are
-# using 25/8 as "private" address space on their wireless networks.
-# This range has never been announced via BGP (at least upto 2015)
-#	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
-<% if scope['::libreswan::virtual_private']  then -%>
-     <% if scope['::libreswan::virtual_private'].size > 1 then %>
-  virtual_private = %v4:<%= scope['::libreswan::virtual_private'].join(",%v4:")%>
-     <% else %>
-  virtual_private = %v4:<%= scope['::libreswan::virtual_private'].to_s%>
-     <% end %>
+  # which IPsec stack to use, "netkey" (the default), "klips" or "mast".
+  # For MacOSX use "bsd"
+  protostack = <%= @protostack %>
+  #
+  # NAT-TRAVERSAL support
+  # exclude networks used on server side by adding %v4:!a.b.c.0/24
+  # It seems that T-Mobile in the US and Rogers/Fido in Canada are
+  # using 25/8 as "private" address space on their wireless networks.
+  # This range has never been announced via BGP (at least upto 2015)
+  #	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
+<%
+if @virtual_private
+  require 'ipaddr'
+  _virtual_private = []
+  @virtual_private.each do |net|
+    prefix = ''
+    if net.start_with?('!')
+      prefix = '!'
+      net = net[1..-1]
+    end
+    begin
+      ip = IPAddr.new(net)
+      if (ip.ipv4?)
+        _virtual_private << "%v4:#{prefix}#{net}"
+      elsif (ip.ipv6?)
+        _virtual_private << "%v6:#{prefix}#{net}"
+      end
+    rescue
+      raise Puppet::ParseError.new("#{net} in virtual_private is not an IPv4/IPv6 address")
+    end
+  end
+end
+-%>
+<% if _virtual_private  then -%>
+  virtual-private = <%= _virtual_private.join(',')%>
 <% end -%>
 #
 # You must add your IPsec connections as separate files in the ipsecdir
 #  (defined above (default /etc/ipsec.d/ )
-include <%= scope['::libreswan::ipsecdir'] %>/*.conf
+include <%= @ipsecdir %>/*.conf

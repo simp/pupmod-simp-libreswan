@@ -69,7 +69,7 @@ pki_dir : '/etc/pki/simp-testing/pki'
 libreswan::pkiroot : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
 libreswan::use_simp_pki : true
-libreswan::interfaces : "ipsec0=enp0s8"
+libreswan::interfaces : ["ipsec0=enp0s8"]
 libreswan::listen : '#{leftip}'
   EOS
   }
@@ -80,7 +80,7 @@ pki_dir : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
 libreswan::use_simp_pki : true
 libreswan::pkiroot : '/etc/pki/simp-testing/pki'
-libreswan::interfaces : "ipsec0=enp0s8"
+libreswan::interfaces : ["ipsec0=enp0s8"]
 libreswan::listen : '#{rightip}'
     EOM
   }
