@@ -1,3 +1,6 @@
+* Wed Nov 16 2016 Liz Nemsick <lnemsick.simp@gmail.com> - 1.0.0-0
+- Updated iptables dependency version
+
 * Wed Oct 12 2016 Liz Nemsick <lnemsick.simp@gmail.com> - 1.0.0-0
 - Added support for CentOS 6
 - Fix several bugs in the following categories:
