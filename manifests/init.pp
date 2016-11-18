@@ -70,7 +70,7 @@
 class libreswan (
   $service_name        = $::libreswan::params::service_name,
   $package_name        = $::libreswan::params::package_name,
-  $client_nets         = defined('$::client_nets') ? { true => getvar('::client_nets'), default => hiera('client_nets', ['127.0.0.1/32']) }, 
+  $client_nets         = defined('$::client_nets') ? { true => getvar('::client_nets'), default => hiera('client_nets', ['127.0.0.1/32']) },
   $simp_firewall       = defined('$::simp_firewall') ? { true => getvar('::simp_firewall'), default => hiera('simp_firewall',false) },
   $use_fips            = defined('$::use_fips') ? { true => getvar('::use_fips'), default => hiera('use_fips',false) },
   $use_simp_pki        = defined('$::use_simp_pki') ? { true  => getvar('::use_simp_pki'), default => hiera('use_simp_pki',false) },

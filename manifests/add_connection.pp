@@ -119,7 +119,7 @@ define libreswan::add_connection (
       validate_net_list($left)
     }
   }
-  
+
   case $right {
     undef  :  {}
     '%any' :  {}
