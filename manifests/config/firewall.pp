@@ -4,7 +4,7 @@
 class libreswan::config::firewall {
   assert_private()
   iptables::add_udp_listen { 'ipsec_allow':
-    client_nets => $libreswan::client_nets,
+    trusted_nets => $libreswan::trusted_nets,
     apply_to    => 'all',
     dports      => [ $::libreswan::ikeport, $::libreswan::nat_ikeport ],
   }

@@ -2,7 +2,7 @@
 # into the NSS database located in the directory
 # indicated by parameter dbdir.
 #
-# @param dbdir [String] The directory where the NSS Database is located.
+# @param dbdir [AbsolutePath] The directory where the NSS Database is located.
 #
 # @param nsspwd_file [String] The file which contains the password if there is one.
 #
@@ -14,18 +14,13 @@
 #   PEM and P12 are currently acceptable.
 #
 define libreswan::nss::loadcerts(
-  $dbdir,
-  $cert,
-  $token       = 'NSS Certificate DB',
-  $certtype    = 'PEM',
-  $key         = undef,
-  $nsspwd_file = "${dbdir}/nsspassword",
+  Stdlib::Absolutepath              $dbdir,
+  Stdlib::Absolutepath              $cert,
+  String                            $token       = 'NSS Certificate DB',
+  Enum['PEM','P12']                 $certtype    = 'PEM',
+  Optional[Stdlib::Absolutepath]    $key         = undef,
+  Stdlib::Absolutepath              $nsspwd_file = "${dbdir}/nsspassword",
 ) {
-  validate_absolute_path($dbdir)
-  validate_string($token)
-  validate_absolute_path($cert)
-  validate_array_member($certtype,['PEM','P12'])
-  validate_absolute_path($key)
 
   $nickname = $title
 

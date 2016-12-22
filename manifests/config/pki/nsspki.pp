@@ -3,13 +3,14 @@
 # It is called when the certificates change or when the data
 # base is initialized.
 #
-class libreswan::config::pki::nsspki {
+class libreswan::config::pki::nsspki(
+) {
+
   assert_private()
 
-  $cacert = "${::libreswan::certsource}/pki/cacerts/cacerts.pem"
-  $cert   = "${::libreswan::certsource}/pki/public/${::fqdn}.pub"
-  $key    = "${::libreswan::certsource}/pki/private/${::fqdn}.pem"
-
+  $cacert = $::libreswan::config::pki::app_pki_ca
+  $cert   = $::libreswan::config::pki::app_pki_cert
+  $key    = $::libreswab::config::pki::app_pki_key
 
   # Currently for libreswan version 3.15 the secrets file must be
   # updated with name of the certificate to use from the NSS database.

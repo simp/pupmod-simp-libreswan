@@ -22,7 +22,7 @@ class libreswan::config {
 #seedbits
 #secctx-attr-type
   $plutofork           = $::libreswan::plutofork
-  $crlcheckinterval    = $::libreswan::crlcheckinterval
+  $crlcheckinterval    = $::libreswan::crlcheckinterv
   $strictcrlpolicy     = $::libreswan::strictcrlpolicy
   $ocsp_enable         = $::libreswan::ocsp_enable
   $ocsp_strict         = $::libreswan::ocsp_strict

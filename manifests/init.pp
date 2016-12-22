@@ -42,8 +42,17 @@
 # @param simp_firewall [Boolean] Whether to add appropriate rules to
 #  allow ipsec traffic to the SIMP-controlled firewall
 #
-# @param use_simp_pki [Boolean] Whether to use SIMP's PKI infrastructure to
-#  manage certificates used by ipsec
+# @param pki [false,true,'simp']
+#   if 'simp' then use  SIMP's PKI infrastructure to manage certificates used by ipsec
+#   if true then it will copy certs from app_pki_external_source to app_pki_dir
+#     when puppet runs and restart the necessary services.  See pki::copy to
+#     see the structure required for the source directory.
+#   if false you must set variables
+#     libreswan::config::pki::app_pki_ca
+#     libreswan::config::pki::app_pki_cert
+#     libreswab::config::pki::app_pki_key
+#     (or put your keys in the defaut location)
+#     you will need to manualy restart services to pick up the new certs.
 #
 # @param use_fips [Boolean] Whether server is in FIPS mode.  Affects digest algorithms
 # allowed to be used by ipsec.
@@ -68,140 +77,73 @@
 # @author Jeanne Greulich <jeanne.greulich@onyxpoint.com>
 #
 class libreswan (
-  $service_name        = $::libreswan::params::service_name,
-  $package_name        = $::libreswan::params::package_name,
-  $client_nets         = defined('$::client_nets') ? { true => getvar('::client_nets'), default => hiera('client_nets', ['127.0.0.1/32']) },
-  $simp_firewall       = defined('$::simp_firewall') ? { true => getvar('::simp_firewall'), default => hiera('simp_firewall',false) },
-  $use_fips            = defined('$::use_fips') ? { true => getvar('::use_fips'), default => hiera('use_fips',false) },
-  $use_simp_pki        = defined('$::use_simp_pki') ? { true  => getvar('::use_simp_pki'), default => hiera('use_simp_pki',false) },
-  $use_haveged         = defined('$::use_haveged') ? { true => getvar('::use_haveged'), default => hiera('use_haveged',true) },
-  $nssdb_password      = passgen('nssdb_password'),
-  $certsource          = '/etc/pki/ipsec',
-  $pkiroot             = '/etc/pki',
+  String                          $service_name            = $::libreswan::params::service_name,
+  String                          $package_name            = $::libreswan::params::package_name,
+  Simplib::Netlist                $trusted_nets            = simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] }),
+  Boolean                         $firewall                = simplib::lookup('simp_options::firewall', {'default_value' => false }),
+  Boolean                         $fips                    = simplib::lookup('simp_options::fips', {'default_value' => false }),
+  Boolean                         $pki                     = simplib::lookup('simp_options::pki', {'default_value' => false }),
+  Boolean                         $haveged                 = simplib::lookup('simp_options::haveged', {'default_value' => false }),
+  String                          $nssdb_password          = passgen('nssdb_password'),
+  Stdlib::Absolutepath            $app_pki_dir             = '/etc/pki/ipsec',
+  Stdlib::Absolutepath            $app_pki_external_source =  simplib::lookup('simp_options::pki::source', {'default_value' => '/etc/pki/simp' }),
   # Possible Values in ipsec.conf file
-  $myid                = undef,
-  $protostack          = 'netkey',
-  $interfaces          = undef,
-  $listen              = undef,
-  $ikeport             = '500',
-  $nflog_all           = undef,
-  $nat_ikeport         = '4500',
-  $keep_alive          = undef,
-  $virtual_private     = ['10.0.0.0/8','192.168.0.0/16','172.16.0.0/12'],
-  $myvendorid          = undef,
-  $nhelpers            = undef,
+  Optional[String]                $myid                    = undef,
+  Enum['netkey','klips','mast']   $protostack              = 'netkey',
+  Optional[Libreswan::Interfaces] $interfaces              = undef,
+  Variant[Simplib::IP::V4,
+          Simplib::IP::V6]        $listen                  = undef,
+  Simplib::Port                   $ikeport                 = 500,
+  Optional[Integer]               $nflog_all               = undef,
+  Simplib::Port                   $nat_ikeport             = 4500,
+  Optional[Integer]               $keep_alive              = undef,
+#
+  Libreswan::VirtualPrivate       $virtual_private         = ['10.0.0.0/8','192.168.0.0/16','172.16.0.0/12'],
+  Optional[String]                $myvendorid              = undef,
+  Optional[Integer]               $nhelpers                = undef,
 #seedbits
 #secctx-attr-type
-  $plutofork           = undef,
-  $crlcheckinterval    = undef,
-  $strictcrlpolicy     = undef,
-  $ocsp_enable         = undef,
-  $ocsp_strict         = undef,
-  $ocsp_timeout        = undef,
-  $ocsp_uri            = undef,
-  $ocsp_trustname      = undef,
-  $syslog              = undef,
-  $klipsdebug          = 'none',
-  $plutodebug          = 'none',
-  $uniqueids           = undef,
-  $plutorestartoncrash = undef,
-  $logfile             = undef,
-  $logappend           = undef,
-  $logtime             = undef,
-  $ddos_mode           = undef,
-  $ddos_ike_treshold   = undef,  # incorrect spelling in libreswan 3.1.5 source code verified
+  Optional[Libreswan::YesNo]      $plutofork               = undef,
+  Optional[Integer]               $crlcheckinterval        = undef,
+  Optional[Libreswan::YesNo]      $strictcrlpolicy         = undef,
+  Optional[Libreswan::YesNo]      $ocsp_enable             = undef,
+  Optional[Libreswan::YesNo]      $ocsp_strict             = undef,
+  Optional[Integer]               $ocsp_timeout            = undef,
+  Optional[Array[Simplib::Uri]]   $ocsp_uri                = undef,
+  Optional[String]                $ocsp_trustname          = undef,
+  Optional[String]                $syslog                  = undef,
+  String                          $klipsdebug              = 'none',
+  String                          $plutodebug              = 'none',
+  Optional[Libreswan::YesNo]      $uniqueids               = undef,
+  Optional[Libreswan::YesNo]      $plutorestartoncrash     = undef,
+  Optional[Stdlib::Absolutepath]  $logfile                 = undef,
+  Optional[Libreswan::YesNo]      $logappend               = undef,
+  Optional[Libreswan::YesNo]      $logtime                 = undef,
+  Enum['busy','unlimited','auto'] $ddos_mode               = undef,
+  Optional[Integer]               $ddos_ike_treshold       = undef,  # incorrect spelling in libreswan 3.1.5 source code verified
 #max-halfopen-ike
 #shuntlifetime
 #xfrmlifetime
-  $dumpdir             = '/var/run/pluto',
-  $statsbin            = undef,
-  $ipsecdir            = '/etc/ipsec.d',
-  $secretsfile         = '/etc/ipsec.secrets',
-  $perpeerlog          = undef,
-  $perpeerlogdir       = '/var/log/pluto/peer',
-  $fragicmp            = undef,
-  $hidetos             = undef,
-  $overridemtu         = undef,
+  Stdlib::Absolutepath            $dumpdir                 = '/var/run/pluto',
+  Optional[String]                $statsbin                = undef,
+  Stdlib::Absolutepath            $ipsecdir                = '/etc/ipsec.d',
+  Stdlib::Absolutepath            $secretsfile             = '/etc/ipsec.secrets',
+  Optional[Libreswan::YesNo]      $perpeerlog              = undef,
+  Stdlib::Absolutepath            $perpeerlogdir           = '/var/log/pluto/peer',
+  Optional[Libreswan::YesNo]      $fragicmp                = undef,
+  Optional[Libreswan::YesNo]      $hidetos                 = undef,
+  Optional[Integer]               $overridemtu             = undef,
 
 ) inherits ::libreswan::params {
 
-  # TODO validate these in the same order they appear in the parameter
-  # list
-  validate_string( $service_name )
-  validate_string( $package_name )
-  validate_array( $client_nets )
-  validate_net_list( $client_nets )
-  validate_bool( $simp_firewall )
-  validate_bool( $use_simp_pki )
-  validate_bool( $use_fips )
-  validate_bool( $use_haveged )
-  # config setup section of ipsec.conf
-  if $myid { validate_string($myid)}
-  if $strictcrlpolicy { libreswan_validate_yesno($strictcrlpolicy) }
-  if $hidetos { libreswan_validate_yesno($hidetos) }
-  if $plutofork { libreswan_validate_yesno($plutofork) }
-  if $uniqueids { libreswan_validate_yesno($uniqueids) }
-
-  #TODO validate list which can contain IP addresses prefixed by "!".  Right
-  # now validation is done in template that uses this variable
-  validate_array($virtual_private)
-  if $plutorestartoncrash { libreswan_validate_yesno($plutorestartoncrash) }
-  if $fragicmp { libreswan_validate_yesno($fragicmp) }
-  if $listen {
-    # This should be a single IPv4 or IPv6 address
-    # TODO reject CIDR addresses
-    validate_string($listen)
-    validate_net_list($listen)
-  }
-  if $perpeerlog { libreswan_validate_yesno($perpeerlog) }
-  validate_absolute_path($perpeerlogdir)
-  if $nhelpers { validate_integer($nhelpers)}
-  if $overridemtu { validate_integer($overridemtu)}
-  if $keep_alive { validate_integer($keep_alive)}
-  if $crlcheckinterval { validate_integer($crlcheckinterval)}
-  if $myvendorid { validate_string($myvendorid)}
-  if $statsbin { validate_string($statsbin)}
-  if $ocsp_enable { libreswan_validate_yesno($ocsp_enable) }
-  if $ocsp_strict { libreswan_validate_yesno($ocsp_strict) }
-  if $ocsp_timeout { validate_integer($ocsp_timeout) }
-  if $ocsp_uri {
-    validate_string($ocsp_uri) # must be single URI
-    validate_uri_list($ocsp_uri)
-  }
-  if $ocsp_trustname{ validate_string($ocsp_trustname) }
-
-  #TODO build validator for <facility>.<level>
-  if $syslog { validate_string($syslog)}
-
-  validate_string($klipsdebug)
-  validate_string($plutodebug)
-  if $logfile { validate_absolute_path ($logfile) }
-  if $logappend { libreswan_validate_yesno($logappend) }
-  if $logtime { libreswan_validate_yesno($logtime) }
-  if $ddos_mode { validate_array_member($ddos_mode,['busy','unlimited','auto']) }
-  if $ddos_ike_treshold { validate_integer($ddos_ike_treshold) }
-  validate_absolute_path($ipsecdir)
-  validate_absolute_path($secretsfile)
-  validate_absolute_path($dumpdir)
-  validate_absolute_path($certsource)
-  validate_absolute_path($pkiroot)
-  validate_array_member($protostack,['netkey','klips','mast'])
-  validate_integer($ikeport)
-  if $nflog_all { validate_integer($nflog_all) }
-  validate_integer($nat_ikeport)
-
-  if $interfaces {
-    validate_array($interfaces)
-    validate_re_array($interfaces,['^%none$', '^%defaultroute$', '(\w+=\w+)'])
-  }
   # set the token for the NSS database.
-  if $::libreswan::use_fips {
+  if $fips {
     $token = 'NSS FIPS 140-2 Certificate DB' }
   else {
     $token = 'NSS Certificate DB'
   }
 
-  if $::libreswan::use_haveged {
+  if $haveged {
     include '::haveged'
   }
 
@@ -215,13 +157,13 @@ class libreswan (
   Class[ '::libreswan::service' ]->
   Class[ '::libreswan' ]
 
-  if $simp_firewall {
+  if $firewall {
     include '::libreswan::config::firewall'
     Class[ '::libreswan::config::firewall' ] ~>
     Class[ '::libreswan::service'  ]
   }
 
-  if $use_simp_pki {
+  if $pki {
     include '::libreswan::config::pki'
     include '::libreswan::config::pki::nsspki'
     Class[ '::libreswan::config::pki' ] ~>

@@ -13,18 +13,14 @@
 # @param destroyexisting [Boolean] If true, it will remove the existing database before running the init command.
 #
 define libreswan::nss::init_db(
-  $dbdir,
-  $password,
-  $destroyexisting = false,
-  $use_fips        = false,
-  $token           = 'NSS Certificate DB',
-  $nsspassword     = "${dbdir}/nsspassword",
+  Stdlib::Absolutepath  $dbdir,
+  String                $password,
+  Boolean               $destroyexisting = false,
+  Boolean               $fips            = simplib::lookup('simp_options::fips', { 'default_value' => false}),
+  String                $token           = 'NSS Certificate DB',
+  Stdlib::Absolutepath  $nsspassword     = "${dbdir}/nsspassword",
 ){
 
-  validate_absolute_path($dbdir)
-  validate_bool($destroyexisting)
-  validate_string($password)
-  validate_absolute_path($nsspassword)
   # Because this is an initialization, the current password should be none.
   $oldpassword = 'none'
   $dbfile = "${dbdir}/cert9.db"
@@ -73,7 +69,7 @@ define libreswan::nss::init_db(
   }
 
   # Make sure FIPS is set according to use_fips.
-  if $use_fips {
+  if $fips {
     exec { "nssdb in fips mode ${dbdir}":
       command => "modutil -dbdir sql:${dbdir} -fips true",
       onlyif  =>  "modutil -dbdir sql:${dbdir} -chkfips false",
