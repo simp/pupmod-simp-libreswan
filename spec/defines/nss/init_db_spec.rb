@@ -50,7 +50,7 @@ describe 'libreswan::nss::init_db', :type => :define do
           }
         end
         describe "ipsec class with fips disabled" do
-          let(:params) { common_params.merge( { :use_fips => false, :token => 'NSS Certificate DB'} ) }
+          let(:params) { common_params.merge( { :fips => false, :token => 'NSS Certificate DB'} ) }
           let(:title ){ 'IPSEC NSS DB' }
           it { is_expected.to contain_exec("make sure nssdb not in fips mode #{params[:dbdir]}").with({
             :command => "modutil  -dbdir sql:#{params[:dbdir]} -fips false",
@@ -72,7 +72,7 @@ describe 'libreswan::nss::init_db', :type => :define do
         end
 
         describe "ipsec class with fips enabled" do
-          let(:params) { common_params.merge( { :use_fips => true, :token => 'NSS FIPS 140-2 Certificate DB'} ) }
+          let(:params) { common_params.merge( { :fips => true, :token => 'NSS FIPS 140-2 Certificate DB'} ) }
           let(:title  ){ 'IPSEC NSS DB' }
           it { is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with({
             :command => "modutil -dbdir sql:#{params[:dbdir]} -fips true",

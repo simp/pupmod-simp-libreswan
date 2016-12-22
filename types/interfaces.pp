@@ -1,1 +1,1 @@
-type Libreswan::Interfaces = Array[Enum['%none','%defaultroute'],Pattern[/(\w+=\w+)/]]
+type Libreswan::Interfaces = Array[Variant[Enum['%none','%defaultroute'],Pattern['(\w+=\w+)']]]

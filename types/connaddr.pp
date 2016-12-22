@@ -1,8 +1,9 @@
 type Libreswan::ConnAddr = Variant[
-                             Enum['%any','%defaultroute','%opportunistic','%opportunisticgroup','%group'],
-                             Array[Simplib::IP::V4],
-                             Array[Simplib::IP::V6],
+                             Enum['%any','%defaultroute',
+                                  '%opportunistic',
+                                  '%opportunisticgroup',
+                                  '%group'],
                              Simplib::IP::V4,
                              Simplib::IP::V6,
-                             Pattern['^%\w+']
+                             Pattern['^%[a-zA-Z]+\d+$']
                           ]

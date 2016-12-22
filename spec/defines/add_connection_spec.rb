@@ -347,22 +347,14 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'true' is not 'yes' or 'no'/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for Enum/)
                 end
               end
             end
           end
 
           describe 'string parameter' do
-            [ :left,
-              :right,
-              :leftsourceip,
-              :rightsourceip,
-              :rightsubnet,
-              :leftsubnet,
-              :leftnexthop,
-              :rightnexthop,
-              :leftupdown,
+            [ :leftupdown,
               :rightupdown,
               :leftcert,
               :rightcert,
@@ -372,8 +364,6 @@ describe 'libreswan::add_connection', :type => :define do
               :rightca,
               :leftxauthusername,
               :rightxauthusername,
-              :modecfgdns1,
-              :modecfgdns2,
               :modecfgdomain,
               :modecfgbanner,
               :phase2alg,
@@ -385,14 +375,15 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/\["string-in-an-array"\] is not a string/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a String value/)
                 end
               end
             end
           end
 
           describe 'single IP address' do
-            [ :left,
+            [
+              :left,
               :right,
               :leftsourceip,
               :rightsourceip,
@@ -407,7 +398,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2..4.' is not a valid network/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
                 end
               end
 
@@ -415,10 +406,9 @@ describe 'libreswan::add_connection', :type => :define do
                 let(:title){ "disallowed_cidr_#{ipaddr_param}" }
                 let(:params) {{ipaddr_param => '1.2.3.0/24'}}
                 it 'rejects CIDR address' do
-                  pending 'Currently, CIDR addresses are not rejected'
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2.3.0\/24' is a network \(CIDR\)/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
                 end
               end
             end
@@ -430,10 +420,9 @@ describe 'libreswan::add_connection', :type => :define do
                 let(:title){ "invalid_length_#{addr_pool_param}" }
                 let(:params) {{addr_pool_param => ['1.2.3.4']}}
                 it 'fails to compile' do
-                  pending "Currently, length of array is not validated."
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/#{addr_pool_param} must have 2 values/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects size to be 2/)
                 end
               end
 
@@ -441,10 +430,9 @@ describe 'libreswan::add_connection', :type => :define do
                 let(:title){ "invalid_cidr_#{addr_pool_param}" }
                 let(:params) {{addr_pool_param => ['1.2.4.0/24', '5.7.8.0/24'] }}
                 it 'fails to compile' do
-                  pending "Currently, CIDR addresses are not rejected"
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2.4.0\/24' is a network \(CIDR\)/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
                 end
               end
             end
@@ -453,8 +441,6 @@ describe 'libreswan::add_connection', :type => :define do
           describe 'single CIDR address' do
             [ :leftsubnet,
               :rightsubnet,
-              :leftsubnets,
-              :rightsubnets
             ].each do |cidr_param|
               context "invalid CIDR address #{cidr_param}" do
                 let(:title){ "invalid_cidr_#{cidr_param}" }
@@ -462,7 +448,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2..30.0\/24' is not a valid network/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
                 end
               end
 
@@ -470,10 +456,9 @@ describe 'libreswan::add_connection', :type => :define do
                 let(:title){ "not_a_cidr_#{cidr_param}" }
                 let(:params) {{cidr_param => '1.2.3.4'}}
                 it 'fails to compile' do
-                  pending "Currently, non-CIDR addresses are not rejected"
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2.34' is not a valid network/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
                 end
               end
             end
@@ -487,17 +472,48 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2..30.0\/24' is not a valid network/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
                 end
               end
               context "not CIDR address #{cidr_param}" do
                 let(:title){ "not_a_cidr_#{cidr_param}" }
                 let(:params) {{cidr_param => '1.2.3.4'}}
                 it 'fails to compile' do
-                  pending "Currently, non-CIDR addresses are not rejected"
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2.3.4' is not a valid network/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects an Array/)
+                end
+              end
+            end
+          end
+
+          describe 'left and right tests' do
+            [ :left, :right ].each do |side_param|
+              context "invalid  address #{side_param}" do
+                let(:title){ "invalid_cidr_array_#{side_param}" }
+                let(:params) {{side_param => '1.2..30.0/24'}}
+                it 'fails to compile' do
+                  expect {
+                    is_expected.to compile
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a/)
+                end
+              end
+              context "Valid #{side_param}" do
+                let(:title){ "Valid ether names _#{side_param}" }
+                let(:params) {{side_param => '%eth0'}}
+                it 'compiles' do
+                   expect  {
+                     is_expected.to compile
+                   } 
+                end
+              end
+              context "invalid text #{side_param}" do
+                let(:title){ "invalid ether names _#{side_param}" }
+                let(:params) {{side_param => 'eth0'}}
+                it 'fails to compile' do
+                  expect {
+                    is_expected.to compile
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a/)
                 end
               end
             end
@@ -523,7 +539,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/does not contain 'not-in-enumerated-list'/)
+                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for Enum/)
                 end
               end
             end

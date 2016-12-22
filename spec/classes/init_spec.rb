@@ -10,7 +10,7 @@ describe 'libreswan' do
     it { is_expected.to contain_class('libreswan::config').that_notifies('Class[libreswan::service]') }
     it { is_expected.to contain_class('libreswan::install').that_comes_before('Class[libreswan::config]') }
     it { is_expected.to contain_class('libreswan::service').that_subscribes_to('Class[libreswan::config]') }
-    it { is_expected.to contain_class('haveged') }
+    it { is_expected.to_not contain_class('haveged') }
   end
 
   context 'supported operating systems' do
@@ -22,10 +22,10 @@ describe 'libreswan' do
 
         context "libreswan class with firewall enabled" do
           let(:params) {{
-            :client_nets     => ['192.168.0.0/16'],
-            :ikeport => '50',
-            :nat_ikeport => '4500',
-            :simp_firewall => true,
+            :trusted_nets     => ['192.168.0.0/16'],
+            :ikeport => 50,
+            :nat_ikeport => 4500,
+            :firewall => true,
           }}
           it_behaves_like "a structured module"
           it { is_expected.to contain_class('libreswan::config::firewall') }
@@ -34,16 +34,16 @@ describe 'libreswan' do
         end
 
         context "libreswan class with use_simp_pki enabled" do
-          let(:params) {{ :use_simp_pki => true, }}
+          let(:params) {{ :pki => true, }}
           it { is_expected.to contain_class('libreswan::config::pki') }
           it { is_expected.to contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
           it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
         end
         it { is_expected.to contain_service('ipsec') }
 
-        context 'with use_haveged => false' do
-          let(:params) {{:use_haveged => false}}
-          it { is_expected.to_not contain_class('haveged') }
+        context 'with haveged => true' do
+          let(:params) {{:haveged => true}}
+          it { is_expected.to contain_class('haveged') }
         end
 
         #TODO flesh out full list of validation successes and failures,
@@ -95,7 +95,7 @@ describe 'libreswan' do
               it 'fails to compile' do
                 expect {
                   is_expected.to compile
-                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'false' is not 'yes' or 'no'/)
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/got 'false'/)
               end
             end
           end
@@ -108,33 +108,59 @@ describe 'libreswan' do
             :crlcheckinterval,
             :ocsp_timeout,
             :ddos_ike_treshold,
-            :ikeport,
             :nflog_all,
-            :nat_ikeport
           ].each do |int_param|
             context "invalid #{int_param}" do
               let(:params) {{int_param => 'not-a-number'}}
               it 'fails to compile' do
                 expect {
                   is_expected.to compile
-                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'\["not-a-number"\]' is not an integer/)
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects an Integer value/)
+              end
+            end
+          end
+        end
+
+        describe 'with invalid port parameters' do
+          [ :ikeport,
+            :nat_ikeport
+          ].each do |int_param|
+            context "invalid #{int_param}" do
+              let(:params) {{int_param => 'not-a-port'}}
+              it 'fails to compile' do
+                expect {
+                  is_expected.to compile
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a value of type Integer/)
               end
             end
           end
         end
 
         describe 'with invalid bool parameters' do
-          [ :simp_firewall,
-            :use_simp_pki,
-            :use_fips,
-            :use_haveged
+          [ :firewall,
+            :fips,
+            :haveged
           ].each do |bool_param|
             context "invalid #{bool_param}" do
               let(:params) {{bool_param => 'FALSE'}}
               it 'fails to compile' do
                 expect {
                   is_expected.to compile
-                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/FALSE" is not a boolean/)
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a Boolean value/)
+              end
+            end
+          end
+        end
+
+        describe 'with invalid Stroolean parameters' do
+          [ :pki
+          ].each do |bool_param|
+            context "invalid #{bool_param}" do
+              let(:params) {{bool_param => 'FALSE'}}
+              it 'fails to compile' do
+                expect {
+                  is_expected.to compile
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a value of type Boolean or Enum/)
               end
             end
           end
@@ -146,15 +172,15 @@ describe 'libreswan' do
             :ipsecdir,
             :secretsfile,
             :dumpdir,
-            :certsource,
-            :pkiroot
+            :app_pki_external_source,
+            :app_pki_dir
           ].each do |abs_path_param|
             context "invalid #{abs_path_param}" do
               let(:params) {{abs_path_param => './myfile'}}
               it 'fails to compile' do
                 expect {
                   is_expected.to compile
-                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/".\/myfile" is not an absolute path/)
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for Variant/)
               end
             end
           end
@@ -164,10 +190,8 @@ describe 'libreswan' do
           [ :service_name,
             :package_name,
             :myid,
-            :listen,
             :myvendorid,
             :statsbin,
-            :ocsp_uri,
             :ocsp_trustname,
             :syslog,
             :klipsdebug,
@@ -178,28 +202,28 @@ describe 'libreswan' do
               it 'fails to compile' do
                 expect {
                   is_expected.to compile
-                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/\["string-in-an-array"\] is not a string/)
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a String value, got Tuple/)
               end
             end
           end
         end
 
         describe 'with invalid parameters' do
-          context 'invalid client_nets' do
-            let(:params) {{:client_nets => ['1.2.3.4/33']}}
+          context 'invalid trusted_nets' do
+            let(:params) {{:trusted_nets => ['1.2.3.4/33']}}
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1.2.3.4\/33' is not a valid network/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a /)
             end
           end
 
           context 'invalid virtual_private' do
-            let(:params) {{:virtual_private => '1.2.3.0/24'}}
+            let(:params) {{:virtual_private => '%v4:1.2.3.0/24'}}
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/"1.2.3.0\/24" is not an Array/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a /)
             end
           end
 
@@ -208,7 +232,7 @@ describe 'libreswan' do
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/':myuri' is not a valid URI/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for/)
             end
           end
 
@@ -217,7 +241,7 @@ describe 'libreswan' do
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'busy,unlimited,auto' does not contain 'none'/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for Enum/)
             end
           end
 
@@ -226,7 +250,7 @@ describe 'libreswan' do
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'netkey,klips,mast' does not contain 'none'/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for Enum/)
             end
           end
 
@@ -235,28 +259,25 @@ describe 'libreswan' do
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1..2.3' is not a valid network/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for/)
             end
           end
 
-#TODO enable once code validates this is a valid IP (not CIDR)
-=begin
           context 'invalid listen' do
             let(:params) {{:listen => '1.2.3.0/24'}}
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/'1..2.3' is not a valid network/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for/)
             end
           end
-=end
 
           context 'invalid interfaces' do
             let(:params) {{:interfaces => ['eth1=']}}
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/"eth1=" does not match/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for/)
             end
           end
 
@@ -265,7 +286,7 @@ describe 'libreswan' do
             it 'fails to compile' do
               expect {
                 is_expected.to compile
-              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/267.2.3.0\/24 in virtual_private is not an IPv4\/IPv6 address/)
+              }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for/)
             end
           end
         end

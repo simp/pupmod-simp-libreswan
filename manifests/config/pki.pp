@@ -8,7 +8,7 @@ class libreswan::config::pki(
   Optional[Stdlib::Absolutepath] $app_pki_key    = "${::libreswan::app_pki_dir}/pki/private/${::fqdn}.pem"
 ){
 
-  assert_private()
+#  assert_private()
 
 
 
@@ -17,7 +17,7 @@ class libreswan::config::pki(
     password     =>  $::libreswan::nssdb_password,
     nsspassword  =>  $::libreswan::nsspassword,
     token        =>  $::libreswan::token,
-    fips     =>  $::libreswan::fips,
+    fips         =>  $::libreswan::fips,
     require      =>  File['/etc/ipsec.conf'],
     notify       =>  Class[Libreswan::Config::Pki::Nsspki]
   }
@@ -27,7 +27,7 @@ class libreswan::config::pki(
   # certificate routines.
   if $::libreswan::pki {
   
-# Create the directory to  copy the certs to
+#   Create the directory to  copy the certs to
     file { $::libreswan::app_pki_dir :
       ensure =>  directory,
       owner  => 'root',
@@ -46,7 +46,7 @@ class libreswan::config::pki(
     file { [ "${app_pki_cert}",
              "${app_pki_key}",
              "${app_pki_ca}" ] :
-      ensure =>  directory,
+      ensure =>  file,
       owner  => 'root',
       group  => 'root',
       mode   => '0700'
