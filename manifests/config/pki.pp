@@ -3,9 +3,9 @@
 # by the IPSEC process.
 #
 class libreswan::config::pki(
-  Stdlib::Absolutepath           $app_pki_ca     = "${::libreswan::app_pki_dir}/pki/cacerts/cacerts.pem",
-  Stdlib::Absolutepath           $app_pki_cert   = "${::libreswan::app_pki_dir}/pki/public/${::fqdn}.pub",
-  Optional[Stdlib::Absolutepath] $app_pki_key    = "${::libreswan::app_pki_dir}/pki/private/${::fqdn}.pem"
+  Stdlib::Absolutepath           $app_pki_ca   = "${::libreswan::app_pki_dir}/pki/cacerts/cacerts.pem",
+  Stdlib::Absolutepath           $app_pki_cert = "${::libreswan::app_pki_dir}/pki/public/${::fqdn}.pub",
+  Optional[Stdlib::Absolutepath] $app_pki_key  = "${::libreswan::app_pki_dir}/pki/private/${::fqdn}.pem"
 ){
 
 #  assert_private()
@@ -13,20 +13,20 @@ class libreswan::config::pki(
 
 
   libreswan::nss::init_db { "NSSDB ${::libreswan::ipsecdir}":
-    dbdir        =>  $::libreswan::ipsecdir,
-    password     =>  $::libreswan::nssdb_password,
-    nsspassword  =>  $::libreswan::nsspassword,
-    token        =>  $::libreswan::token,
-    fips         =>  $::libreswan::fips,
-    require      =>  File['/etc/ipsec.conf'],
-    notify       =>  Class[Libreswan::Config::Pki::Nsspki]
+    dbdir       => $::libreswan::ipsecdir,
+    password    => $::libreswan::nssdb_password,
+    nsspassword => $::libreswan::nsspassword,
+    token       => $::libreswan::token,
+    fips        => $::libreswan::fips,
+    require     => File['/etc/ipsec.conf'],
+    notify      => Class[Libreswan::Config::Pki::Nsspki]
   }
 
 
   # Copy the certs if they are updated and notify the Load
   # certificate routines.
   if $::libreswan::pki {
-  
+
 #   Create the directory to  copy the certs to
     file { $::libreswan::app_pki_dir :
       ensure =>  directory,
@@ -43,9 +43,11 @@ class libreswan::config::pki(
     }
   }
   else {
-    file { [ "${app_pki_cert}",
-             "${app_pki_key}",
-             "${app_pki_ca}" ] :
+    file { [
+      $app_pki_cert,
+      $app_pki_key,
+      $app_pki_ca
+    ] :
       ensure =>  file,
       owner  => 'root',
       group  => 'root',

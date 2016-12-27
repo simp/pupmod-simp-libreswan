@@ -36,7 +36,7 @@
 #   https://libreswan.org/man/ipsec.conf.5.html, the CONN:SETTINGS section
 #
 #
-define libreswan::add_connection (
+define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',
   Integer                              $keyingtries        = 10,
   String                               $ike                = 'aes-sha2;dh24',
@@ -45,24 +45,18 @@ define libreswan::add_connection (
   Optional[Libreswan::ConnAddr]        $left               = undef,
   Optional[Libreswan::ConnAddr]        $right              = undef,
   Optional[Enum['ipv4','ipv6']]        $connaddrfamily     = undef,
-  Optional[Array[Variant[
-    Simplib::IP::V4,
-    Simplib::IP::V6],2,2]]             $leftaddresspool    = undef,
+  Optional[Array[Simplib::IP,2,2]]     $leftaddresspool    = undef,
   Optional[Variant[
     Enum['%no','%priv'],
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
-    Simplib::IP::V4::CIDR,
-    Simplib::IP::V6::CIDR]]            $leftsubnet         = undef,
-  Optional[Variant[
-    Array[Simplib::IP::V4::CIDR],
-    Array[Simplib::IP::V6::CIDR]]]     $leftsubnets        = undef,
+    Simplib::IP::CIDR]]                $leftsubnet         = undef,
+  Optional[Variant[Simplib::IP::CIDR,
+    Array[Simplib::IP::CIDR]]]         $leftsubnets        = undef,
   Optional[String]                     $leftprotoport      = undef,
   Optional[Variant[
-    Simplib::IP::V4,
-    Simplib::IP::V6,
-    Array[Simplib::IP::V4],
-    Array[Simplib::IP::V6]]]           $leftsourceip       = undef,
+    Simplib::IP,
+    Array[Simplib::IP]]]               $leftsourceip       = undef,
   Optional[String]                     $leftupdown         = undef,
   Optional[String]                     $leftcert           = undef,
   Optional[String]                     $leftrsasigkey      = undef,
@@ -71,40 +65,32 @@ define libreswan::add_connection (
     'never','always','sendifasked']]   $leftsendcert       = undef,
   Optional[Variant[
     Enum['%direct','%defaultroute'],
-    Simplib::IP::V4,
-    Simplib::IP::V6]]                  $leftnexthop        = undef,
+    Simplib::IP]]                      $leftnexthop        = undef,
   Optional[String]                     $leftid             = undef,
   Optional[String]                     $leftca             = undef,
   Optional[String]                     $rightid            = undef,
   Optional[String]                     $rightrsasigkey     = undef,
   Optional[String]                     $rightrsasigkey2    = undef,
   Optional[String]                     $rightca            = undef,
-  Optional[Array[Variant[
-    Simplib::IP::V4,
-    Simplib::IP::V6],2,2]]             $rightaddresspool   = undef,
-  Optional[Variant[
-    Array[Simplib::IP::V4::CIDR],
-    Array[Simplib::IP::V6::CIDR]]]     $rightsubnets        = undef,
+  Optional[Array[Simplib::IP,2,2]]     $rightaddresspool   = undef,
+  Optional[Variant[Simplib::IP::CIDR,
+    Array[Simplib::IP::CIDR]]]         $rightsubnets       = undef,
   Optional[Variant[
     Enum['%no','%priv'],
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
-    Simplib::IP::V4::CIDR,
-    Simplib::IP::V6::CIDR]]            $rightsubnet        = undef,
+    Simplib::IP::CIDR]]                $rightsubnet        = undef,
   Optional[String]                     $rightprotoport     = undef,
   Optional[Variant[
-    Simplib::IP::V4,
-    Simplib::IP::V6,
-    Array[Simplib::IP::V4],
-    Array[Simplib::IP::V6]]]           $rightsourceip      = undef,
+    Simplib::IP,
+    Array[Simplib::IP]]]               $rightsourceip      = undef,
   Optional[String]                     $rightupdown        = undef,
   Optional[String]                     $rightcert          = undef,
   Optional[Enum['yes', 'no',
     'never','always','sendifasked']]   $rightsendcert      = undef,
   Optional[Variant[
     Enum['%direct','%defaultroute'],
-    Simplib::IP::V4,
-    Simplib::IP::V6]]                   $rightnexthop       = undef,
+    Simplib::IP]]                      $rightnexthop       = undef,
   Optional[Enum['add','start',
     'ondemand', 'ignore']]             $auto               = undef,
   Optional[Enum['rsasig','secret',
@@ -134,12 +120,8 @@ define libreswan::add_connection (
     'alwaysok']]                       $xauthby            = undef,
   Optional[Enum['hard','soft']]        $xauthfail          = undef,
   Optional[Enum['yes','no']]           $modecfgpull        = undef,
-  Optional[Variant[
-      Simplib::IP::V4,
-      Simplib::IP::V6]]                $modecfgdns1        = undef,
-  Optional[Variant[
-      Simplib::IP::V4,
-      Simplib::IP::V6]]                $modecfgdns2        = undef,
+  Optional[Simplib::IP]                $modecfgdns1        = undef,
+  Optional[Simplib::IP]                $modecfgdns2        = undef,
   Optional[String]                     $modecfgdomain      = undef,
   Optional[String]                     $modecfgbanner      = undef,
   Optional[Enum['drafts','rfc',
@@ -151,7 +133,7 @@ define libreswan::add_connection (
   # TODO Create custom type for *protoport to allow following types of permutations:
   #   *protoport=17   *protoport=17/1701  *protoport=17/%any  *protoport=tcp
   #   *protoport=tcp/22  *protoport=tcp/%any
-  
+
 # TODO maybe restrict subnet and  subnets more: The following is orig:
 #  if $leftsubnet         {
 #    validate_string($leftsubnet)  # Single CIDR

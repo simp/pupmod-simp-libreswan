@@ -3,9 +3,9 @@ require 'spec_helper_acceptance'
 #FIXME this code is brittle!
 def get_private_network_interface(host)
   interfaces = fact_on(host, 'interfaces').split(',')
-   
+
   # remove interfaces we know are not the private network interface
-  interfaces.delete_if do |ifc| 
+  interfaces.delete_if do |ifc|
     ifc == 'lo' or
     ifc.include?('ip_') or # IPsec tunnel
     ifc == 'enp0s3' or     # public interface for puppetlabs/centos-7.2-64-nocm virtual box
@@ -20,7 +20,7 @@ def get_public_network_interface(host)
   interfaces = fact_on(host, 'interfaces').split(',')
 
   # remove interfaces we know are not the public network interface
-  interfaces.delete_if do |ifc| 
+  interfaces.delete_if do |ifc|
     ifc == 'lo' or
     ifc.include?('ip_') # IPsec tunnel
   end
@@ -85,14 +85,14 @@ test_name 'libreswan class'
           public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
           enable_audit       => false
         }
-        libreswan::add_connection{ 'default':
+        libreswan::connection{ 'default':
           leftcert      => "${::fqdn}",
           left          => "#{leftip}",
           leftrsasigkey => '%cert',
           leftsendcert  => 'always',
           authby        => 'rsasig',
         }
-        libreswan::add_connection{ 'outgoing' :
+        libreswan::connection{ 'outgoing' :
           right          => "#{rightip}",
           rightrsasigkey => '%cert',
           auto           => 'start'
@@ -107,14 +107,14 @@ test_name 'libreswan class'
           public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
           enable_audit       => false
         }
-        libreswan::add_connection{ 'default':
+        libreswan::connection{ 'default':
           leftcert      => "${::fqdn}",
           left          => "#{rightip}",
           leftrsasigkey => '%cert',
           leftsendcert  => 'always',
           authby        => 'rsasig'
         }
-        libreswan::add_connection{ 'outgoing' :
+        libreswan::connection{ 'outgoing' :
           right          => "#{leftip}",
           rightrsasigkey => '%cert',
           auto           => 'start'
@@ -151,7 +151,7 @@ EOM
         '/bin/nc'
       end
     }
-  
+
     context 'test prep' do
       it 'should install haveged, nmap-ncat, and tcpdump' do
         [left, right].flatten.each do |node|
@@ -166,13 +166,13 @@ EOM
         left.install_package('tcpdump')
       end
     end
-  
+
     context 'tunnel using certs' do
       context "with use_simp_pki" do
         it 'should apply manifest idempotently and start ipsec service' do
           set_hieradata_on(left, hieradata_left)
           set_hieradata_on(right,hieradata_right)
-  
+
           [left, right].flatten.each do |node|
             # Apply ipsec and check for idempotency
             apply_manifest_on(node, manifest, :catch_failures => true)
@@ -187,14 +187,14 @@ EOM
             on node, "netstat -nuapl | grep -e '.*\/pluto' | grep -e ':4500'", :acceptable_exit_codes => [0]
           end
         end
-  
+
         it 'should load certs and create NSS Database' do
           on left, "certutil -L -d sql:/etc/ipsec.d | grep -i #{leftfqdn}", :acceptable_exit_codes => [0]
           on right, "certutil -L -d sql:/etc/ipsec.d | grep -i #{rightfqdn}", :acceptable_exit_codes => [0]
         end
       end
-  
-      context 'with add_connection but no firewall protection' do
+
+      context 'with connection but no firewall protection' do
         it 'should apply manifest idempotently and restart ipsec service' do
           apply_manifest_on(left, leftconnection, :catch_failures => true)
           apply_manifest_on(right, rightconnection, :catch_failures => true)
@@ -203,7 +203,7 @@ EOM
           on left, "ipsec status", :acceptable_exit_codes => [0]
           on right, "ipsec status", :acceptable_exit_codes => [0]
         end
-  
+
         it "should start a usable connection in tunnel mode" do
           wait_for_command_success(left, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
           wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
@@ -220,7 +220,7 @@ EOM
 #            filter = "dst #{leftip} and \( \(ip proto 50\) or \(port #{nc_port} \) \)"
             on left, "tcpdump -i #{leftinterface} -c 3 -w #{testfile}.pcap #{filter}",
               :acceptable_exit_codes => [0]
-          } 
+          }
           sleep(2)
           on right, "echo 'this is a test of a tunnel' | #{nc} -s #{rightip} #{left} #{nc_port} -w 5 ", :acceptable_exit_codes => [0]
           lthread.join
@@ -239,7 +239,7 @@ EOM
           end
         end
       end
-  
+
       context 'when tunnel goes down' do
         it 'should detect disabled tunnel' do
           on left, 'puppet resource service ipsec ensure=stopped', :acceptable_exit_codes => [0]
@@ -251,7 +251,7 @@ EOM
           wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 0\"")
           wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
-  
+
         it "should drop data because of broken tunnel" do
           # try to send TCP data from right to left
           on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
@@ -266,9 +266,9 @@ EOM
           on left, "pkill -f '#{nc} -l #{nc_port}'", :acceptable_exit_codes => [0]
         end
       end
-  
-      context 'when add_connection with firewall' do
-        let(:client_net) { 
+
+      context 'when connection with firewall' do
+        let(:client_net) {
           quads = leftip.split('.')  # doesn't matter if use left or right ip
           quads[2] = '0'
           quads[3] = '0'
@@ -276,7 +276,7 @@ EOM
         }
         let(:hieradata_with_firewall_left)  { hieradata_left + "simp_firewall: yes\nclient_nets : ['#{client_net}']\n" }
         let(:hieradata_with_firewall_right) { hieradata_right + "simp_firewall: yes\nclient_nets : ['#{client_net}']\n" }
-        let(:leftconnection_with_firewall) { leftconnection + 
+        let(:leftconnection_with_firewall) { leftconnection +
           "      class { 'iptables': }\n" +
           "      iptables::add_rules {'allow_public_network_interface':\n" +
           "        content => '-A LOCAL-INPUT -i #{get_public_network_interface(left)} -j ACCEPT',\n" +
@@ -289,7 +289,7 @@ EOM
           "        order => 11\n" +
           "      }\n"
         }
-        let(:rightconnection_with_firewall) { rightconnection + 
+        let(:rightconnection_with_firewall) { rightconnection +
           "      class { 'iptables': }\n" +
           "      iptables::add_rules {'allow_public_network_interface':\n" +
           "        content => '-A LOCAL-INPUT -i #{get_public_network_interface(right)} -j ACCEPT',\n" +
@@ -306,7 +306,7 @@ EOM
         it 'should apply manifest idempotently, restart ipsec service, start iptables with ipsec firewall' do
           set_hieradata_on(left, hieradata_with_firewall_left)
           set_hieradata_on(right,hieradata_with_firewall_right)
-  
+
           # Apply ipsec and check for idempotency
           apply_manifest_on(left, leftconnection_with_firewall, :catch_failures => true)
           apply_manifest_on(right, rightconnection_with_firewall, :catch_failures => true)
@@ -322,8 +322,8 @@ EOM
             end
           end
         end
-  
-        it "should allow data carried by add_connection's tunnel" do
+
+        it "should allow data carried by connection's tunnel" do
           wait_for_command_success(left, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
           wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
 

@@ -122,7 +122,7 @@ shared_examples_for "a libreswan connection config file generator" do
   }
 end
 
-describe 'libreswan::add_connection', :type => :define do
+describe 'libreswan::connection', :type => :define do
   context 'supported operating systems' do
     on_supported_os.each do |os, facts|
       context "on #{os}" do
@@ -196,7 +196,7 @@ describe 'libreswan::add_connection', :type => :define do
               :type               => 'tunnel',
               :ikev2              => 'insist',
               :phase2             => 'ah',
-	      :ikepad             => 'no',
+              :ikepad             => 'no',
               :fragmentation      => 'no',
               :sha2_truncbug      => 'no',
               :narrowing          => 'yes',
@@ -242,77 +242,77 @@ describe 'libreswan::add_connection', :type => :define do
           end
 
           describe 'magic subnet enum' do
-	    [ :leftsubnet, :rightsubnet ].each do |subnet_enum|
-	      [ 'vhost:%priv,%no','vnet:%priv' ].each do |valid_enum|
-	        context "#{subnet_enum} of #{valid_enum}" do
-	          let(:title){ "#{subnet_enum}_#{valid_enum}" }
-	          let(:params) {{subnet_enum => valid_enum}}
-	          it { is_expected.to compile }
+            [ :leftsubnet, :rightsubnet ].each do |subnet_enum|
+              [ 'vhost:%priv,%no','vnet:%priv' ].each do |valid_enum|
+                context "#{subnet_enum} of #{valid_enum}" do
+                  let(:title){ "#{subnet_enum}_#{valid_enum}" }
+                  let(:params) {{subnet_enum => valid_enum}}
+                  it { is_expected.to compile }
                 end
-	      end
-	    end
+              end
+            end
           end
 
           describe 'magic nexthop enum' do
-	    [ :leftnexthop, :rightnexthop ].each do |nexthop_enum|
-	      [ '%direct','%defaultroute' ].each do |valid_enum|
-	        context "#{nexthop_enum} of #{valid_enum}" do
-	          let(:title){ "#{nexthop_enum}_#{valid_enum}" }
-	          let(:params) {{nexthop_enum => valid_enum}}
-	          it { is_expected.to compile }
+            [ :leftnexthop, :rightnexthop ].each do |nexthop_enum|
+              [ '%direct','%defaultroute' ].each do |valid_enum|
+                context "#{nexthop_enum} of #{valid_enum}" do
+                  let(:title){ "#{nexthop_enum}_#{valid_enum}" }
+                  let(:params) {{nexthop_enum => valid_enum}}
+                  it { is_expected.to compile }
                 end
-	      end
-	    end
+              end
+            end
           end
 
           describe 'sendcert enum' do
-	    [ :leftsendcert, :rightsendcert ].each do |sendcert_enum|
-	      [ 'yes', 'no', 'never', 'always', 'sendifasked' ].each do |valid_enum|
-	        context "#{sendcert_enum} of #{valid_enum}" do
-	          let(:title){ "#{sendcert_enum}_#{valid_enum}" }
-	          let(:params) {{sendcert_enum => valid_enum}}
-	          it { is_expected.to compile }
+            [ :leftsendcert, :rightsendcert ].each do |sendcert_enum|
+              [ 'yes', 'no', 'never', 'always', 'sendifasked' ].each do |valid_enum|
+                context "#{sendcert_enum} of #{valid_enum}" do
+                  let(:title){ "#{sendcert_enum}_#{valid_enum}" }
+                  let(:params) {{sendcert_enum => valid_enum}}
+                  it { is_expected.to compile }
                 end
-	      end
-	    end
+              end
+            end
           end
 
           describe 'authby enum' do
-	    [ 'rsasig','secret', 'secret|rsasig', 'never', 'null' ].each do |valid_enum|
-	      context "authby of #{valid_enum}" do
-	        let(:title){ "authby_#{valid_enum}" }
-	        let(:params) {{:authby => valid_enum}}
-	        it { is_expected.to compile }
+            [ 'rsasig','secret', 'secret|rsasig', 'never', 'null' ].each do |valid_enum|
+              context "authby of #{valid_enum}" do
+                let(:title){ "authby_#{valid_enum}" }
+                let(:params) {{:authby => valid_enum}}
+                it { is_expected.to compile }
               end
             end
           end
 
           describe 'auto enum' do
-	    [ 'add','start','ondemand','ignore' ].each do |valid_enum|
-	      context "auto of #{valid_enum}" do
-	        let(:title){ "auto_#{valid_enum}" }
-	        let(:params) {{:auto => valid_enum}}
-	        it { is_expected.to compile }
+            [ 'add','start','ondemand','ignore' ].each do |valid_enum|
+              context "auto of #{valid_enum}" do
+                let(:title){ "auto_#{valid_enum}" }
+                let(:params) {{:auto => valid_enum}}
+                it { is_expected.to compile }
               end
             end
           end
 
           describe 'connaddrfamily enum' do
-	    [ 'ipv4', 'ipv6' ].each do |valid_enum|
-	      context "connaddrfamily of #{valid_enum}" do
-	        let(:title){ "connaddrfamily_#{valid_enum}" }
-	        let(:params) {{:connaddrfamily => valid_enum}}
-	        it { is_expected.to compile }
+            [ 'ipv4', 'ipv6' ].each do |valid_enum|
+              context "connaddrfamily of #{valid_enum}" do
+                let(:title){ "connaddrfamily_#{valid_enum}" }
+                let(:params) {{:connaddrfamily => valid_enum}}
+                it { is_expected.to compile }
               end
             end
           end
 
           describe 'type enum' do
-	    [ 'tunnel','transport','passthough','reject','drop' ].each do |valid_enum|
-	      context "type of #{valid_enum}" do
-	        let(:title){ "type_#{valid_enum}" }
-	        let(:params) {{:type => valid_enum}}
-	        it { is_expected.to compile }
+            [ 'tunnel','transport','passthough','reject','drop' ].each do |valid_enum|
+              context "type of #{valid_enum}" do
+                let(:title){ "type_#{valid_enum}" }
+                let(:params) {{:type => valid_enum}}
+                it { is_expected.to compile }
               end
             end
           end
@@ -347,7 +347,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for Enum/)
+                  }.to raise_error(/expects a match for Enum/)
                 end
               end
             end
@@ -375,7 +375,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a String value/)
+                  }.to raise_error(/expects a String value/)
                 end
               end
             end
@@ -398,7 +398,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
+                  }.to raise_error(/expects a match/)
                 end
               end
 
@@ -408,7 +408,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'rejects CIDR address' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
+                  }.to raise_error(/expects a match/)
                 end
               end
             end
@@ -422,7 +422,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects size to be 2/)
+                  }.to raise_error(/expects size to be 2/)
                 end
               end
 
@@ -432,7 +432,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
+                  }.to raise_error(/expects a match/)
                 end
               end
             end
@@ -448,7 +448,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
+                  }.to raise_error(/expects a match/)
                 end
               end
 
@@ -458,7 +458,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
+                  }.to raise_error(/expects a match/)
                 end
               end
             end
@@ -472,7 +472,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match/)
+                  }.to raise_error(/expects a match/)
                 end
               end
               context "not CIDR address #{cidr_param}" do
@@ -481,7 +481,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects an Array/)
+                  }.to raise_error(/expects a/)
                 end
               end
             end
@@ -495,7 +495,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a/)
+                  }.to raise_error(/expects a/)
                 end
               end
               context "Valid #{side_param}" do
@@ -504,7 +504,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'compiles' do
                    expect  {
                      is_expected.to compile
-                   } 
+                   }
                 end
               end
               context "invalid text #{side_param}" do
@@ -513,7 +513,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a/)
+                  }.to raise_error(/expects a/)
                 end
               end
             end
@@ -539,7 +539,7 @@ describe 'libreswan::add_connection', :type => :define do
                 it 'fails to compile' do
                   expect {
                     is_expected.to compile
-                  }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/expects a match for Enum/)
+                  }.to raise_error(/expects a match for Enum/)
                 end
               end
             end
