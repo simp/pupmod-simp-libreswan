@@ -8,9 +8,13 @@ describe 'libreswan' do
     it { is_expected.to contain_class('libreswan::params') }
     it { is_expected.to contain_class('libreswan::config') }
     it { is_expected.to contain_class('libreswan::config').that_notifies('Class[libreswan::service]') }
+    it { is_expected.to contain_class('libreswan::config::pki') }
+    it { is_expected.to contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
+      it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
     it { is_expected.to contain_class('libreswan::install').that_comes_before('Class[libreswan::config]') }
     it { is_expected.to contain_class('libreswan::service').that_subscribes_to('Class[libreswan::config]') }
     it { is_expected.to_not contain_class('haveged') }
+    it { is_expected.to contain_service('ipsec') }
   end
 
   context 'supported operating systems' do
@@ -30,16 +34,15 @@ describe 'libreswan' do
           it_behaves_like "a structured module"
           it { is_expected.to contain_class('libreswan::config::firewall') }
           it { is_expected.to contain_class('libreswan::config::firewall').that_notifies('Class[libreswan::service]') }
-          it { is_expected.to create_iptables__add_udp_listen('ipsec_allow').with_dports(["50","4500"]) }
+          it { is_expected.to create_iptables__listen__udp('ipsec_allow').with_dports(["50","4500"]) }
         end
 
-        context "libreswan class with use_simp_pki enabled" do
-          let(:params) {{ :pki => true, }}
-          it { is_expected.to contain_class('libreswan::config::pki') }
-          it { is_expected.to contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
-          it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
+        context "libreswan class with use_certs enabled" do
+          let(:params) {{ :use_certs => false, }}
+          it { is_expected.to_not contain_class('libreswan::config::pki') }
+          it { is_expected.to_not contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
+          it { is_expected.to_not contain_class('libreswan::config::pki::nsspki') }
         end
-        it { is_expected.to contain_service('ipsec') }
 
         context 'with haveged => true' do
           let(:params) {{:haveged => true}}

@@ -278,12 +278,12 @@ EOM
         let(:hieradata_with_firewall_right) { hieradata_right + "simp_firewall: yes\nclient_nets : ['#{client_net}']\n" }
         let(:leftconnection_with_firewall) { leftconnection +
           "      class { 'iptables': }\n" +
-          "      iptables::add_rules {'allow_public_network_interface':\n" +
+          "      iptables::rule {'allow_public_network_interface':\n" +
           "        content => '-A LOCAL-INPUT -i #{get_public_network_interface(left)} -j ACCEPT',\n" +
           "        apply_to => 'all',\n" +
           "        order => 11\n" +
           "      }\n" +
-          "      iptables::add_rules {'allow_decrypted_nc_traffic':\n" +
+          "      iptables::rule {'allow_decrypted_nc_traffic':\n" +
           "        content => '-A LOCAL-INPUT -p tcp --dport #{nc_port} -j ACCEPT',\n" +
           "        apply_to => 'all',\n" +
           "        order => 11\n" +
@@ -291,12 +291,12 @@ EOM
         }
         let(:rightconnection_with_firewall) { rightconnection +
           "      class { 'iptables': }\n" +
-          "      iptables::add_rules {'allow_public_network_interface':\n" +
+          "      iptables::rule {'allow_public_network_interface':\n" +
           "        content => '-A LOCAL-INPUT -i #{get_public_network_interface(right)} -j ACCEPT',\n" +
           "        apply_to => 'all',\n" +
           "        order => 11\n" +
           "      }\n" +
-          "      iptables::add_rules {'allow_decrypted_nc_traffic':\n" +
+          "      iptables::rule {'allow_decrypted_nc_traffic':\n" +
           "        content => '-A LOCAL-INPUT -p tcp --dport #{nc_port} -j ACCEPT',\n" +
           "        apply_to => 'all',\n" +
           "        order => 11\n" +

@@ -54,14 +54,18 @@
 #     (or put your keys in the defaut location)
 #     you will need to manualy restart services to pick up the new certs.
 #
-# @param use_fips [Boolean] Whether server is in FIPS mode.  Affects digest algorithms
+# @param use_certs [Boolean] Wether you are going to use certificates for
+#     ipsec.  Default true.  If set to false, the pki management is
+#     skipped completely.
+#
+# @param fips [Boolean] Whether server is in FIPS mode.  Affects digest algorithms
 # allowed to be used by ipsec.
 #
-# @param use_haveged [Boolean] Whether to use haveged to ensure adequate entropy
+# @param haveged [Boolean] Whether to use haveged to ensure adequate entropy
 #
 # @param nssdb_password [String] Password for the NSS database used by ipsec
 #
-# @param certsource [AbsolutePath] Used if use_simp_pki is true to copy certs locally for ipsec.
+# @param certsource [AbsolutePath] Used if pki is true to copy certs locally for ipsec.
 #
 # @param ipsecdir [AbsolutePath] The directory to store all ipsec configuration information.
 #
@@ -82,6 +86,7 @@ class libreswan (
   Simplib::Netlist                $trusted_nets            = simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] }),
   Boolean                         $firewall                = simplib::lookup('simp_options::firewall', {'default_value' => false }),
   Boolean                         $fips                    = simplib::lookup('simp_options::fips', {'default_value' => false }),
+  Boolean                         $use_certs               = true,
   Variant[Boolean,Enum['simp']]   $pki                     = simplib::lookup('simp_options::pki', {'default_value' => false }),
   Boolean                         $haveged                 = simplib::lookup('simp_options::haveged', {'default_value' => false }),
   String                          $nssdb_password          = passgen('nssdb_password'),
@@ -163,7 +168,7 @@ class libreswan (
     Class[ '::libreswan::service'  ]
   }
 
-  if $pki {
+  if $use_certs {
     include '::libreswan::config::pki'
     include '::libreswan::config::pki::nsspki'
     Class[ '::libreswan::config::pki' ] ~>
