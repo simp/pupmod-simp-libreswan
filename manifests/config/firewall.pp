@@ -5,8 +5,8 @@ class libreswan::config::firewall {
   assert_private()
   iptables::listen::udp { 'ipsec_allow':
     trusted_nets => $libreswan::trusted_nets,
-    apply_to    => 'all',
-    dports      => [ $::libreswan::ikeport, $::libreswan::nat_ikeport ],
+    apply_to     => 'all',
+    dports       => [ $::libreswan::ikeport, $::libreswan::nat_ikeport ],
   }
 
   # Add rules to allow the AH and ESP protocols used to encrypt data
