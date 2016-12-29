@@ -7,7 +7,7 @@ describe 'libreswan::install' do
         let(:facts) do
           facts
         end
-        let(:pre_condition) { 'class { "libreswan": ipsecdir => "/etc/ipsec.d" }' }
+        let(:pre_condition) { 'class { "libreswan": ipsecdir => "/etc/ipsec.d", use_certs => true }' }
 
         context 'with default parameters' do
           it { is_expected.to compile.with_all_deps }

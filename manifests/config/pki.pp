@@ -10,8 +10,6 @@ class libreswan::config::pki(
 
 #  assert_private()
 
-
-
   libreswan::nss::init_db { "NSSDB ${::libreswan::ipsecdir}":
     dbdir       => $::libreswan::ipsecdir,
     password    => $::libreswan::nssdb_password,
@@ -19,7 +17,6 @@ class libreswan::config::pki(
     token       => $::libreswan::token,
     fips        => $::libreswan::fips,
     require     => File['/etc/ipsec.conf'],
-    notify      => Class[Libreswan::Config::Pki::Nsspki]
   }
 
 

@@ -113,7 +113,7 @@ connection_conf_content = {
 
 shared_examples_for "a libreswan connection config file generator" do
   it { is_expected.to compile.with_all_deps }
-  it { is_expected.to contain_file(conn_name).with(
+  it { is_expected.to contain_file("#{conn_name}").with(
     {
       :notify  => 'Service[ipsec]',
       :path    => "#{params[:dir]}/#{title}.conf",

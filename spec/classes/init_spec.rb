@@ -9,8 +9,7 @@ describe 'libreswan' do
     it { is_expected.to contain_class('libreswan::config') }
     it { is_expected.to contain_class('libreswan::config').that_notifies('Class[libreswan::service]') }
     it { is_expected.to contain_class('libreswan::config::pki') }
-    it { is_expected.to contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
-      it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
+    it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
     it { is_expected.to contain_class('libreswan::install').that_comes_before('Class[libreswan::config]') }
     it { is_expected.to contain_class('libreswan::service').that_subscribes_to('Class[libreswan::config]') }
     it { is_expected.to_not contain_class('haveged') }

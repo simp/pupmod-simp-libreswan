@@ -287,6 +287,7 @@ class { "libreswan":
   fragicmp            => 'yes',
   hidetos             => 'no',
   overridemtu         => 1500,
+  use_certs           => true,
 }
 EOM
           }

@@ -19,8 +19,7 @@ describe 'libreswan::config::pki' do
           }
 
           it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with({
-            :require  => 'File[/etc/ipsec.conf]',
-            :notify   => "Class[Libreswan::Config::Pki::Nsspki]"
+            :require  => 'File[/etc/ipsec.conf]'
             })
           }
           it { is_expected.to create_file('/etc/foo').with({
@@ -28,7 +27,6 @@ describe 'libreswan::config::pki' do
             })
           }
           it { is_expected.to create_pki__copy('/etc/foo').with({
-            :notify   => 'Class[Libreswan::Config::Pki::Nsspki]',
             :require  => 'File[/etc/foo]',
             })
           }
@@ -40,8 +38,7 @@ describe 'libreswan::config::pki' do
           let(:hieradata) { 'test1_hiera' }
 
           it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with({
-            :require  => 'File[/etc/ipsec.conf]',
-            :notify   => "Class[Libreswan::Config::Pki::Nsspki]"
+            :require  => 'File[/etc/ipsec.conf]'
             })
           }
           it { is_expected.to create_file('/etc/pki/foo_ca.pem').with({
@@ -65,8 +62,7 @@ describe 'libreswan::config::pki' do
             pki => "simp", app_pki_external_source => "/etc/pki/simp-test", app_pki_dir => "/etc/foo" }'}
 
           it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with({
-            :require  => 'File[/etc/ipsec.conf]',
-            :notify   => "Class[Libreswan::Config::Pki::Nsspki]"
+            :require  => 'File[/etc/ipsec.conf]'
             })
           }
           it { is_expected.to create_file('/etc/foo').with({
@@ -74,7 +70,6 @@ describe 'libreswan::config::pki' do
             })
           }
           it { is_expected.to create_pki__copy('/etc/foo').with({
-            :notify   => 'Class[Libreswan::Config::Pki::Nsspki]',
             :require  => 'File[/etc/foo]',
             })
           }
