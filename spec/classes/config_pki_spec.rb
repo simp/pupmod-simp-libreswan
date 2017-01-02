@@ -41,7 +41,7 @@ describe 'libreswan::config::pki' do
             :require  => 'File[/etc/ipsec.conf]'
             })
           }
-          it { is_expected.to create_file('/etc/pki/foo_ca.pem','/etc/pki/foo_key.pem','/etc/pki/foo_cert.pub').with({
+          it { is_expected.to create_file('/etc/pki/foo_cert.pub','/etc/pki/foo_key.pem','/etc/pki/foo_ca.pem').with({
               :ensure  => 'file',
             })
           }

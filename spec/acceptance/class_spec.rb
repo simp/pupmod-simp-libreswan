@@ -350,7 +350,8 @@ EOM
           on left, 'puppet resource service ipsec ensure=stopped', :acceptable_exit_codes => [0]
           wait_for_command_success(left, "ipsec status |& grep 'Pluto is not running'")
 
-          # can take up to 2 minutes for right to timeout tunnel, so restart instead to detect
+          # can take up to 2 minutes for right to timeout tunnel,
+          # so restart instead to detect
           # failure immediately
           on right, 'ipsec restart', :acceptable_exit_codes => [0]
           wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 0\"")
