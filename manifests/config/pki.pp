@@ -42,15 +42,15 @@ class libreswan::config::pki(
     # Do the users a favor and ensure these files so we can notify the nss database
     # when they change (see config/pki/nsspki.pp)
     file { [
-       $app_pki_cert,
-       $app_pki_key,
-       $app_pki_ca
-     ] :
-       ensure =>  file,
-       owner  => 'root',
-       group  => 'root',
-       mode   => '0700'
-   }
+      $app_pki_cert,
+      $app_pki_key,
+      $app_pki_ca
+      ] :
+        ensure =>  file,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0700'
+    }
   }
 }
 
