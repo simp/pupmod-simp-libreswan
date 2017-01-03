@@ -34,15 +34,20 @@ describe 'libreswan::config::pki' do
         end
 
         context "with pki false libreswan::config should init NSS db and copy certs" do
-          let(:pre_condition) { 'class { "libreswan": service_name => "ipsec", pki => false } ' }
+          let(:pre_condition) {
+            "class { 'libreswan':
+               service_name => 'ipsec',
+               pki => false,
+               app_pki_dir => '/etc/foo' }"
+            }
           let(:hieradata) { 'test1_hiera' }
 
           it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with({
             :require  => 'File[/etc/ipsec.conf]'
             })
           }
-          it { is_expected.to create_file('/etc/pki/foo_cert.pub').with({
-              :ensure  => 'file',
+          it { is_expected.to create_file('/etc/foo/pki').with({
+              :ensure  => 'directory',
             })
           }
           it { is_expected.to_not create_pki__copy('/etc/foo') }

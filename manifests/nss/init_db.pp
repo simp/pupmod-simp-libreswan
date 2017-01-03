@@ -1,5 +1,5 @@
-#  This class initializes the NSS database, sets the correct password and
-#  makes sure FIPS is configured according to use_fips.
+#  This class initializes the NSS database, sets the correct password, and
+#  makes configures FIPS if necessary.
 #
 # @param dbdir [AbsolutePath] Directroy where the nss db will be created.
 #
@@ -68,7 +68,6 @@ define libreswan::nss::init_db(
     refreshonly => true,
   }
 
-  # Make sure FIPS is set according to use_fips.
   if $fips {
     exec { "nssdb in fips mode ${dbdir}":
       command => "modutil -dbdir sql:${dbdir} -fips true",

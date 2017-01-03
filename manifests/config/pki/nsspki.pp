@@ -5,15 +5,8 @@
 #
 class libreswan::config::pki::nsspki(
 ) {
-
   assert_private()
   Class[Libreswan::Config::Pki] ~> Class[Libreswan::Config::Pki::Nsspki]
-
-  $cacert = $::libreswan::config::pki::app_pki_ca
-  $cert   = $::libreswan::config::pki::app_pki_cert
-  $key    = $::libreswan::config::pki::app_pki_key
-  $pki    = $::libreswan::pki
-  $dbdir  = $::libreswan::ipsecdir
 
   # Currently for libreswan version 3.15 the secrets file must be
   # updated with name of the certificate to use from the NSS database.
@@ -24,37 +17,41 @@ class libreswan::config::pki::nsspki(
     content => ": RSA \"${::fqdn}\"",
   }
 
-  if $pki {
+  $loadcerts_subscribe = $::libreswan::pki ? {
+    'simp'  => [Pki::Copy[$::libreswan::app_pki_dir],Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]],
+    default => Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]
+  }
+  if $::libreswan::pki {
     libreswan::nss::loadcacerts{ "CA_for_${::domain}" :
-      cert        => $cacert,
+      cert        => $::libreswan::config::pki::app_pki_ca,
       dbdir       => $::libreswan::ipsecdir,
       token       => $::libreswan::token,
       nsspwd_file => $::libreswan::nsspassword,
-      subscribe   => [Pki::Copy["${::libreswan::app_pki_dir}"],Libreswan::Nss::Init_db["NSSDB ${dbdir}"]]
+      subscribe   => $loadcerts_subscribe
     }
     libreswan::nss::loadcerts{ $::fqdn :
       dbdir       => $::libreswan::ipsecdir,
       nsspwd_file => $::libreswan::nsspassword,
-      cert        => $cert,
-      key         => $key,
+      cert        => $::libreswan::config::pki::app_pki_cert,
+      key         => $::libreswan::config::pki::app_pki_key,
       token       => $::libreswan::token,
-      subscribe   => [Pki::Copy["${::libreswan::app_pki_dir}"],Libreswan::Nss::Init_db["NSSDB ${dbdir}"]]
+      subscribe   => $loadcerts_subscribe
     }
   } else {
     libreswan::nss::loadcacerts{ "CA_for_${::domain}" :
-      cert        => $cacert,
+      cert        => $::libreswan::config::pki::app_pki_ca,
       dbdir       => $::libreswan::ipsecdir,
       token       => $::libreswan::token,
       nsspwd_file => $::libreswan::nsspassword,
-      subscribe   => [File["${cacert}"],Libreswan::Nss::Init_db["NSSDB ${dbdir}"]]
+      subscribe   => [File[$::libreswan::config::pki::app_pki_ca],Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]]
     }
     libreswan::nss::loadcerts{ $::fqdn :
       dbdir       => $::libreswan::ipsecdir,
       nsspwd_file => $::libreswan::nsspassword,
-      cert        => $cert,
-      key         => $key,
+      cert        => $::libreswan::config::pki::app_pki_cert,
+      key         => $::libreswan::config::pki::app_pki_key,
       token       => $::libreswan::token,
-      subscribe   => [File["${cert}"],File["${key}"],Libreswan::Nss::Init_db["NSSDB ${dbdir}"]]
+      subscribe   => [File[$::libreswan::config::pki::app_pki_cert],File[$::libreswan::config::pki::app_pki_key],Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]]
     }
   }
 }

@@ -8,8 +8,6 @@ class libreswan::config::pki(
   Optional[Stdlib::Absolutepath] $app_pki_key  = "${::libreswan::app_pki_dir}/pki/private/${::fqdn}.pem"
 ){
 
-#  assert_private()
-
   libreswan::nss::init_db { "NSSDB ${::libreswan::ipsecdir}":
     dbdir       => $::libreswan::ipsecdir,
     password    => $::libreswan::nssdb_password,
@@ -20,37 +18,39 @@ class libreswan::config::pki(
   }
 
 
-  # Copy the certs if they are updated and notify the Load
-  # certificate routines.
+  file { $::libreswan::app_pki_dir :
+    ensure =>  directory,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0640'
+  }
+
   if $::libreswan::pki {
-
-#   Create the directory to  copy the certs to
-    file { $::libreswan::app_pki_dir :
-      ensure =>  directory,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0700'
-    }
-
     ::pki::copy { $::libreswan::app_pki_dir :
       source  => $::libreswan::app_pki_external_source,
       pki     => $::libreswan::pki,
-      notify  => Class[Libreswan::Config::Pki::Nsspki],
       require => File[$::libreswan::app_pki_dir]
     }
   }
   else {
-    file { [
-      $app_pki_cert,
-      $app_pki_key,
-      $app_pki_ca
-    ] :
-      ensure =>  file,
+    file { "${::libreswan::app_pki_dir}/pki":
+      ensure => 'directory',
       owner  => 'root',
       group  => 'root',
-      mode   => '0700'
+      mode   => '0640'
     }
+    # Do the users a favor and ensure these files so we can notify the nss database
+    # when they change (see config/pki/nsspki.pp)
+    file { [
+       $app_pki_cert,
+       $app_pki_key,
+       $app_pki_ca
+     ] :
+       ensure =>  file,
+       owner  => 'root',
+       group  => 'root',
+       mode   => '0700'
+   }
   }
-
 }
 

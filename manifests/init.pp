@@ -28,18 +28,16 @@
 #
 # * If used independently, all SIMP-managed security subsystems are disabled by
 #   default, and must be explicitly opted into by administrators. Please review
-#   the +client_nets+, +simp_firewall+, +nssdb_password+, and +$use_*+
-#   parameters for details.
-#
+#   the simp global catalysts for more details.
 #
 # @param service_name [String] The name of the ipsec service.
 #
 # @param package_name [String] The name of the libreswan package.
 #
-# @param client_nets [Array] A whitelist of subnetworks (in CIDR notataion) with
+# @param trusted_nets [Array] A whitelist of subnetworks (in CIDR notataion) with
 # permitted acccess explicitly for ipsec communication
 #
-# @param simp_firewall [Boolean] Whether to add appropriate rules to
+# @param firewall [Boolean] Whether to add appropriate rules to
 #  allow ipsec traffic to the SIMP-controlled firewall
 #
 # @param pki [false,true,'simp']
