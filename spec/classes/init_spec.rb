@@ -93,11 +93,11 @@ describe 'libreswan' do
             :logtime
           ].each do |yesno_param|
             context "invalid #{yesno_param}" do
-              let(:params) {{yesno_param => 'false'}}
+              let(:params) {{yesno_param => false}}
               it 'fails to compile' do
                 expect {
                   is_expected.to compile
-                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/got 'false'/)
+                }.to raise_error(RSpec::Expectations::ExpectationNotMetError,/got Boolean/)
               end
             end
           end
