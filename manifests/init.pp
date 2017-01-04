@@ -30,42 +30,42 @@
 #   default, and must be explicitly opted into by administrators. Please review
 #   the simp global catalysts for more details.
 #
-# @param service_name [String] The name of the ipsec service.
+# @param service_name  The name of the ipsec service.
 #
-# @param package_name [String] The name of the libreswan package.
+# @param package_name  The name of the libreswan package.
 #
-# @param trusted_nets [Array] A whitelist of subnetworks (in CIDR notataion) with
+# @param trusted_nets  A whitelist of subnetworks (in CIDR notataion) with
 # permitted acccess explicitly for ipsec communication
 #
-# @param firewall [Boolean] Whether to add appropriate rules to
+# @param firewall  Whether to add appropriate rules to
 #  allow ipsec traffic to the SIMP-controlled firewall
 #
-# @param pki [false,true,'simp']
-#   if 'simp' then use  SIMP's PKI infrastructure to manage certificates used by ipsec
-#   if true then it will copy certs from app_pki_external_source to app_pki_dir
+# @param pki   SIMP PKI option.
+#   If 'simp' then use  SIMP's PKI infrastructure to manage certificates used by ipsec.
+#   If true then it will copy certs from app_pki_external_source to app_pki_dir
 #     when puppet runs and restart the necessary services.  See pki::copy to
 #     see the structure required for the source directory.
-#   if false you must set variables
+#   If false you must set variables
 #     libreswan::config::pki::app_pki_ca
 #     libreswan::config::pki::app_pki_cert
 #     libreswab::config::pki::app_pki_key
 #     (or put your keys in the defaut location)
 #     you will need to manualy restart services to pick up the new certs.
 #
-# @param use_certs [Boolean] Wether you are going to use certificates for
+# @param use_certs  Wether you are going to use certificates for
 #     ipsec.  Default true.  If set to false, the pki management is
 #     skipped completely.
 #
-# @param fips [Boolean] Whether server is in FIPS mode.  Affects digest algorithms
+# @param fips  Whether server is in FIPS mode.  Affects digest algorithms
 # allowed to be used by ipsec.
 #
-# @param haveged [Boolean] Whether to use haveged to ensure adequate entropy
+# @param haveged  Whether to use haveged to ensure adequate entropy
 #
-# @param nssdb_password [String] Password for the NSS database used by ipsec
+# @param nssdb_password  Password for the NSS database used by ipsec
 #
-# @param certsource [AbsolutePath] Used if pki is true to copy certs locally for ipsec.
+# @param certsource  Used if pki is true to copy certs locally for ipsec.
 #
-# @param ipsecdir [AbsolutePath] The directory to store all ipsec configuration information.
+# @param ipsecdir  The directory to store all ipsec configuration information.
 #
 # The other parameters are all setting for the ipsec.conf file. See the
 # libreswan doumentation https://libreswan.org/man/ipsec.conf.5.html

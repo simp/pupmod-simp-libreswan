@@ -65,7 +65,7 @@ test_name 'libreswan class'
           cacerts_sources    => ['file:///etc/pki/simp-testing/pki/cacerts'] ,
           private_key_source => "file:///etc/pki/simp-testing/pki/private/${::fqdn}.pem",
           public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
-          enable_audit       => false
+          auditd             => false
         }
         class { 'libreswan': }
   EOS
@@ -83,7 +83,7 @@ test_name 'libreswan class'
           cacerts_sources    => ['file:///etc/pki/simp-testing/pki/cacerts'] ,
           private_key_source => "file:///etc/pki/simp-testing/pki/private/${::fqdn}.pem",
           public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
-          enable_audit       => false
+          auditd             => false
         }
         libreswan::connection{ 'default':
           leftcert      => "${::fqdn}",
@@ -105,7 +105,7 @@ test_name 'libreswan class'
           cacerts_sources    => ['file:///etc/pki/simp-testing/pki/cacerts'] ,
           private_key_source => "file:///etc/pki/simp-testing/pki/private/${::fqdn}.pem",
           public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
-          enable_audit       => false
+          auditd             => false
         }
         libreswan::connection{ 'default':
           leftcert      => "${::fqdn}",

@@ -13,7 +13,7 @@
 #
 # NOTE: Manually generated configuration files are not managed by Puppet.
 #
-# @param dir [AbsolutePath] The absolute path to the ipsec configuration
+# @param dir  The absolute path to the ipsec configuration
 # directory.
 #
 # The following parameters correspond to libreswan settings for which
@@ -21,13 +21,13 @@
 # can override the defaults by passing in different data in the
 # definition parameters.
 #
-# @param keyingtries [Integer] The number of times a connection will try to
+# @param keyingtries  The number of times a connection will try to
 #    reconnect before exiting.
 #
-# @param ike [String] The ciphers used in the connection
+# @param ike  The ciphers used in the connection
 #    changed from 3Des or aes/sha or md5/and diffie hellman
 #
-# @param phase2alg [String] the ciphers used in the second part of the connection.
+# @param phase2alg  The ciphers used in the second part of the connection.
 #
 # The rest of the parameters map one-to-one to libreswan settings and
 # are undef. Any undef parameter will not appear in the generated
@@ -51,12 +51,9 @@ define libreswan::connection (
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
     Simplib::IP::CIDR]]                $leftsubnet         = undef,
-  Optional[Variant[Simplib::IP::CIDR,
-    Array[Simplib::IP::CIDR]]]         $leftsubnets        = undef,
+  Optional[Array[Simplib::IP::CIDR]]   $leftsubnets        = undef,
   Optional[String]                     $leftprotoport      = undef,
-  Optional[Variant[
-    Simplib::IP,
-    Array[Simplib::IP]]]               $leftsourceip       = undef,
+  Optional[Simplib::IP]                $leftsourceip       = undef,
   Optional[String]                     $leftupdown         = undef,
   Optional[String]                     $leftcert           = undef,
   Optional[String]                     $leftrsasigkey      = undef,
@@ -73,17 +70,14 @@ define libreswan::connection (
   Optional[String]                     $rightrsasigkey2    = undef,
   Optional[String]                     $rightca            = undef,
   Optional[Array[Simplib::IP,2,2]]     $rightaddresspool   = undef,
-  Optional[Variant[Simplib::IP::CIDR,
-    Array[Simplib::IP::CIDR]]]         $rightsubnets       = undef,
+  Optional[Array[Simplib::IP::CIDR]]   $rightsubnets       = undef,
   Optional[Variant[
     Enum['%no','%priv'],
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
     Simplib::IP::CIDR]]                $rightsubnet        = undef,
   Optional[String]                     $rightprotoport     = undef,
-  Optional[Variant[
-    Simplib::IP,
-    Array[Simplib::IP]]]               $rightsourceip      = undef,
+  Optional[Simplib::IP]                $rightsourceip      = undef,
   Optional[String]                     $rightupdown        = undef,
   Optional[String]                     $rightcert          = undef,
   Optional[Enum['yes', 'no',
@@ -134,26 +128,6 @@ define libreswan::connection (
   #   *protoport=17   *protoport=17/1701  *protoport=17/%any  *protoport=tcp
   #   *protoport=tcp/22  *protoport=tcp/%any
 
-# TODO maybe restrict subnet and  subnets more: The following is orig:
-#  if $leftsubnet         {
-#    validate_string($leftsubnet)  # Single CIDR
-#    validate_net_list($leftsubnet, '(vhost:|vnet:|%priv|%no)')
-#  }
-#  if $rightsubnet        {
-#    validate_string($rightsubnet) # Single CIDR
-#    validate_net_list($rightsubnet, '(vhost:|vnet:|%priv|%no)')
-#  }
-
-  #TODO when validate_net_list() regex logic is fixed....
-  # if $leftnexthop {
-  #   validate_string
-  #   validate_net_list($leftnexthop, '^(%direct|%defaultroute)$')
-  # }
-  #TODO when validate_net_list() regex logic is fixed....
-  # if $rightnexthop {
-  #   validate_string
-  #   validate_net_list($rightnexthop, '^(%direct|%defaultroute)$')
-  # }
 
   if $title == 'default' {
     $conn_name = '%default'

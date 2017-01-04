@@ -2,13 +2,13 @@
 # located in dbdir. The default is the IPSEC database
 # dir. This module will load the CA certs into the database.
 #
-# @param dbdir [String] The directory where the DB is located
+# @param dbdir  The directory where the DB is located
 #
-# @param nsspwd_file [String]
+# @param nsspwd_file
 #
-# @param cert [AbsolutePath] The absolute path to the public portion CA certificate.
+# @param cert  The absolute path to the public portion CA certificate.
 #
-# @param certtype [String] The format the certificate is in. PEM and DER are currently acceptable.
+# @param certtype  The format the certificate is in. PEM and DER are currently acceptable.
 #
 define libreswan::nss::loadcacerts(
   Stdlib::Absolutepath   $dbdir,

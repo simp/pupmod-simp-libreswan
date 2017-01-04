@@ -1,16 +1,16 @@
 #  This class initializes the NSS database, sets the correct password, and
 #  makes configures FIPS if necessary.
 #
-# @param dbdir [AbsolutePath] Directroy where the nss db will be created.
+# @param dbdir  Directroy where the nss db will be created.
 #
-# @param password [String]
+# @param password
 #   Password used to protect the database. Each NSS database is broken up into
 #   tokens used for different types of certificates, Smart cards, FIPS compliant,
 #   non FIPD. This util sets the FIPS and non fips token to they same password.
 #   The tokens are defined by `$::libreswan::nsstoken`. You can add tokens to
 #   array if there are other parts of the database you want to protect.
 #
-# @param destroyexisting [Boolean] If true, it will remove the existing database before running the init command.
+# @param destroyexisting  If true, it will remove the existing database before running the init command.
 #
 define libreswan::nss::init_db(
   Stdlib::Absolutepath  $dbdir,

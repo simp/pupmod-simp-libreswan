@@ -36,19 +36,19 @@ config setup
   nhelpers = <%= @nhelpers %>
 <% end -%>
 <% if @plutofork  then -%>
-  plutofork = <%= @plutofork.downcase.strip %>
+  plutofork = <%= @plutofork %>
 <% end -%>
 <% if @crlcheckinterval  then -%>
   crlcheckinterval = <%= @crlcheckinterval %>
 <% end -%>
 <% if @strictcrlpolicy  then -%>
-  strictcrlpolicy = <%= @strictcrlpolicy.downcase.strip %>
+  strictcrlpolicy = <%= @strictcrlpolicy %>
 <% end -%>
 <% if @ocsp_enable  then -%>
-  ocsp-enable = <%= @ocsp_enable.downcase.strip %>
+  ocsp-enable = <%= @ocsp_enable %>
 <% end -%>
 <% if @ocsp_strict  then -%>
-  ocsp-strict = <%= @ocsp_strict.downcase.strip %>
+  ocsp-strict = <%= @ocsp_strict %>
 <% end -%>
 <% if @ocsp_timeout  then -%>
   ocsp-timeout = <%= @ocsp_timeout %>
@@ -75,10 +75,10 @@ config setup
   # Again: only enable plutodebug when asked by a developer
   plutodebug = <%= @plutodebug %>
 <% if @uniqueids  then -%>
-  uniqueids = <%= @uniqueids.downcase.strip %>
+  uniqueids = <%= @uniqueids %>
 <% end -%>
 <% if @plutorestartoncrash  then -%>
-  plutorestartoncrash = <%= @plutorestartoncrash.downcase.strip %>
+  plutorestartoncrash = <%= @plutorestartoncrash %>
 <% end -%>
   # Normally, pluto logs via syslog. If you want to log to a file,
   # specify below or to disable logging, eg for embedded systems, use
@@ -91,10 +91,10 @@ config setup
   #logfile=/var/log/pluto.log
 <% end -%>
 <% if @logappend  then -%>
-  logappend = <%= @logappend.downcase.strip %>
+  logappend = <%= @logappend %>
 <% end -%>
 <% if @logtime  then -%>
-  logtime = <%= @logtime.downcase.strip %>
+  logtime = <%= @logtime %>
 <% end -%>
 <% if @ddos_mode  then -%>
   ddos-mode = <%= @ddos_mode %>
@@ -113,14 +113,14 @@ config setup
 <% end -%>
   secretsfile = <%= @secretsfile %>
 <% if @perpeerlog  then -%>
-  perpeerlog = <%= @perpeerlog.downcase.strip %>
+  perpeerlog = <%= @perpeerlog %>
 <% end -%>
   perpeerlogdir = <%= @perpeerlogdir %>
 <% if @fragicmp  then -%>
-  fragicmp = <%= @fragicmp.downcase.strip %>
+  fragicmp = <%= @fragicmp %>
 <% end -%>
 <% if @hidetos  then -%>
-  hidetos = <%= @hidetos.downcase.strip %>
+  hidetos = <%= @hidetos %>
 <% end -%>
 <% if @overridemtu  then -%>
   overridemtu = <%= @overridemtu %>
