@@ -185,21 +185,21 @@ class { "libreswan":
   protostack          => 'klips',
   interfaces          => ['ipsec0=eth0','ipsec1=ppp0'],
   listen              => '1.2.3.4',
-  ikeport             => '600',
-  nflog_all           => '10',
-  nat_ikeport         => '4600',
-  keep_alive          => '10',
-  virtual_private     => ['1.2.3.0/24', 'fe80::/10', '!5.6.0.0/16', '!fd80::/10'],
+  ikeport             => 600,
+  nflog_all           => 10,
+  nat_ikeport         => 4600,
+  keep_alive          => 10,
+  virtual_private     => ['%v4:1.2.3.0/24', '%v6:fe80::/10', '%v4:!5.6.0.0/16', '%v6:!fd80::/10'],
   myvendorid          => 'my-vendor-id',
-  nhelpers            => '-1',
+  nhelpers            => -1,
   #seedbits
   #secctx-attr-type
   plutofork           => 'no',
-  crlcheckinterval    => '60',
+  crlcheckinterval    => 60,
   strictcrlpolicy     => 'yes',
   ocsp_enable         => 'yes',
   ocsp_strict         => 'yes',
-  ocsp_timeout        => '4',
+  ocsp_timeout        => 4,
   ocsp_uri            => 'https://myuri',
   ocsp_trustname      => 'my-trustname',
   syslog              => 'daemon.warning',
@@ -211,7 +211,7 @@ class { "libreswan":
   logappend           => 'no',
   logtime             => 'no',
   ddos_mode           => 'busy',
-  ddos_ike_treshold   => '26000',
+  ddos_ike_treshold   => 26000,
   #max-halfopen-ike
   #shuntlifetime
   #xfrmlifetime
@@ -223,70 +223,7 @@ class { "libreswan":
   perpeerlogdir       => '/var/log/ipsec/peer',
   fragicmp            => 'yes',
   hidetos             => 'no',
-  overridemtu         => '1500',
-}
-EOM
-          }
-
-          it_should_behave_like "a libreswan ipsec config file generator"
-          it { is_expected.to contain_file('/var/log/ipsec.log').with(
-            {
-              :owner  => 'root',
-              :mode   => '0600',
-              :before => 'File[/etc/ipsec.conf]'
-            })
-          }
-        end
-
-        context "with mixed/upper case yes/no parameters" do
-          let(:title) { :fully_specified }
-          let(:dumpdir) { '/var/run/ipsec' }
-          let(:pre_condition) { manifest = <<-EOM
-class { "libreswan":
-  service_name        => "ipsec",
-  myid                => '@myid',
-  protostack          => 'klips',
-  interfaces          => ['ipsec0=eth0','ipsec1=ppp0'],
-  listen              => '1.2.3.4',
-  ikeport             => '600',
-  nflog_all           => '10',
-  nat_ikeport         => '4600',
-  keep_alive          => '10',
-  virtual_private     => ['1.2.3.0/24', 'fe80::/10', '!5.6.0.0/16', '!fd80::/10'],
-  myvendorid          => 'my-vendor-id',
-  nhelpers            => '-1',
-  #seedbits
-  #secctx-attr-type
-  plutofork           => 'NO',
-  crlcheckinterval    => '60',
-  strictcrlpolicy     => 'YES',
-  ocsp_enable         => 'Yes',
-  ocsp_strict         => 'Yes',
-  ocsp_timeout        => '4',
-  ocsp_uri            => 'https://myuri',
-  ocsp_trustname      => 'my-trustname',
-  syslog              => 'daemon.warning',
-  klipsdebug          => 'all',
-  plutodebug          => 'all',
-  uniqueids           => 'No',
-  plutorestartoncrash => 'No',
-  logfile             => '/var/log/ipsec.log',
-  logappend           => 'No',
-  logtime             => 'No',
-  ddos_mode           => 'busy',
-  ddos_ike_treshold   => '26000',
-  #max-halfopen-ike
-  #shuntlifetime
-  #xfrmlifetime
-  dumpdir             => '/var/run/ipsec',
-  statsbin            => '/some/external/reporter -p 266',
-  ipsecdir            => '/etc/myipsec.d',
-  secretsfile         => '/etc/myipsec.secrets',
-  perpeerlog          => 'Yes',
-  perpeerlogdir       => '/var/log/ipsec/peer',
-  fragicmp            => 'Yes',
-  hidetos             => 'No',
-  overridemtu         => '1500',
+  overridemtu         => 1500,
 }
 EOM
           }

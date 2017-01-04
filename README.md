@@ -90,7 +90,7 @@ To add a connection via puppet, create a definition file under the site manifest
 class site::ipsectunnel1 {
   include 'libreswan'
 
-  libreswan::add_connection{ 'default':
+  libreswan::connection{ 'default':
     leftcert => "${::fqdn}",
     left   => "${ipaddress}"
     leftrsasigkey     => '%cert',
@@ -98,7 +98,7 @@ class site::ipsectunnel1 {
     authby  => 'rsasig'
   }
 
-  libreswan::add_connection{ 'outgoing' :
+  libreswan::connection{ 'outgoing' :
      right  => '<the IP Address of the client you are connecting to.>'
      rightrsasigkey     => '%cert',
      notify => Service['ipsec'],
@@ -126,7 +126,7 @@ the directory.  You will need to remove it manually.
 | `ipsec::nsspki`             | Call NSS to load certs for ipsec use. |
 | `ipsec::nss::init_db`       | Sets up a local copy of NSS database and sets up files used to access it. |
 | `ipsec::nss::loadcerts`     | Actually load the certificates to the NSS database. |
-| `ipsec::add_connection`     | defines connections for IPSEC. |
+| `ipsec::connection`         | defines connections for IPSEC. |
 
 
 

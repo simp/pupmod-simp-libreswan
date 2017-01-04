@@ -44,19 +44,19 @@ conn <%= @conn_name %>
   leftaddresspool = <%= @leftaddresspool.join('-') %>
 <% end -%>
 <% if @leftxauthserver then -%>
-  leftxauthserver = <%= @leftxauthserver.downcase.strip %>
+  leftxauthserver = <%= @leftxauthserver %>
 <% end -%>
 <% if @leftxauthusername then -%>
   leftxauthusername = <%= @leftxauthusername %>
 <% end -%>
 <% if @leftxauthclient then -%>
-  leftxauthclient = <%= @leftxauthclient.downcase.strip %>
+  leftxauthclient = <%= @leftxauthclient %>
 <% end -%>
 <% if @leftmodecfgserver then -%>
-  leftmodecfgserver = <%= @leftmodecfgserver.downcase.strip %>
+  leftmodecfgserver = <%= @leftmodecfgserver %>
 <% end -%>
 <% if @leftmodecfgclient then -%>
-  leftmodecfgclient = <%= @leftmodecfgclient.downcase.strip %>
+  leftmodecfgclient = <%= @leftmodecfgclient %>
 <% end -%>
 
 # Right Side Settings
@@ -103,19 +103,19 @@ conn <%= @conn_name %>
   rightaddresspool = <%= @rightaddresspool.join('-') %>
 <% end -%>
 <% if @rightxauthserver then -%>
-  rightxauthserver = <%= @rightxauthserver.downcase.strip %>
+  rightxauthserver = <%= @rightxauthserver %>
 <% end -%>
 <% if @rightxauthusername then -%>
   rightxauthusername = <%= @rightxauthusername %>
 <% end -%>
 <% if @rightxauthclient then -%>
-  rightxauthclient = <%= @rightxauthclient.downcase.strip %>
+  rightxauthclient = <%= @rightxauthclient %>
 <% end -%>
 <% if @rightmodecfgserver then -%>
-  rightmodecfgserver = <%= @rightmodecfgserver.downcase.strip %>
+  rightmodecfgserver = <%= @rightmodecfgserver %>
 <% end -%>
 <% if @rightmodecfgclient then -%>
-  rightmodecfgclient = <%= @rightmodecfgclient.downcase.strip %>
+  rightmodecfgclient = <%= @rightmodecfgclient %>
 <% end -%>
 
 # Universal Settings
@@ -147,16 +147,16 @@ conn <%= @conn_name %>
   sareftrack = <%= @sareftrack %>
 <% end -%>
 <% if @narrowing then -%>
-  narrowing = <%= @narrowing.downcase.strip %>
+  narrowing = <%= @narrowing %>
 <% end -%>
 <% if @ikepad then -%>
-  ikepad = <%= @ikepad.downcase.strip %>
+  ikepad = <%= @ikepad %>
 <% end -%>
 <% if @fragmentation then -%>
   fragmentation = <%= @fragmentation %>
 <% end -%>
 <% if @sha2_truncbug then -%>
-  sha2-truncbug = <%= @sha2_truncbug.downcase.strip %>
+  sha2-truncbug = <%= @sha2_truncbug %>
 <% end -%>
 <% if @nat_ikev1_method then -%>
   nat-ikev1-method = <%= @nat_ikev1_method %>
@@ -168,7 +168,7 @@ conn <%= @conn_name %>
   xauthfail = <%= @xauthfail %>
 <% end -%>
 <% if @modecfgpull then -%>
-  modecfgpull = <%= @modecfgpull.downcase.strip %>
+  modecfgpull = <%= @modecfgpull %>
 <% end -%>
 <% if @modecfgdns1 then -%>
   modecfgdns1 = <%= @modecfgdns1 %>
