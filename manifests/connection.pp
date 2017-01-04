@@ -35,6 +35,63 @@
 # the setting defaults when omitted from a connection's configuration.
 #   https://libreswan.org/man/ipsec.conf.5.html, the CONN:SETTINGS section
 #
+# @param left
+# @param right
+# @param connaddrfamily
+# @param leftaddresspool
+# @param leftsubnet
+# @param leftsubnets
+# @param leftprotoport
+# @param leftsourceip
+# @param leftupdown
+# @param leftcert
+# @param leftrsasigkey
+# @param leftrsasigkey2
+# @param leftsendcert
+# @param leftnexthop
+# @param leftid
+# @param leftca
+# @param rightid
+# @param rightrsasigkey
+# @param rightrsasigkey2
+# @param rightca
+# @param rightaddresspool
+# @param rightsubnets
+# @param rightsubnet
+# @param rightprotoport
+# @param rightsourceip
+# @param rightupdown
+# @param rightcert
+# @param rightsendcert
+# @param rightnexthop
+# @param auto
+# @param authby
+# @param type
+# @param ikev2
+# @param phase2
+# @param ikepad
+# @param fragmentation
+# @param sha2_truncbug
+# @param narrowing
+# @param sareftrack
+# @param leftxauthserver
+# @param rightxauthserver
+# @param leftxauthusername
+# @param rightxauthusername
+# @param leftxauthclient
+# @param rightxauthclient
+# @param leftmodecfgserver
+# @param rightmodecfgserver
+# @param leftmodecfgclient
+# @param rightmodecfgclient
+# @param xauthby
+# @param xauthfail
+# @param modecfgpull
+# @param modecfgdns1
+# @param modecfgdns2
+# @param modecfgdomain
+# @param modecfgbanner
+# @param nat_ikev1_method
 #
 define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',

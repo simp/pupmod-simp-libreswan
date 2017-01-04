@@ -127,7 +127,7 @@ test_name 'libreswan class'
 pki_dir : '/etc/pki/simp-testing/pki'
 libreswan::pkiroot : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
-libreswan::use_simp_pki : true
+libreswan::pki : true
 libreswan::interfaces : ["ipsec0=#{leftip}"]
 libreswan::listen : '#{leftip}'
 EOS
@@ -137,7 +137,7 @@ EOS
 ---
 pki_dir : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
-libreswan::use_simp_pki : true
+libreswan::pki : true
 libreswan::pkiroot : '/etc/pki/simp-testing/pki'
 libreswan::interfaces : ["ipsec0=#{rightip}"]
 libreswan::listen : '#{rightip}'
@@ -168,7 +168,7 @@ EOM
     end
 
     context 'tunnel using certs' do
-      context "with use_simp_pki" do
+      context "with pki" do
         it 'should apply manifest idempotently and start ipsec service' do
           set_hieradata_on(left, hieradata_left)
           set_hieradata_on(right,hieradata_right)
@@ -274,8 +274,16 @@ EOM
           quads[3] = '0'
           quads.join('.') + '/16'
         }
-        let(:hieradata_with_firewall_left)  { hieradata_left + "simp_firewall: yes\nclient_nets : ['#{client_net}']\n" }
-        let(:hieradata_with_firewall_right) { hieradata_right + "simp_firewall: yes\nclient_nets : ['#{client_net}']\n" }
+        let(:hieradata_with_firewall_left)  { 
+          hieradata_left + 
+          "simp_options::firewall: yes\n" + 
+          "simp_options::trusted_nets : ['#{client_net}']\n"
+        }
+        let(:hieradata_with_firewall_right) { 
+          hieradata_right + 
+          "simp_options::firewall: yes\n" + 
+          "simp_options::trusted_nets : ['#{client_net}']\n"
+        }
         let(:leftconnection_with_firewall) { leftconnection +
           "      class { 'iptables': }\n" +
           "      iptables::rule {'allow_public_network_interface':\n" +

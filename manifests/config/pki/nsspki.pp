@@ -6,7 +6,7 @@
 class libreswan::config::pki::nsspki(
 ) {
   assert_private()
-  Class[Libreswan::Config::Pki] ~> Class[Libreswan::Config::Pki::Nsspki]
+  Class['libreswan::config::pki'] ~> Class['libreswan::config::pki::nsspki']
 
   # Currently for libreswan version 3.15 the secrets file must be
   # updated with name of the certificate to use from the NSS database.

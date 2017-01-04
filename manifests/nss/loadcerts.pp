@@ -8,6 +8,8 @@
 #
 # @param cert  The absolute path to the public portion of the cert.
 #
+# @param token
+#
 # @param key  The absolute path to the private portion of the cert.
 #
 # @param certtype  The format the certificate is in.

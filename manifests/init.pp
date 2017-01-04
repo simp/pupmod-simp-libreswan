@@ -6,11 +6,6 @@
 #
 # At this time the current version of libreswan is 3.1.7.
 #
-#
-# === Welcome to SIMP!
-# This module is a component of the System Integrity Management Platform, a
-# a managed security compliance framework built on Puppet.
-#
 # ---
 # libreswan is designed to install and configure the ipsec service from libreswan.
 # It will also configure and maintain the NSS database used by ipsec if you have
@@ -40,6 +35,13 @@
 # @param firewall  Whether to add appropriate rules to
 #  allow ipsec traffic to the SIMP-controlled firewall
 #
+# @param fips  Whether server is in FIPS mode.  Affects digest algorithms
+# allowed to be used by ipsec.
+#
+# @param use_certs  Wether you are going to use certificates for
+#     ipsec.  Default true.  If set to false, the pki management is
+#     skipped completely.
+#
 # @param pki   SIMP PKI option.
 #   If 'simp' then use  SIMP's PKI infrastructure to manage certificates used by ipsec.
 #   If true then it will copy certs from app_pki_external_source to app_pki_dir
@@ -52,23 +54,54 @@
 #     (or put your keys in the defaut location)
 #     you will need to manualy restart services to pick up the new certs.
 #
-# @param use_certs  Wether you are going to use certificates for
-#     ipsec.  Default true.  If set to false, the pki management is
-#     skipped completely.
-#
-# @param fips  Whether server is in FIPS mode.  Affects digest algorithms
-# allowed to be used by ipsec.
-#
 # @param haveged  Whether to use haveged to ensure adequate entropy
 #
 # @param nssdb_password  Password for the NSS database used by ipsec
 #
-# @param certsource  Used if pki is true to copy certs locally for ipsec.
+# @param app_pki_dir
+# @param app_pki_external_source
+# @param myid
+# @param protostack
+# @param interfaces
+# @param listen
+# @param ikeport
+# @param nflog_all
+# @param nat_ikeport
+# @param keep_alive
+# @param virtual_private
+# @param myvendorid
+# @param nhelpers
+# @param plutofork
+# @param crlcheckinterval
+# @param strictcrlpolicy
+# @param ocsp_enable
+# @param ocsp_strict
+# @param ocsp_timeout
+# @param ocsp_uri
+# @param ocsp_trustname
+# @param syslog
+# @param klipsdebug
+# @param plutodebug
+# @param uniqueids
+# @param plutorestartoncrash
+# @param logfile
+# @param logappend
+# @param logtime
+# @param ddos_mode
+# @param ddos_ike_treshold
+# @param dumpdir
+# @param statsbin
 #
 # @param ipsecdir  The directory to store all ipsec configuration information.
 #
-# The other parameters are all setting for the ipsec.conf file. See the
-# libreswan doumentation https://libreswan.org/man/ipsec.conf.5.html
+# @param secretsfile
+# @param perpeerlog
+# @param perpeerlogdir
+# @param fragicmp
+# @param hidetos
+# @param overridemtu
+#
+# * See the libreswan doumentation https://libreswan.org/man/ipsec.conf.5.html
 # for more information regarding these variables.
 # Any variable set to undefined will not appear in the configuration
 # file and will default to the value set by libreswan. Those set will

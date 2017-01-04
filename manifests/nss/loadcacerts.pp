@@ -8,6 +8,8 @@
 #
 # @param cert  The absolute path to the public portion CA certificate.
 #
+# @param token
+#
 # @param certtype  The format the certificate is in. PEM and DER are currently acceptable.
 #
 define libreswan::nss::loadcacerts(

@@ -12,6 +12,10 @@
 #
 # @param destroyexisting  If true, it will remove the existing database before running the init command.
 #
+# @param fips
+# @param token
+# @param nsspassword
+#
 define libreswan::nss::init_db(
   Stdlib::Absolutepath  $dbdir,
   String                $password,

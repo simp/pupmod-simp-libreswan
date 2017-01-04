@@ -2,6 +2,10 @@
 # the PKI certificates are loaded into the NSS Database used
 # by the IPSEC process.
 #
+# @param app_pki_ca
+# @param app_pki_cert
+# @param app_pki_key
+#
 class libreswan::config::pki(
   Stdlib::Absolutepath           $app_pki_ca   = "${::libreswan::app_pki_dir}/pki/cacerts/cacerts.pem",
   Stdlib::Absolutepath           $app_pki_cert = "${::libreswan::app_pki_dir}/pki/public/${::fqdn}.pub",
