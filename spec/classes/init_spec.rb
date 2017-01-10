@@ -8,8 +8,8 @@ describe 'libreswan' do
     it { is_expected.to contain_class('libreswan::params') }
     it { is_expected.to contain_class('libreswan::config') }
     it { is_expected.to contain_class('libreswan::config').that_notifies('Class[libreswan::service]') }
-    it { is_expected.to contain_class('libreswan::config::pki') }
-    it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
+    it { is_expected.to_not contain_class('libreswan::config::pki') }
+    it { is_expected.to_not contain_class('libreswan::config::pki::nsspki') }
     it { is_expected.to contain_class('libreswan::install').that_comes_before('Class[libreswan::config]') }
     it { is_expected.to contain_class('libreswan::service').that_subscribes_to('Class[libreswan::config]') }
     it { is_expected.to_not contain_class('haveged') }
@@ -36,11 +36,11 @@ describe 'libreswan' do
           it { is_expected.to create_iptables__listen__udp('ipsec_allow').with_dports(["50","4500"]) }
         end
 
-        context "libreswan class with use_certs enabled" do
-          let(:params) {{ :use_certs => false, }}
-          it { is_expected.to_not contain_class('libreswan::config::pki') }
-          it { is_expected.to_not contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
-          it { is_expected.to_not contain_class('libreswan::config::pki::nsspki') }
+        context "libreswan class with pki = 'simp'" do
+          let(:params) {{ :pki => 'simp', }}
+          it { is_expected.to contain_class('libreswan::config::pki') }
+          it { is_expected.to contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
+          it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
         end
 
         context 'with haveged => true' do
@@ -174,8 +174,6 @@ describe 'libreswan' do
             :ipsecdir,
             :secretsfile,
             :dumpdir,
-            :app_pki_external_source,
-            :app_pki_dir
           ].each do |abs_path_param|
             context "invalid #{abs_path_param}" do
               let(:params) {{abs_path_param => './myfile'}}

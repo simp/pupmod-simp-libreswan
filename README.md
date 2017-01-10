@@ -65,8 +65,8 @@ https://libreswan.org/wiki/Main_Page#User_Documentation
 Add the following to hiera:
 ```yaml
 ---
-use_simp_pki: true
-libreswan::client_nets : <desired client nets>
+simp_options::pki: true
+simp_options::trusted_nets : <desired client nets>
 
 classes:
   - 'libreswan'

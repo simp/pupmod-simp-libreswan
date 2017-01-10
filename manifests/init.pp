@@ -38,28 +38,23 @@
 # @param fips  Whether server is in FIPS mode.  Affects digest algorithms
 # allowed to be used by ipsec.
 #
-# @param use_certs  Wether you are going to use certificates for
-#     ipsec.  Default true.  If set to false, the pki management is
-#     skipped completely.
-#
-# @param pki   SIMP PKI option.
-#   If 'simp' then use  SIMP's PKI infrastructure to manage certificates used by ipsec.
-#   If true then it will copy certs from app_pki_external_source to app_pki_dir
-#     when puppet runs and restart the necessary services.  See pki::copy to
-#     see the structure required for the source directory.
-#   If false you must set variables
-#     libreswan::config::pki::app_pki_ca
-#     libreswan::config::pki::app_pki_cert
-#     libreswab::config::pki::app_pki_key
-#     (or put your keys in the defaut location)
-#     you will need to manualy restart services to pick up the new certs.
+# @param pki
+#   * If 'simp', include SIMP's pki module and use pki::copy to manage
+#     application certs in /etc/pki/simp_apps/libreswan/x509
+#   * If true, do *not* include SIMP's pki module, but still use pki::copy
+#     to manage certs in /etc/pki/simp_apps/libreswan/x509
+#   * If false, do not include SIMP's pki module and do not use pki::copy
+#     to manage certs.  You will need to appropriately assign a subset of:
+#     * app_pki_dir
+#     * app_pki_key
+#     * app_pki_cert
+#     * app_pki_ca
+#     * app_pki_ca_dir
 #
 # @param haveged  Whether to use haveged to ensure adequate entropy
 #
 # @param nssdb_password  Password for the NSS database used by ipsec
 #
-# @param app_pki_dir
-# @param app_pki_external_source
 # @param myid
 # @param protostack
 # @param interfaces
@@ -121,8 +116,6 @@ class libreswan (
   Variant[Boolean,Enum['simp']]   $pki                     = simplib::lookup('simp_options::pki', {'default_value' => false }),
   Boolean                         $haveged                 = simplib::lookup('simp_options::haveged', {'default_value' => false }),
   String                          $nssdb_password          = passgen('nssdb_password'),
-  Stdlib::Absolutepath            $app_pki_dir             = '/etc/pki/ipsec',
-  Stdlib::Absolutepath            $app_pki_external_source =  simplib::lookup('simp_options::pki::source', {'default_value' => '/etc/pki/simp' }),
   # Possible Values in ipsec.conf file
   Optional[String]                $myid                    = undef,
   Enum['netkey','klips','mast']   $protostack              = 'netkey',
@@ -199,7 +192,7 @@ class libreswan (
     Class[ '::libreswan::service'  ]
   }
 
-  if $use_certs {
+  if $pki {
     include '::libreswan::config::pki'
     include '::libreswan::config::pki::nsspki'
     Class[ '::libreswan::config::pki' ] ~>

@@ -59,17 +59,8 @@ test_name 'libreswan class'
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
     let(:haveged) { "package { 'epel-release': ensure => present } -> class { 'haveged': }" }
-    let(:manifest) {
-      <<-EOS
-        class { '::pki':
-          cacerts_sources    => ['file:///etc/pki/simp-testing/pki/cacerts'] ,
-          private_key_source => "file:///etc/pki/simp-testing/pki/private/${::fqdn}.pem",
-          public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
-          auditd             => false
-        }
-        class { 'libreswan': }
-  EOS
-    }
+    let(:manifest) { "class { 'libreswan': }"}
+
     let(:leftinterface) { get_private_network_interface(left) }
     let(:leftip) { fact_on(left, %(ipaddress_#{leftinterface})) }
     let(:leftfqdn) { fact_on( left, 'fqdn' ) }
@@ -79,12 +70,6 @@ test_name 'libreswan class'
     let(:nc_port) { 2389 }
     let(:leftconnection) {
       <<-EOS
-        class { '::pki':
-          cacerts_sources    => ['file:///etc/pki/simp-testing/pki/cacerts'] ,
-          private_key_source => "file:///etc/pki/simp-testing/pki/private/${::fqdn}.pem",
-          public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
-          auditd             => false
-        }
         libreswan::connection{ 'default':
           leftcert      => "${::fqdn}",
           left          => "#{leftip}",
@@ -101,12 +86,6 @@ test_name 'libreswan class'
     }
     let(:rightconnection) {
       <<-EOS
-        class { '::pki':
-          cacerts_sources    => ['file:///etc/pki/simp-testing/pki/cacerts'] ,
-          private_key_source => "file:///etc/pki/simp-testing/pki/private/${::fqdn}.pem",
-          public_key_source  => "file:///etc/pki/simp-testing/pki/public/${::fqdn}.pub",
-          auditd             => false
-        }
         libreswan::connection{ 'default':
           leftcert      => "${::fqdn}",
           left          => "#{rightip}",
@@ -124,23 +103,21 @@ test_name 'libreswan class'
     let(:hieradata_left) {
       <<-EOS
 ---
-pki_dir : '/etc/pki/simp-testing/pki'
-libreswan::pkiroot : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
-libreswan::pki : true
 libreswan::interfaces : ["ipsec0=#{leftip}"]
 libreswan::listen : '#{leftip}'
+simp_options::pki: true
+simp_options::pki::source: '/etc/pki/simp-testing/pki'
 EOS
     }
     let(:hieradata_right){
     <<-EOM
 ---
-pki_dir : '/etc/pki/simp-testing/pki'
 libreswan::service_name : 'ipsec'
-libreswan::pki : true
-libreswan::pkiroot : '/etc/pki/simp-testing/pki'
 libreswan::interfaces : ["ipsec0=#{rightip}"]
 libreswan::listen : '#{rightip}'
+simp_options::pki: true
+simp_options::pki::source: '/etc/pki/simp-testing/pki'
 EOM
     }
     let(:testfile) { testfile = "/tmp/testfile.#{Time.now.to_i}" }
@@ -274,14 +251,14 @@ EOM
           quads[3] = '0'
           quads.join('.') + '/16'
         }
-        let(:hieradata_with_firewall_left)  { 
-          hieradata_left + 
-          "simp_options::firewall: yes\n" + 
+        let(:hieradata_with_firewall_left)  {
+          hieradata_left +
+          "simp_options::firewall: yes\n" +
           "simp_options::trusted_nets : ['#{client_net}']\n"
         }
-        let(:hieradata_with_firewall_right) { 
-          hieradata_right + 
-          "simp_options::firewall: yes\n" + 
+        let(:hieradata_with_firewall_right) {
+          hieradata_right +
+          "simp_options::firewall: yes\n" +
           "simp_options::trusted_nets : ['#{client_net}']\n"
         }
         let(:leftconnection_with_firewall) { leftconnection +
