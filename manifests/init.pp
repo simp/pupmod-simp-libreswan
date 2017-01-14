@@ -174,28 +174,30 @@ class libreswan (
 
   if $haveged {
     include '::haveged'
+
+    Class[ '::haveged' ] -> Class[ '::libreswan::service' ]
   }
 
   $nsspassword = "${ipsecdir}/nsspassword"
 
-  include '::libreswan::install'
-  include '::libreswan::config'
-  include '::libreswan::service'
-  Class[ '::libreswan::install' ] ->
-  Class[ '::libreswan::config'  ] ~>
-  Class[ '::libreswan::service' ]->
-  Class[ '::libreswan' ]
+  contain '::libreswan::install'
+  contain '::libreswan::config'
+  contain '::libreswan::service'
+
+  Class[ '::libreswan::install' ] -> Class[ '::libreswan::config'  ]
+  Class[ '::libreswan::config'  ] ~> Class[ '::libreswan::service' ]
 
   if $firewall {
-    include '::libreswan::config::firewall'
-    Class[ '::libreswan::config::firewall' ] ~>
-    Class[ '::libreswan::service'  ]
+    contain '::libreswan::config::firewall'
+
+    Class[ '::libreswan::config::firewall' ] ~> Class[ '::libreswan::service'  ]
   }
 
   if $pki {
-    include '::libreswan::config::pki'
-    include '::libreswan::config::pki::nsspki'
-    Class[ '::libreswan::config::pki' ] ~>
-    Class[ '::libreswan::config::pki::nsspki' ]
+    contain '::libreswan::config::pki'
+    contain '::libreswan::config::pki::nsspki'
+
+    Class[ '::libreswan::config::pki' ] ~> Class[ '::libreswan::config::pki::nsspki' ]
+    Class[ '::libreswan::config::pki::nsspki' ] ~> Class[ '::libreswan::service' ]
   }
 }

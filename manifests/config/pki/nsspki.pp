@@ -30,15 +30,16 @@ class libreswan::config::pki::nsspki(
     dbdir       => $::libreswan::ipsecdir,
     token       => $::libreswan::token,
     nsspwd_file => $::libreswan::nsspassword,
-    subscribe   => [Pki::Copy[$::libreswan::app_pki_dir],Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]]
+    subscribe   => Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]
   }
+
   libreswan::nss::loadcerts{ $::fqdn :
     dbdir       => $::libreswan::ipsecdir,
     nsspwd_file => $::libreswan::nsspassword,
     cert        => $::libreswan::config::pki::app_pki_cert,
     key         => $::libreswan::config::pki::app_pki_key,
     token       => $::libreswan::token,
-    subscribe   => [Pki::Copy[$::libreswan::app_pki_dir],Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]]
+    subscribe   => Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]
   }
 }
 
