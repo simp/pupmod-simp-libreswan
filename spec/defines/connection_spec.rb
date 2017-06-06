@@ -225,8 +225,8 @@ describe 'libreswan::connection', :type => :define do
           it_should_behave_like "a libreswan connection config file generator"
         end
 
-        # TODO flesh out more success and failure validation cases,
-        # especially regex validations and IPv6 cases
+        # TODO flesh out more success and failure validation cases for
+        #      libreswan types
         #
         describe 'accept valid parameter options' do
           describe 'magic IP enum' do
@@ -237,6 +237,16 @@ describe 'libreswan::connection', :type => :define do
                   let(:params) {{ip_enum => valid_enum}}
                   it { is_expected.to compile}
                 end
+              end
+            end
+          end
+
+          describe 'valid device spec' do
+            [ :left, :right ].each do |ip_enum|
+              context "Valid device spec for #{ip_enum}" do
+                let(:title){ "Valid ether names _#{ip_enum}" }
+                let(:params) {{ip_enum => '%eth0'}}
+                it { is_expected.to compile }
               end
             end
           end
@@ -264,152 +274,26 @@ describe 'libreswan::connection', :type => :define do
               end
             end
           end
-
-          describe 'sendcert enum' do
-            [ :leftsendcert, :rightsendcert ].each do |sendcert_enum|
-              [ 'yes', 'no', 'never', 'always', 'sendifasked' ].each do |valid_enum|
-                context "#{sendcert_enum} of #{valid_enum}" do
-                  let(:title){ "#{sendcert_enum}_#{valid_enum}" }
-                  let(:params) {{sendcert_enum => valid_enum}}
-                  it { is_expected.to compile }
-                end
-              end
-            end
-          end
-
-          describe 'authby enum' do
-            [ 'rsasig','secret', 'secret|rsasig', 'never', 'null' ].each do |valid_enum|
-              context "authby of #{valid_enum}" do
-                let(:title){ "authby_#{valid_enum}" }
-                let(:params) {{:authby => valid_enum}}
-                it { is_expected.to compile }
-              end
-            end
-          end
-
-          describe 'auto enum' do
-            [ 'add','start','ondemand','ignore' ].each do |valid_enum|
-              context "auto of #{valid_enum}" do
-                let(:title){ "auto_#{valid_enum}" }
-                let(:params) {{:auto => valid_enum}}
-                it { is_expected.to compile }
-              end
-            end
-          end
-
-          describe 'connaddrfamily enum' do
-            [ 'ipv4', 'ipv6' ].each do |valid_enum|
-              context "connaddrfamily of #{valid_enum}" do
-                let(:title){ "connaddrfamily_#{valid_enum}" }
-                let(:params) {{:connaddrfamily => valid_enum}}
-                it { is_expected.to compile }
-              end
-            end
-          end
-
-          describe 'type enum' do
-            [ 'tunnel','transport','passthough','reject','drop' ].each do |valid_enum|
-              context "type of #{valid_enum}" do
-                let(:title){ "type_#{valid_enum}" }
-                let(:params) {{:type => valid_enum}}
-                it { is_expected.to compile }
-              end
-            end
-          end
-#TODO ikev2
-#TODO phase2
-#TODO nat_ikev1_method
-#TODO fragmentation
-#TODO sareftrack
-#TODO xauthby
-#TODO xauthfail
-#TODO leftrsasigkey, leftrsasigkey2, rightrsasigkey, rightrsasigkey2
         end
 
         describe 'reject invalid parameters' do
-          describe 'yes/no parameter' do
-            [ :ikepad,
-              :narrowing,
-              :sha2_truncbug,
-              :leftxauthserver,
-              :rightxauthserver,
-              :leftxauthclient,
-              :rightxauthclient,
-              :leftmodecfgserver,
-              :rightmodecfgserver,
-              :leftmodecfgclient,
-              :rightmodecfgclient,
-              :modecfgpull
-            ].each do |yesno_param|
-              context "invalid #{yesno_param}" do
-                let(:title){ "invalid_#{yesno_param}" }
-                let(:params) {{yesno_param => 'true'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match for Enum/)
-                end
-              end
-            end
-          end
-
-          describe 'string parameter' do
-            [ :leftupdown,
-              :rightupdown,
-              :leftcert,
-              :rightcert,
-              :leftid,
-              :rightid,
-              :leftca,
-              :rightca,
-              :leftxauthusername,
-              :rightxauthusername,
-              :modecfgdomain,
-              :modecfgbanner,
-              :phase2alg,
-              :ike
-            ].each do |string_param|
-              context "invalid string #{string_param}" do
-                let(:title){ "invalid_string_#{string_param}" }
-                let(:params) {{string_param => ['string-in-an-array']}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a String value/)
-                end
-              end
-            end
-          end
-
-          describe 'single IP address' do
+          describe 'single IP address when other variants are possible' do
             [
               :left,
               :right,
-              :leftsourceip,
-              :rightsourceip,
               :leftnexthop,
-              :rightnexthop,
-              :modecfgdns1,
-              :modecfgdns2
+              :rightnexthop
             ].each do |ipaddr_param|
               context "invalid #{ipaddr_param}" do
                 let(:title){ "invalid_#{ipaddr_param}" }
                 let(:params) {{ipaddr_param => '1.2..4.'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match/)
-                end
+                it { is_expected.to_not compile }
               end
 
-              context 'CIDR address' do
+              context "#{ipaddr_param} contains invalid CIDR address"  do
                 let(:title){ "disallowed_cidr_#{ipaddr_param}" }
                 let(:params) {{ipaddr_param => '1.2.3.0/24'}}
-                it 'rejects CIDR address' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match/)
-                end
+                it { is_expected.to_not compile }
               end
             end
           end
@@ -419,70 +303,31 @@ describe 'libreswan::connection', :type => :define do
               context "#{addr_pool_param} array not length 2" do
                 let(:title){ "invalid_length_#{addr_pool_param}" }
                 let(:params) {{addr_pool_param => ['1.2.3.4']}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects size to be 2/)
-                end
+                it { is_expected.to_not compile }
               end
 
-              context "#{addr_pool_param} contains CIDR addresses"  do
+              context "#{addr_pool_param} contains invalid CIDR address"  do
                 let(:title){ "invalid_cidr_#{addr_pool_param}" }
                 let(:params) {{addr_pool_param => ['1.2.4.0/24', '5.7.8.0/24'] }}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match/)
-                end
+                it { is_expected.to_not compile }
               end
             end
           end
 
-          describe 'single CIDR address' do
+          describe 'single CIDR address when other variants are possible' do
             [ :leftsubnet,
               :rightsubnet,
             ].each do |cidr_param|
               context "invalid CIDR address #{cidr_param}" do
                 let(:title){ "invalid_cidr_#{cidr_param}" }
                 let(:params) {{cidr_param => '1.2..30.0/24'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match/)
-                end
+                it { is_expected.to_not compile }
               end
 
               context "not CIDR address #{cidr_param}" do
                 let(:title){ "not_a_cidr_#{cidr_param}" }
                 let(:params) {{cidr_param => '1.2.3.4'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match/)
-                end
-              end
-            end
-          end
-
-          describe 'array of CIDR addresses' do
-            [ :leftsubnets, :rightsubnets ].each do |cidr_param|
-              context "invalid CIDR address #{cidr_param}" do
-                let(:title){ "invalid_cidr_array_#{cidr_param}" }
-                let(:params) {{cidr_param => ['1.2..30.0/24', '1.2.3.4']}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match/)
-                end
-              end
-              context "not CIDR address #{cidr_param}" do
-                let(:title){ "not_a_cidr_#{cidr_param}" }
-                let(:params) {{cidr_param => '1.2.3.4'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a/)
-                end
+                it { is_expected.to_not compile }
               end
             end
           end
@@ -492,63 +337,14 @@ describe 'libreswan::connection', :type => :define do
               context "invalid  address #{side_param}" do
                 let(:title){ "invalid_cidr_array_#{side_param}" }
                 let(:params) {{side_param => '1.2..30.0/24'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a/)
-                end
-              end
-              context "Valid #{side_param}" do
-                let(:title){ "Valid ether names _#{side_param}" }
-                let(:params) {{side_param => '%eth0'}}
-                it 'compiles' do
-                   expect  {
-                     is_expected.to compile
-                   }
-                end
+                it { is_expected.to_not compile }
               end
               context "invalid text #{side_param}" do
                 let(:title){ "invalid ether names _#{side_param}" }
                 let(:params) {{side_param => 'eth0'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a/)
-                end
+                it { is_expected.to_not compile }
               end
             end
-          end
-
-          describe 'enumerated list' do
-            [ :authby,
-              :auto,
-              :leftsendcert,
-              :rightsendcert,
-              :type,
-              :ikev2,
-              :phase2,
-              :nat_ikev1_method,
-              :fragmentation,
-              :sareftrack,
-              :xauthby,
-              :xauthfail
-            ].each do |enum_param|
-              context "invalid enumeration #{enum_param}" do
-                let(:title){ "invalid_enum_#{enum_param}" }
-                let(:params) {{enum_param => 'not-in-enumerated-list'}}
-                it 'fails to compile' do
-                  expect {
-                    is_expected.to compile
-                  }.to raise_error(/expects a match for Enum/)
-                end
-              end
-            end
-          end
-
-          context 'when connaddrfamily is invalid' do
-            let(:title){ :invalid_connaddrfamily }
-            let(:params) { common_params.merge({ :connaddrfamily => 'IPV4' }) }
-            it { is_expected.to_not compile.with_all_deps }
           end
         end
       end
