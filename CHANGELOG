@@ -1,3 +1,6 @@
+* Thu Jul 06 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 3.0.1-0
+- Confine puppet version in metadata.json
+
 * Fri Jan 13 2017 Nick Markowski <nmarkowski@keywcorp.com> - 3.0.0-0
 - Updated pki scheme.
 - Application certs now managed in /etc/pki/simp_apps/libreswan/x509
