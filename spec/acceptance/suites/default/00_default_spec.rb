@@ -182,8 +182,8 @@ EOM
         end
 
         it "should start a usable connection in tunnel mode" do
-          wait_for_command_success(left, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
-          wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
+          wait_for_command_success(left,  "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
+          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
           wait_for_command_success(left, "ip xfrm policy | grep 'mode tunnel'")
           wait_for_command_success(right, "ip xfrm policy | grep 'mode tunnel'")
 
@@ -225,7 +225,7 @@ EOM
           # can take up to 2 minutes for right to timeout tunnel, so restart instead to detect
           # failure immediately
           on right, 'ipsec restart', :acceptable_exit_codes => [0]
-          wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 0\"")
+          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 0\"")
           wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
 
@@ -309,8 +309,8 @@ EOM
         end
 
         it "should allow data carried by connection's tunnel" do
-          wait_for_command_success(left, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
-          wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 1\"")
+          wait_for_command_success(left,  "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
+          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
 
           # send TCP data from right to left
           on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
@@ -339,7 +339,7 @@ EOM
           # so restart instead to detect
           # failure immediately
           on right, 'ipsec restart', :acceptable_exit_codes => [0]
-          wait_for_command_success(right, "ipsec status | grep -i \"Total IPsec connections: loaded 1, active 0\"")
+          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 0\"")
         end
 
         it "should drop data because of broken tunnel" do
