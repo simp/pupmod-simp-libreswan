@@ -16,7 +16,7 @@ class libreswan::config::pki::nsspki(
     content => ": RSA \"${::fqdn}\"",
   }
 
-  $_fips = $::libreswan::fips or $facts['fips_enabled'] 
+  $_fips = $::libreswan::fips or $facts['fips_enabled']
 
   libreswan::nss::init_db { "NSSDB ${::libreswan::ipsecdir}":
     dbdir       => $::libreswan::ipsecdir,
