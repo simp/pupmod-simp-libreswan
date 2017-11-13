@@ -94,7 +94,7 @@ acceptance-test-no-fips:
     - beaker
   script:
     - bundle install --no-binstubs --path=vendor
-    - bundle exec rake acceptance
+    - bundle exec rake beaker:suites
 
 acceptance-test-fips:
   stage: test
@@ -102,4 +102,4 @@ acceptance-test-fips:
     - beaker
   script:
     - bundle install --no-binstubs --path=vendor
-    - BEAKER_fips=yes bundle exec rake acceptance
+    - BEAKER_fips=yes bundle exec rake beaker:suites
