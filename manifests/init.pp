@@ -4,8 +4,6 @@
 #
 # https://libreswan.org
 #
-# At this time the current version of libreswan is 3.1.7.
-#
 # ---
 # libreswan is designed to install and configure the ipsec service from libreswan.
 # It will also configure and maintain the NSS database used by ipsec if you have
@@ -103,8 +101,7 @@
 # appear in the configuration file but can be over written using the
 # hiera yaml files.
 #
-# @author Trevor Vaughan <tvaughan@onyxpoint.com>
-# @author Jeanne Greulich <jeanne.greulich@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-libreswan/graphs/contributors
 #
 class libreswan (
   String                          $service_name            = $::libreswan::params::service_name,
@@ -166,7 +163,7 @@ class libreswan (
 ) inherits ::libreswan::params {
 
   # set the token for the NSS database.
-  if $fips {
+  if $fips or $facts['fips_enabled'] {
     $token = 'NSS FIPS 140-2 Certificate DB' }
   else {
     $token = 'NSS Certificate DB'

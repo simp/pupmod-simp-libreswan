@@ -1,7 +1,7 @@
 #  This class initializes the NSS database, sets the correct password, and
 #  makes configures FIPS if necessary.
 #
-# @param dbdir  Directroy where the nss db will be created.
+# @param dbdir  Directory where the NSS database will be created.
 #
 # @param password
 #   Password used to protect the database. Each NSS database is broken up into
@@ -65,14 +65,7 @@ define libreswan::nss::init_db(
     notify  => Exec["update token password ${dbdir}"]
   }
 
-  # Run scripts to set password.
-  exec { "update token password ${dbdir}":
-    command     => "/usr/local/scripts/nss/update_nssdb_password.sh ${dbdir} ${password} ${oldpassword} \"${token}\"",
-    path        => ['/bin','/sbin'],
-    refreshonly => true,
-  }
-
-  if $fips {
+  if $fips or $facts['fips_enabled'] {
     exec { "nssdb in fips mode ${dbdir}":
       command => "modutil -dbdir sql:${dbdir} -fips true",
       onlyif  =>  "modutil -dbdir sql:${dbdir} -chkfips false",
@@ -88,4 +81,15 @@ define libreswan::nss::init_db(
       require => Exec["init_nssdb ${dbdir}"]
     }
   }
+
+  # Run script to set password. Make sure this is after modifying the
+  # database for fips mode.  We are depending upon the compiler's
+  # promise to run the exec's in the order they are declared in
+  # this class.
+  exec { "update token password ${dbdir}":
+    command     => "/usr/local/scripts/nss/update_nssdb_password.sh ${dbdir} \"${password}\" \"${oldpassword}\" \"${token}\"",
+    path        => ['/bin','/sbin'],
+    refreshonly => true,
+  }
+
 }

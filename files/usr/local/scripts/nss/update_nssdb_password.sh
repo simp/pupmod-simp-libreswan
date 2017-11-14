@@ -54,7 +54,7 @@ case $oldpasswd in
 esac
 
 echo $passwd > $tmpdir/np
-modutil -force -changepw "${token}" -dbdir "sql:${ipsecdir}" -newpwfile ${tmpdir}/np -pwfile ${tmpdir}/op > ${tmpdir}/modutil.output
+modutil -force -changepw "${token}" -dbdir "sql:${ipsecdir}" -newpwfile ${tmpdir}/np -pwfile ${tmpdir}/op > ${tmpdir}/modutil.output 2>&1
 rv=$?
 if [ $rv !=  0 ]; then
   message="`cat ${tmpdir}/modutil.output`"
