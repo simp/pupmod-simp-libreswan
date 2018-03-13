@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 connection_conf_content = {
-  :default =>
+  'default' =>
     "conn %default\n" +
     "# Left Side Settings\n" +
     "\n" +
@@ -15,7 +15,7 @@ connection_conf_content = {
     "  xauthfail = hard\n" +
     "  keyingtries = 10\n",
 
-  :outgoing =>
+  'outgoing' =>
     "conn outgoing\n" +
     "# Left Side Settings\n" +
     "  left = 10.0.0.1\n" +
@@ -30,7 +30,7 @@ connection_conf_content = {
     "  keyingtries = 10\n",
 
   # This content is NOT a usable connection file, but exercises default logic
-  :minimally_specified_conn =>
+  'minimally_specified_conn' =>
     "conn minimally_specified_conn\n" +
     "# Left Side Settings\n" +
     "\n" +
@@ -42,7 +42,7 @@ connection_conf_content = {
     "  keyingtries = 10\n",
 
   # This content is NOT a usable connection file, but exercises non-default logic
-  :maximally_specified_conn =>
+  'maximally_specified_conn' =>
     "conn maximally_specified_conn\n" +
     "# Left Side Settings\n" +
     "  left = 10.11.11.1\n" +
@@ -133,7 +133,7 @@ describe 'libreswan::connection', :type => :define do
 
         describe 'create %default connection config' do
           let(:conn_name){ '%default' }
-          let(:title){ :default }
+          let(:title){ 'default' }
           let(:params) { common_params.merge({ :fragmentation => 'force', :xauthby => 'pam', :xauthfail => 'hard' }) }
 
           it_should_behave_like "a libreswan connection config file generator"
@@ -141,7 +141,7 @@ describe 'libreswan::connection', :type => :define do
 
         describe 'create other connection config' do
           let(:conn_name){ 'outgoing' }
-          let(:title){ :outgoing }
+          let(:title){ 'outgoing' }
           let(:params) { common_params.merge({ :left => '10.0.0.1', :leftcert => '%cert', :leftsendcert => 'always' }) }
 
           it_should_behave_like "a libreswan connection config file generator"
@@ -149,7 +149,7 @@ describe 'libreswan::connection', :type => :define do
 
         describe 'create file with only default params' do
           let(:conn_name){ 'minimally_specified_conn' }
-          let(:title){ :minimally_specified_conn }
+          let(:title){ 'minimally_specified_conn' }
           let(:params) { common_params}
 
           it_should_behave_like "a libreswan connection config file generator"
@@ -157,7 +157,7 @@ describe 'libreswan::connection', :type => :define do
 
         describe 'create file with fully-specified params' do
           let(:conn_name){ 'maximally_specified_conn' }
-          let(:title){ :maximally_specified_conn }
+          let(:title){ 'maximally_specified_conn' }
           let(:params) { common_params.merge(
             { :keyingtries        => 5,
               :ike                => 'aes_gcm256-sha2;dh23',
