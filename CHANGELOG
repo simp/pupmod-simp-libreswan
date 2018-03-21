@@ -1,3 +1,6 @@
+* Wed Mar 21 2018 Trevor Vaughan <tvaughan@onyxpont.com> - 3.0.3-0
+- Added Puppet 5 and OEL support
+
 * Thu Nov 09 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 3.0.2-0
 - Bug fixes:
   - Set up FIPS-compliant configuration, not just when

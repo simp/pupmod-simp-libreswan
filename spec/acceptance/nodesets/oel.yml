@@ -1,0 +1,42 @@
+HOSTS:
+  left7:
+    roles:
+      - server
+      - left7
+      - agent
+      - libreswan
+      - default
+    platform:   el-7-x86_64
+    box:        elastic/oel-7-x86_64
+    hypervisor: vagrant
+  right7:
+    roles:
+      - server
+      - right7
+      - agent
+      - libreswan
+    platform:   el-7-x86_64
+    box:        elastic/oel-7-x86_64
+    hypervisor: vagrant
+  left6:
+    roles:
+      - server
+      - left6
+      - agent
+      - libreswan
+    platform:   el-6-x86_64
+    box:        elastic/oel-6-x86_64
+    hypervisor: vagrant
+  right6:
+    roles:
+      - server
+      - right6
+      - agent
+      - libreswan
+    platform:   el-6-x86_64
+    box:        elastic/oel-6-x86_64
+    hypervisor: vagrant
+CONFIG:
+  log_level: verbose
+  type:      aio
+  vagrant_memsize: 256

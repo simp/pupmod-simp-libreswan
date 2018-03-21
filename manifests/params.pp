@@ -7,9 +7,5 @@ class libreswan::params {
       $package_name = 'libreswan'
       $service_name = 'ipsec'
     }
-    default: {
-      fail("${::operatingsystem} not supported")
-    }
   }
-
 }

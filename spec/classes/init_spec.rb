@@ -178,15 +178,4 @@ describe 'libreswan' do
       end
     end
   end
-
-  context 'unsupported operating system' do
-    describe 'libreswan class without any parameters on Solaris/Nexenta' do
-      let(:facts) {{
-        :osfamily        => 'Solaris',
-        :operatingsystem => 'Nexenta',
-      }}
-
-      it { expect { is_expected.to contain_package('libreswan') }.to raise_error(Puppet::Error, /Nexenta not supported/) }
-    end
-  end
 end

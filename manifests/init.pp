@@ -162,6 +162,8 @@ class libreswan (
 
 ) inherits ::libreswan::params {
 
+  simplib::assert_metadata($module_name)
+
   # set the token for the NSS database.
   if $fips or $facts['fips_enabled'] {
     $token = 'NSS FIPS 140-2 Certificate DB' }
