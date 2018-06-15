@@ -1,3 +1,6 @@
+* Fri Jun 15 2018 Nick Miller <nick.miller@onyxpoint.com> - 3.0.3-0
+- Remove unneeded fixtures and update CI assets
+
 * Thu Nov 09 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 3.0.2-0
 - Bug fixes:
   - Set up FIPS-compliant configuration, not just when
