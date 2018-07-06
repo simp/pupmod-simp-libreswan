@@ -1,3 +1,10 @@
+<%
+  if ENV['BEAKER_HYPERVISOR']
+    hypervisor = ENV['BEAKER_HYPERVISOR']
+  else
+    hypervisor = 'vagrant'
+  end
+-%>
 HOSTS:
   left7:
     roles:
@@ -8,7 +15,7 @@ HOSTS:
       - default
     platform:   el-7-x86_64
     box:        centos/7
-    hypervisor: vagrant
+    hypervisor: <%= hypervisor %>
   right7:
     roles:
       - server
@@ -17,7 +24,7 @@ HOSTS:
       - libreswan
     platform:   el-7-x86_64
     box:        centos/7
-    hypervisor: vagrant
+    hypervisor: <%= hypervisor %>
   left6:
     roles:
       - server
@@ -26,7 +33,7 @@ HOSTS:
       - libreswan
     platform:   el-6-x86_64
     box:        centos/6
-    hypervisor: vagrant
+    hypervisor: <%= hypervisor %>
   right6:
     roles:
       - server
@@ -35,8 +42,11 @@ HOSTS:
       - libreswan
     platform:   el-6-x86_64
     box:        centos/6
-    hypervisor: vagrant
+    hypervisor: <%= hypervisor %>
 CONFIG:
   log_level: verbose
   type:      aio
   vagrant_memsize: 256
+<% if ENV['BEAKER_PUPPET_ENVIRONMENT'] -%>
+  puppet_environment: <%= ENV['BEAKER_PUPPET_ENVIRONMENT'] %>
+<% end -%>
