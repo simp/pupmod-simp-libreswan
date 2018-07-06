@@ -157,6 +157,32 @@ pup5_3-unit:
   <<: *spec_tests
 
 
+# Puppet 5.5 for PE 2018.1 support
+# See: https://puppet.com/misc/puppet-enterprise-lifecycle
+# --------------------------------------
+pup5_5-validation:
+  stage: validation
+  tags:
+    - docker
+  image: ruby:2.4
+  variables:
+    PUPPET_VERSION: '~> 5.5.1'
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  <<: *validation_checks
+
+pup5_5-unit:
+  stage: unit
+  tags:
+    - docker
+  image: ruby:2.4
+  variables:
+    PUPPET_VERSION: '~> 5.5.1'
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  <<: *spec_tests
+
+
 # Keep an eye on the latest puppet 5
 # ----------------------------------
 pup5_latest-validation:
@@ -185,7 +211,7 @@ pup5_latest-unit:
 
 # Acceptance tests
 # ==============================================================================
-default-acceptance:
+acceptance-default:
   stage: acceptance
   tags:
     - beaker
@@ -194,9 +220,10 @@ default-acceptance:
   variables:
     PUPPET_VERSION: '4.10'
   script:
+    - bundle exec rake spec_clean
     - bundle exec rake beaker:suites[default]
 
-fips-acceptance:
+acceptance-fips:
   stage: acceptance
   tags:
     - beaker
@@ -206,6 +233,7 @@ fips-acceptance:
     PUPPET_VERSION: '4.10'
     BEAKER_fips: 'yes'
   script:
+    - bundle exec rake spec_clean
     - bundle exec rake beaker:suites[default]
 
 acceptance-puppet5-default:
@@ -214,6 +242,9 @@ acceptance-puppet5-default:
     - beaker
   <<: *cache_bundler
   <<: *setup_env_beaker
+  variables:
+    PUPPET_VERSION: '~> 5.5.1'
+    BEAKER_PUPPET_COLLECTION: 'puppet5'
   script:
     - bundle exec rake beaker:suites[default,puppet5]
 
@@ -225,6 +256,8 @@ acceptance-fips-puppet5-default:
   <<: *setup_env_beaker
   variables:
     BEAKER_fips: 'yes'
+    PUPPET_VERSION: '~> 5.5.1'
+    BEAKER_PUPPET_COLLECTION: 'puppet5'
   script:
     - bundle exec rake beaker:suites[default,puppet5]
 
@@ -235,6 +268,7 @@ acceptance-oel-puppet5-default:
   <<: *cache_bundler
   <<: *setup_env_beaker
   variables:
-    PUPPET_VERSION: '5.4'
+    PUPPET_VERSION: '~> 5.5.1'
+    BEAKER_PUPPET_COLLECTION: 'puppet5'
   script:
     - bundle exec rake beaker:suites[default,oel_p5]
