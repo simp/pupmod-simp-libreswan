@@ -241,7 +241,7 @@ acceptance-oel:
   tags:
     - beaker
   <<: *cache_bundler
-  <<: *setup_env_beaker
+  <<: *setup_bundler_env
   variables:
     PUPPET_VERSION: '4.10'
   script:
@@ -252,7 +252,7 @@ acceptance-oel-fips:
   tags:
     - beaker
   <<: *cache_bundler
-  <<: *setup_env_beaker
+  <<: *setup_bundler_env
   variables:
     PUPPET_VERSION: '4.10'
     BEAKER_fips: 'yes'
@@ -264,7 +264,7 @@ acceptance-puppet5-default:
   tags:
     - beaker
   <<: *cache_bundler
-  <<: *setup_env_beaker
+  <<: *setup_bundler_env
   variables:
     PUPPET_VERSION: '~> 5.5.1'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
@@ -276,7 +276,7 @@ acceptance-fips-puppet5-default:
   tags:
     - beaker
   <<: *cache_bundler
-  <<: *setup_env_beaker
+  <<: *setup_bundler_env
   variables:
     BEAKER_fips: 'yes'
     PUPPET_VERSION: '~> 5.5.1'
@@ -289,7 +289,7 @@ acceptance-oel-puppet5-default:
   tags:
     - beaker
   <<: *cache_bundler
-  <<: *setup_env_beaker
+  <<: *setup_bundler_env
   variables:
     PUPPET_VERSION: '~> 5.5.1'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
@@ -301,7 +301,7 @@ acceptance-oel-fips-puppet5-default:
   tags:
     - beaker
   <<: *cache_bundler
-  <<: *setup_env_beaker
+  <<: *setup_bundler_env
   variables:
     BEAKER_fips: 'yes'
     PUPPET_VERSION: '~> 5.5.1'
