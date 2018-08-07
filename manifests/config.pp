@@ -51,6 +51,11 @@ class libreswan::config {
   $fragicmp            = $::libreswan::fragicmp
   $hidetos             = $::libreswan::hidetos
   $overridemtu         = $::libreswan::overridemtu
+  $block_cidrs         = $::libreswan::block_cidrs
+  $clear_cidrs         = $::libreswan::clear_cidrs
+  $clear_private_cidrs = $::libreswan::clear_private_cidrs
+  $private_cidrs       = $::libreswan::private_cidrs
+  $private_clear_cidrs = $::libreswan::private_clear_cidrs
 
   file { '/etc/ipsec.conf':
     ensure  => file,
@@ -65,8 +70,43 @@ class libreswan::config {
     mode   => '0700',
     before => File['/etc/ipsec.conf']
   }
+  file { "${ipsecdir}/policies/block":
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('libreswan/etc/ipsec.d/policies/block.erb'),
+  }
+  file { "${ipsecdir}/policies/clear":
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('libreswan/etc/ipsec.d/policies/clear.erb'),
+  }
+  file { "${ipsecdir}/policies/clear-or-private":
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('libreswan/etc/ipsec.d/policies/clear_or_private.erb'),
+  }
+  file { "${ipsecdir}/policies/private":
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('libreswan/etc/ipsec.d/policies/private.erb'),
+  }
+  file { "${ipsecdir}/policies/private-or-clear":
+    ensure  => 'file',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('libreswan/etc/ipsec.d/policies/private_or_clear.erb'),
+  }
   if $::libreswan::logfile {
-    file {$::libreswan::logfile:
+    file { $::libreswan::logfile:
       ensure => file,
       owner  => root,
       mode   => '0600',

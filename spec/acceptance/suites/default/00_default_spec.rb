@@ -58,7 +58,7 @@ test_name 'libreswan class'
   describe "libreswan class for CentOS #{os_major_version}" do
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
-    let(:haveged) { "package { 'epel-release': ensure => present } -> class { 'haveged': }" }
+    let(:haveged) { "package { 'epel-release': ensure => installed, provider => 'rpm', source => \"https://dl.fedoraproject.org/pub/epel/epel-release-latest-#{os_major_version}.noarch.rpm\" } -> class { 'haveged': }" }
     let(:manifest) { "class { 'libreswan': }"}
 
     let(:leftinterface) { get_private_network_interface(left) }
@@ -224,7 +224,6 @@ EOM
 
           # can take up to 2 minutes for right to timeout tunnel, so restart instead to detect
           # failure immediately
-          on right, 'ipsec restart', :acceptable_exit_codes => [0]
           wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 0\"")
           wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
@@ -338,8 +337,8 @@ EOM
           # can take up to 2 minutes for right to timeout tunnel,
           # so restart instead to detect
           # failure immediately
-          on right, 'ipsec restart', :acceptable_exit_codes => [0]
           wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 0\"")
+          wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
 
         it "should drop data because of broken tunnel" do
