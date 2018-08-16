@@ -1,0 +1,14 @@
+# THIS FILE IS CONTROLLED BY PUPPET
+#
+# This file defines the set of CIDRs (network/mask-length) to which
+# communication should never be allowed.
+#
+# See /usr/share/doc/libreswan/policygroups.html for details.
+#
+# $Id: block.in,v 1.4 2003/02/17 02:22:15 mcr Exp $
+#
+<% if @block_cidrs then -%>
+<%   @block_cidrs.each do |cidr| %>
+<%= cidr %>
+<%   end -%>
+<% end -%>

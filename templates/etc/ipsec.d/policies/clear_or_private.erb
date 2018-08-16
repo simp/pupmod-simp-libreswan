@@ -1,0 +1,15 @@
+# THIS FILE IS CONTROLLED BY PUPPET
+#
+# This file defines the set of CIDRs (network/mask-length) to which
+# we will communicate in the clear, or, if the other side initiates IPSEC,
+# using encryption.  This behaviour is also called "Opportunistic Responder".
+#
+# See /usr/share/doc/libreswan/policygroups.html for details.
+#
+# $Id: clear-or-private.in,v 1.4 2003/02/17 02:22:15 mcr Exp $
+#
+<% if @clear_private_cidrs then -%>
+<%   @clear_private_cidrs.each do |cidr| %>
+<%= cidr %>
+<%   end -%>
+<% end -%>

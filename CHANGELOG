@@ -1,3 +1,6 @@
+* Fri Jul 06 2018 Trevor Vaughan <tvaughan@onyxpont.com> - 3.1.0-0
+- Added Puppet 5 and OEL support
+
 * Fri Jun 15 2018 Nick Miller <nick.miller@onyxpoint.com> - 3.0.3-0
 - Remove unneeded fixtures and update CI assets
 

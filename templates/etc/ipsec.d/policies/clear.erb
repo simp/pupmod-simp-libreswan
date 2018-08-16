@@ -1,0 +1,12 @@
+# THIS FILE IS CONTROLLED BY PUPPET
+#
+# This file defines the set of CIDRs (network/mask-length) to which
+# communication should always be in the clear.
+#
+# See /usr/share/doc/libreswan/policygroups.html for details.
+#
+<% if @clear_cidrs then -%>
+<%   @clear_cidrs.each do |cidr| %>
+<%= cidr %>
+<%   end -%>
+<% end -%>

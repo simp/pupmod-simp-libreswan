@@ -38,7 +38,7 @@ define libreswan::nss::init_db(
     }
   }
 
-  if $::operatingsystem in ['RedHat', 'CentOS'] {
+  if $::operatingsystem in ['RedHat', 'CentOS', 'OracleLinux'] {
     if (versioncmp($::operatingsystemmajrelease,'7') < 0) {
       $init_command    = '/usr/sbin/ipsec initnss'
     }

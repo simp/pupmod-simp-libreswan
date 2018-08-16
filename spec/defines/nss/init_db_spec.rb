@@ -9,7 +9,7 @@ describe 'libreswan::nss::init_db', :type => :define do
         let(:common_params) { { :dbdir => '/etc/ipsec.d', :nsspassword => '/etc/ipsec.d/nsspassword',
           :password => 'mypassword', :token => 'NSS Certificate DB' } }
         let(:init_command) {
-          if os == 'centos-6-x86_64' or os == 'redhat-6-x86_64'
+          if ['centos-6-x86_64','redhat-6-x86_64','oraclelinux-6-x86_64'].include?(os)
             '/usr/sbin/ipsec initnss'
           else
             '/sbin/ipsec initnss'
