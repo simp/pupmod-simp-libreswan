@@ -1,3 +1,7 @@
+* Tue Sep 11 2018 Nicholas Markowski <nicholas.markowski@onyxpoint.com> - 3.1.0-0
+- Updated $app_pki_external_source to accept any string. This matches the
+  functionality of pki::copy.
+
 * Fri Jul 06 2018 Trevor Vaughan <tvaughan@onyxpont.com> - 3.1.0-0
 - Added Puppet 5 and OEL support
 
