@@ -14,7 +14,7 @@ HOSTS:
       - libreswan
       - default
     platform:   el-7-x86_64
-    box:        bento/oracle-7.5
+    box:        onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
   right7:
     roles:
@@ -23,7 +23,7 @@ HOSTS:
       - agent
       - libreswan
     platform:   el-7-x86_64
-    box:        bento/oracle-7.5
+    box:        onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
   left6:
     roles:
@@ -32,7 +32,7 @@ HOSTS:
       - agent
       - libreswan
     platform:   el-6-x86_64
-    box:        bento/oracle-6.10
+    box:        onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
   right6:
     roles:
@@ -41,7 +41,7 @@ HOSTS:
       - agent
       - libreswan
     platform:   el-6-x86_64
-    box:        bento/oracle-6.10
+    box:        onyxpoint/oel-6-x86_64
     hypervisor: <%= hypervisor %>
 CONFIG:
   log_level: verbose
