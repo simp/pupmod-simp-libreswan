@@ -55,7 +55,7 @@ end
 test_name 'libreswan class'
 
 ['6', '7'].each do |os_major_version|
-  describe "libreswan class for CentOS #{os_major_version}" do
+  describe "libreswan class for EL #{os_major_version}" do
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
     let(:haveged) { "package { 'epel-release': ensure => installed, provider => 'rpm', source => \"https://dl.fedoraproject.org/pub/epel/epel-release-latest-#{os_major_version}.noarch.rpm\" } -> class { 'haveged': }" }
@@ -271,6 +271,11 @@ EOM
           "        content => '-A LOCAL-INPUT -p tcp --dport #{nc_port} -j ACCEPT',\n" +
           "        apply_to => 'all',\n" +
           "        order => 11\n" +
+          "      }\n" +
+          "      iptables::listen::tcp_stateful { 'allow_sshd':\n" +
+          "        order => 8,\n" +
+          "        trusted_nets => ['ALL'],\n" +
+          "        dports => 22,\n" +
           "      }\n"
         }
         let(:rightconnection_with_firewall) { rightconnection +
@@ -284,6 +289,11 @@ EOM
           "        content => '-A LOCAL-INPUT -p tcp --dport #{nc_port} -j ACCEPT',\n" +
           "        apply_to => 'all',\n" +
           "        order => 11\n" +
+          "      }\n" +
+          "      iptables::listen::tcp_stateful { 'allow_sshd':\n" +
+          "        order => 8,\n" +
+          "        trusted_nets => ['ALL'],\n" +
+          "        dports => 22,\n" +
           "      }\n"
         }
 
