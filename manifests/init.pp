@@ -118,7 +118,7 @@ class libreswan (
   Boolean                                $use_certs               = true,
   Variant[Boolean,Enum['simp']]          $pki                     = simplib::lookup('simp_options::pki', {'default_value' => false }),
   Boolean                                $haveged                 = simplib::lookup('simp_options::haveged', {'default_value' => false }),
-  String                                 $nssdb_password          = passgen('nssdb_password'),
+  String                                 $nssdb_password          = simplib::passgen('nssdb_password'),
   # Possible Values in ipsec.conf file
   Optional[String]                       $myid                    = undef,
   Enum['netkey','klips','mast']          $protostack              = 'netkey',
