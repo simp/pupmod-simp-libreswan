@@ -29,7 +29,7 @@ a compliance-management framework built on Puppet.
 
 If you find any issues, they can be submitted to our [JIRA](https://simp-project.atlassian.net/).
 
-Please read our [Contribution Guide](http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html).
+Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
 
 This module is optimally designed for use within a larger SIMP ecosystem, but it can be used independently:
 * When included within the SIMP ecosystem, security compliance settings will be managed from the Puppet server.
@@ -141,7 +141,7 @@ Currently this has only been tested with Centos 6 and 7.
 
 ## Development
 
-Please read our [Contribution Guide](http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html).
+Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
 
 ### Acceptance tests
 
