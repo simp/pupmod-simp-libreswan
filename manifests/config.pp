@@ -57,6 +57,23 @@ class libreswan::config {
   $private_cidrs       = $::libreswan::private_cidrs
   $private_clear_cidrs = $::libreswan::private_clear_cidrs
 
+  # Adding stuff here
+  #
+  $type                = $::libreswan::type
+  $left                = $::libreswan::left
+  $leftid              = $::libreswan::leftid
+  $rightid             = $::libreswan::rightid
+  $rightca             = $::libreswan::rightca
+  $ikev2               = $::libreswan::ikev2
+  $narrowing           = $::libreswan::narrowing
+  $leftauth            = $::libreswan::leftauth
+  $rightauth           = $::libreswan::rightauth
+  $negotiationshunt    = $::libreswan::negotiationshunt
+  $failureshunt        = $::libreswan::failureshunt
+  $keyingtries         = $::libreswan::keyingtries
+  $rekey               = $::libreswan::rekey
+  $auto                = $::libreswan::auto
+
   file { '/etc/ipsec.conf':
     ensure  => file,
     owner   => root,
@@ -70,6 +87,16 @@ class libreswan::config {
     mode   => '0700',
     before => File['/etc/ipsec.conf']
   }
+
+#Added this config file   
+  file { "${ipsecdir}/oe.conf":
+    ensure  =>  'file',
+    owner   =>  'root',
+    group   =>  'root',
+    mode    =>  '0644',
+    content =>  template('libreswan/etc/oeipsec.conf.erb')
+  }
+
   file { "${ipsecdir}/policies/block":
     ensure  => 'file',
     owner   => 'root',
