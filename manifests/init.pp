@@ -171,8 +171,8 @@ class libreswan (
   Optional[Array[Simplib::IP::V4::CIDR]] $private_cidrs           = undef,
   Optional[Array[Simplib::IP::V4::CIDR]] $private_clear_cidrs     = ['0.0.0.0/0'],
   
-  # Adding stuff here for opportunistic settings
-  #
+  # Opportunistic IPsec parameters
+  
   Optional[String]                       $type                    = undef,
   Optional[String]                       $left                    = '%defaultroute',
   Optional[String]                       $leftid                  = '%fromcert',
@@ -183,11 +183,12 @@ class libreswan (
   Optional[String]                       $narrowing               = 'yes',
   Optional[String]                       $leftauth                = 'rsasig',
   Optional[String]                       $rightauth               = 'rsasig',
-  Optional[String]                       $negotiationshunt        = 'passthrough',
-  Optional[String]                       $failureshunt            = 'passthrough',
+#  Optional[String]                       $negotiationshunt        = undef,
+#  Optional[String]                       $failureshunt            = undef,
   Optional[Integer]                      $keyingtries             = 3,
   Optional[String]                       $rekey                   = 'no',
-  Optional[String]                       $auto                    = 'ondemand'
+  Optional[String]                       $auto                    = 'ondemand',
+  Optional[String]                       $authby                  = 'never'
 
 
 ) inherits ::libreswan::params {

@@ -57,8 +57,8 @@ class libreswan::config {
   $private_cidrs       = $::libreswan::private_cidrs
   $private_clear_cidrs = $::libreswan::private_clear_cidrs
 
-  # Adding stuff here
-  #
+  # Opportunistic IPsec parameters
+  
   $type                = $::libreswan::type
   $left                = $::libreswan::left
   $leftid              = $::libreswan::leftid
@@ -68,11 +68,12 @@ class libreswan::config {
   $narrowing           = $::libreswan::narrowing
   $leftauth            = $::libreswan::leftauth
   $rightauth           = $::libreswan::rightauth
-  $negotiationshunt    = $::libreswan::negotiationshunt
-  $failureshunt        = $::libreswan::failureshunt
+#  $negotiationshunt    = $::libreswan::negotiationshunt
+#  $failureshunt        = $::libreswan::failureshunt
   $keyingtries         = $::libreswan::keyingtries
   $rekey               = $::libreswan::rekey
   $auto                = $::libreswan::auto
+  $authby              = $::libreswan::authby
 
   file { '/etc/ipsec.conf':
     ensure  => file,

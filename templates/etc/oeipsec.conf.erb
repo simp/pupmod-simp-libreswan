@@ -1,44 +1,67 @@
-# This should act as the template for the template for the configuration file 
-# located in the host's /etc/ipsec.d directory
+conn clear
+	type = passthrough
+	authby = <%= @authby %>
+	left = <%= @left %>
+	right = %group
+	auto = <%= @auto %>
+
+conn clear-or-private
+	type = tunnel
+	left = <%= @left %>
+	leftid = <%= @leftid %>
+	right = %opportunisticgroup
+	rightid = <%= @rightid %>
+	rightca = <%= @rightca %>
+	leftauth = <%= @leftauth %>
+	rightauth = <%= @rightauth %>
+	ikev2 = <%= @ikev2 %>
+# Allow data to passthrough in cleartext as IKE occurs
+	negotiationshunt = passthrough
+# If IPsec tunnel fails to be setup, allow data to flow through anyways 
+	failureshunt = passthrough
+	narrowing = <%= @narrowing %>
+	keyingtries = <%= @keyingtries %>
+	rekey = <%= @rekey %>
+        auto = <%= @auto %>
+
 conn private-or-clear
 	type = tunnel
-     <% if @left then -%>
 	left = <%= @left %>
-     <% end -%>
-     <% if @leftid then -%>
 	leftid = <%= @leftid %>
-     <% end -%>
 	right = %opportunisticgroup
-     <% if @rightid then -%>
 	rightid = <%= @rightid %>
-     <% end -%>
-     <% if @rightca then -%>
 	rightca = <%= @rightca %>
-     <% end -%>
-     <% if @ikev2 then -%>
 	ikev2 = <%= @ikev2 %>
-     <% end -%>
-     <% if @narrowing then -%>
 	narrowing = <%= @narrowing %>
-     <% end -%>
-     <% if @leftauth then -%>
 	leftauth = <%= @leftauth %>
-     <% end -%>
-     <% if @rightauth then -%>
 	rightauth = <%= @rightauth %>
-     <% end -%>
-     <% if @negotiationshunt then -%>
-	negotiationshunt = <%= @negotiationshunt %>
-     <% end -%>
-     <% if @failureshunt then -%>
-	failureshunt = <%= @failureshunt %>
-     <% end -%>
-     <% if @keyingtries then -%>
+# Allow data to passthrough in cleartext as IKE occurs
+ 	negotiationshunt = passthrough
+# If IPsec tunnel fails to be setup, allow data to flow through anyways
+	failureshunt = passthrough
 	keyingtries = <%= @keyingtries %>
-     <% end -%>
-     <% if @rekey then -%>
 	rekey = <%= @rekey %>
-     <% end -%>
-     <% if @auto then -%>
 	auto = <%= @auto %>
-     <% end -%>
+
+conn private
+	type = tunnel
+	left = <%= @left %>
+	leftid = <%= @leftid %>
+	right = %opportunisticgroup
+	rightid = <%= @rightid %>
+	rightca = <%= @rightca %>
+	ikev2 = <%= @ikev2 %>
+	leftauth = <%= @leftauth %>
+	rightauth = <%= @rightauth %>
+# Hold data while IKE attempts to setup IPSec tunnel
+ 	negotiationshunt = hold
+# If IKE fails to start IPsec connection, reject the connection
+	failureshunt = reject
+	auto = <%= @auto %>
+
+conn block
+	type = reject
+	authby = <%= @authby %>
+	left = <%= @left %>
+	right = %group
+	auto = <%= @auto %>
