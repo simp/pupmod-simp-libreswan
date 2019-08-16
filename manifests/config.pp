@@ -62,14 +62,15 @@ class libreswan::config {
   $type                = $::libreswan::type
   $left                = $::libreswan::left
   $leftid              = $::libreswan::leftid
+  $right               = $::libreswan::right
   $rightid             = $::libreswan::rightid
   $rightca             = $::libreswan::rightca
   $ikev2               = $::libreswan::ikev2
   $narrowing           = $::libreswan::narrowing
   $leftauth            = $::libreswan::leftauth
   $rightauth           = $::libreswan::rightauth
-#  $negotiationshunt    = $::libreswan::negotiationshunt
-#  $failureshunt        = $::libreswan::failureshunt
+  $negotiationshunt    = $::libreswan::negotiationshunt
+  $failureshunt        = $::libreswan::failureshunt
   $keyingtries         = $::libreswan::keyingtries
   $rekey               = $::libreswan::rekey
   $auto                = $::libreswan::auto
