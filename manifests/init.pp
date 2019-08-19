@@ -176,7 +176,7 @@ class libreswan (
   Optional[Enum['transport', 'passthrough', 'drop', 'reject']]                    $type  =             undef,
   Optional[String]                       $left                    = '%defaultroute',
   Optional[String]                       $leftid                  = '%fromcert',
-  Optional[Enum['%defaultroute', '%any', '%opportunisticgroup', '%group', '%opportunistic', '%ppp0']]                     $right             = undef,
+  Optional[Enum['%defaultroute', '%any', '%opportunisticgroup', '%group', '%opportunistic', '%ppp0']]                    $right             = undef,
   Optional[String]                       $rightid                 = '%fromcert',
   Optional[String]                       $rightca                 = '%same',
   Optional[String]                       $ikev2                   = 'insist',
