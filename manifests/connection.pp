@@ -147,7 +147,7 @@ define libreswan::connection (
   Optional[Enum['rsasig','secret',
     'secret|rsasig', 'never', 'null']] $authby             = undef,
   Optional[Enum['tunnel','transport',
-    'passthough','reject','drop']]     $type               = undef,
+    'passthrough','reject','drop']]     $type               = undef,
   Optional[Enum['insist','permit',
     'propose','never','yes', 'no']]    $ikev2              = undef,
   Optional[Enum['esp', 'ah']]          $phase2             = undef,
@@ -177,6 +177,14 @@ define libreswan::connection (
   Optional[String]                     $modecfgbanner      = undef,
   Optional[Enum['drafts','rfc',
     'both']]                           $nat_ikev1_method   = undef,
+  Optional[Enum['hold','passthrough']] $negotiationshunt   = undef,
+  Optional[Enum['none','passthrough',
+    'drop','reject']]                  $failureshunt       = undef,
+  Optional[Enum['no','yes']]           $rekey              = undef,
+  Optional[Enum['rsasig','secret',
+    'null']]                           $leftauth           = undef,
+  Optional[Enum['rsasig','secret',
+    'null']]                           $rightauth          = undef,
 ) {
   include 'libreswan'
 

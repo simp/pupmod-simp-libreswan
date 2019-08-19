@@ -171,26 +171,6 @@ class libreswan (
   Optional[Array[Simplib::IP::V4::CIDR]] $private_cidrs           = undef,
   Optional[Array[Simplib::IP::V4::CIDR]] $private_clear_cidrs     = ['0.0.0.0/0'],
   
-# Opportunistic IPsec parameters
-  
-  Optional[Enum['transport', 'passthrough', 'drop', 'reject']]                    $type  =             undef,
-  Optional[String]                       $left                    = '%defaultroute',
-  Optional[String]                       $leftid                  = '%fromcert',
-  Optional[Enum['%defaultroute', '%any', '%opportunisticgroup', '%group', '%opportunistic', '%ppp0']]                    $right             = undef,
-  Optional[String]                       $rightid                 = '%fromcert',
-  Optional[String]                       $rightca                 = '%same',
-  Optional[String]                       $ikev2                   = 'insist',
-  Optional[Enum['yes', 'no']]            $narrowing               = 'yes',
-  Optional[Enum['rsasig', 'secret', 'null']]                       $leftauth                = 'rsasig',
-  Optional[Enum['rsasig', 'secret', 'null']]                       $rightauth               = 'rsasig',
-  Optional[Enum['hold', 'passthrough']]                     $negotiationshunt             = undef,
-  Optional[Enum['none', 'passthrough', 'drop', 'reject']]                      $failureshunt             = undef, 
-  Optional[Integer]                      $keyingtries             = 3,
-  Optional[Enum['yes', 'no']]            $rekey                   = 'no',
-  Optional[Enum['add', 'ondemand', 'start', 'ignore']]                       $auto                    = 'ondemand',
-  Optional[Enum['rsasig', 'secret', 'secret|rsasig', 'never', 'null']]                       $authby                  = 'never'
-
-
 ) inherits ::libreswan::params {
 
   simplib::assert_metadata($module_name)

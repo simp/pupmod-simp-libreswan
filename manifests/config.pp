@@ -57,25 +57,6 @@ class libreswan::config {
   $private_cidrs       = $::libreswan::private_cidrs
   $private_clear_cidrs = $::libreswan::private_clear_cidrs
 
-  # Opportunistic IPsec parameters
-  
-  $type                = $::libreswan::type
-  $left                = $::libreswan::left
-  $leftid              = $::libreswan::leftid
-  $right               = $::libreswan::right
-  $rightid             = $::libreswan::rightid
-  $rightca             = $::libreswan::rightca
-  $ikev2               = $::libreswan::ikev2
-  $narrowing           = $::libreswan::narrowing
-  $leftauth            = $::libreswan::leftauth
-  $rightauth           = $::libreswan::rightauth
-  $negotiationshunt    = $::libreswan::negotiationshunt
-  $failureshunt        = $::libreswan::failureshunt
-  $keyingtries         = $::libreswan::keyingtries
-  $rekey               = $::libreswan::rekey
-  $auto                = $::libreswan::auto
-  $authby              = $::libreswan::authby
-
   file { '/etc/ipsec.conf':
     ensure  => file,
     owner   => root,
@@ -90,15 +71,70 @@ class libreswan::config {
     before => File['/etc/ipsec.conf']
   }
 
-#Added this config file   
-  file { "${ipsecdir}/oe.conf":
-    ensure  =>  'file',
-    owner   =>  'root',
-    group   =>  'root',
-    mode    =>  '0644',
-    content =>  template('libreswan/etc/oeipsec.conf.erb')
+# Connections for Opportunistic Encryption
+  libreswan::connection{ 'clear':
+    type     =>  'passthrough',
+    authby   =>  'never',
+    left     =>  '%defaultroute',
+    right    =>  '%group',
+    auto     =>  'ondemand'
   }
-
+  libreswan::connection{ 'clear-or-private':
+    type      =>  'tunnel',
+    left      =>  '%defaultroute',
+    leftid    =>  '%fromcert',
+    right     =>  '%opportunisticgroup',
+    rightid   =>  '%fromcert',
+    rightca   =>  '%same',
+    leftauth  =>  'rsasig',
+    rightauth =>  'rsasig',
+    ikev2     =>  'insist',
+    narrowing =>  'yes',
+    negotiationshunt =>  'passthrough',
+    failureshunt     =>  'passthrough',
+    rekey     =>  'no',
+    auto      =>  'ondemand'
+  }
+  libreswan::connection{ 'private-or-clear':
+    type      =>  'tunnel',
+    left      =>  '%defaultroute',
+    leftid    =>  '%fromcert',
+    right     =>  '%opportunisticgroup',
+    rightid   =>  '%fromcert',
+    rightca   =>  '%same',
+    leftauth  =>  'rsasig',
+    rightauth =>  'rsasig',
+    ikev2     =>  'insist',
+    narrowing =>  'yes',
+    negotiationshunt =>  'passthrough',
+    failureshunt     =>  'passthrough',
+    rekey     =>  'no',
+    auto      =>  'ondemand'
+  }
+  libreswan::connection{ 'private':
+    type      =>  'tunnel',
+    left      =>  '%defaultroute',
+    leftid    =>  '%fromcert',
+    right     =>  '%opportunisticgroup',
+    rightid   =>  '%fromcert',
+    rightca   =>  '%same',
+    leftauth  =>  'rsasig',
+    rightauth =>  'rsasig',
+    ikev2     =>  'insist',
+    narrowing =>  'yes',
+    negotiationshunt =>  'hold',
+    failureshunt     =>  'reject',
+    rekey     =>  'no',
+    auto      =>  'ondemand'
+  }
+  libreswan::connection{ 'block':
+    type      =>  'reject',
+    authby    =>  'never',
+    left      =>  '%defaultroute',
+    right     =>  '%group',
+    auto      =>  'ondemand'
+  }
+  
   file { "${ipsecdir}/policies/block":
     ensure  => 'file',
     owner   => 'root',

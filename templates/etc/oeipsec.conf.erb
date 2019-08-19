@@ -1,5 +1,5 @@
 conn clear
-	type = tunnel
+	type = passthrough
 	authby = <%= @authby %>
 	left = <%= @left %>
 	right = %group
@@ -54,7 +54,7 @@ conn private
 	leftauth = <%= @leftauth %>
 	rightauth = <%= @rightauth %>
 # Hold data while IKE attempts to setup IPSec tunnel
- 	negotiationshunt = hold
+	negotiationshunt = hold
 # If IKE fails to start IPsec connection, reject the connection
 	failureshunt = reject
 	auto = <%= @auto %>
