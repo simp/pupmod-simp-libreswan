@@ -27,26 +27,6 @@ HOSTS:
     box:        onyxpoint/oel-7-x86_64
     box_version: ">= 0.2.0"
     hypervisor: <%= hypervisor %>
-  left6:
-    roles:
-      - server
-      - left6
-      - agent
-      - libreswan
-    platform:   el-6-x86_64
-    box:        onyxpoint/oel-6-x86_64
-    box_version: ">= 0.2.0"
-    hypervisor: <%= hypervisor %>
-  right6:
-    roles:
-      - server
-      - right6
-      - agent
-      - libreswan
-    platform:   el-6-x86_64
-    box:        onyxpoint/oel-6-x86_64
-    box_version: ">= 0.2.0"
-    hypervisor: <%= hypervisor %>
 CONFIG:
   log_level: verbose
   type:      aio
