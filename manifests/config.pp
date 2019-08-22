@@ -70,7 +70,6 @@ class libreswan::config {
     mode   => '0700',
     before => File['/etc/ipsec.conf']
   }
-
   file { "${ipsecdir}/policies/block":
     ensure  => 'file',
     owner   => 'root',
