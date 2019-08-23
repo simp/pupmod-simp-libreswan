@@ -54,7 +54,7 @@ end
 
 test_name 'libreswan class'
 
-['7'].each do |os_major_version|
+['6', '7'].each do |os_major_version|
   describe "libreswan class for EL #{os_major_version}" do
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
@@ -122,7 +122,11 @@ EOM
     }
     let(:testfile) { testfile = "/tmp/testfile.#{Time.now.to_i}" }
     let(:nc) { # we want the full path so we can pkill intelligently
+      if  os_major_version == '6'	
+        '/usr/bin/nc'	
+      else	
         '/bin/nc'
+      end	
     }
 
     context 'test prep' do
@@ -130,7 +134,11 @@ EOM
         [left, right].flatten.each do |node|
            # Generate ALL of the entropy .
            apply_manifest_on(node, haveged, :catch_failures => true)
+           if os_major_version == '6'	
+             node.install_package('nc')	
+           else	
              node.install_package('nmap-ncat')
+           end
         end
         left.install_package('tcpdump')
       end
