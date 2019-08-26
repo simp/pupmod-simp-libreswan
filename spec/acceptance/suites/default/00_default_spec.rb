@@ -122,11 +122,11 @@ EOM
     }
     let(:testfile) { testfile = "/tmp/testfile.#{Time.now.to_i}" }
     let(:nc) { # we want the full path so we can pkill intelligently
-      if os_major_version == '6'
-        '/usr/bin/nc'
-      else
+      if  os_major_version == '6'	
+        '/usr/bin/nc'	
+      else	
         '/bin/nc'
-      end
+      end	
     }
 
     context 'test prep' do
@@ -134,9 +134,9 @@ EOM
         [left, right].flatten.each do |node|
            # Generate ALL of the entropy .
            apply_manifest_on(node, haveged, :catch_failures => true)
-           if os_major_version == '6'
-             node.install_package('nc')
-           else
+           if os_major_version == '6'	
+             node.install_package('nc')	
+           else	
              node.install_package('nmap-ncat')
            end
         end

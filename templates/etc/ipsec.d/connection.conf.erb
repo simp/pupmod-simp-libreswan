@@ -58,6 +58,9 @@ conn <%= @conn_name %>
 <% if @leftmodecfgclient then -%>
   leftmodecfgclient = <%= @leftmodecfgclient %>
 <% end -%>
+<% if @leftauth then -%>
+  leftauth = <%= @leftauth %>
+<% end -%>
 
 # Right Side Settings
 <% if @right then -%>
@@ -116,6 +119,9 @@ conn <%= @conn_name %>
 <% end -%>
 <% if @rightmodecfgclient then -%>
   rightmodecfgclient = <%= @rightmodecfgclient %>
+<% end -%>
+<% if @rightauth then -%>
+  rightauth = <%= @rightauth %>
 <% end -%>
 
 # Universal Settings
@@ -184,4 +190,13 @@ conn <%= @conn_name %>
 <% end -%>
 <% if @keyingtries then -%>
   keyingtries = <%= @keyingtries %>
+<% end -%>
+<% if @negotiationshunt then -%>
+  negotiationshunt = <%= @negotiationshunt %>
+<% end -%>
+<% if @failureshunt then -%>
+  failureshunt = <%= @failureshunt %>
+<% end -%>
+<% if @rekey then -%>
+  rekey = <%= @rekey %>
 <% end -%>

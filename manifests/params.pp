@@ -7,5 +7,8 @@ class libreswan::params {
       $package_name = 'libreswan'
       $service_name = 'ipsec'
     }
+    default: {
+      fail("Module ${module_name} is not supported on ${::osfamily}")
+    }
   }
 }

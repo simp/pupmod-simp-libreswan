@@ -169,7 +169,7 @@ class libreswan (
   Optional[Array[Simplib::IP::V4::CIDR]] $clear_cidrs             = undef,
   Optional[Array[Simplib::IP::V4::CIDR]] $clear_private_cidrs     = undef,
   Optional[Array[Simplib::IP::V4::CIDR]] $private_cidrs           = undef,
-  Optional[Array[Simplib::IP::V4::CIDR]] $private_clear_cidrs     = ['0.0.0.0/0']
+  Optional[Array[Simplib::IP::V4::CIDR]] $private_clear_cidrs     = ['0.0.0.0/0'],
 
 ) inherits ::libreswan::params {
 
