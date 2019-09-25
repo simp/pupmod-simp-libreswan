@@ -39,7 +39,7 @@ def wait_for_command_success(
   result = nil
   Timeout::timeout(max_wait_seconds) do
     while true
-      result = on host, cmd, :accept_all_exit_codes => true
+      result = on(host, cmd, :accept_all_exit_codes => true)
       return if result.exit_code == 0
       sleep(interval_sec)
     end
@@ -54,7 +54,9 @@ end
 
 test_name 'libreswan class'
 
-['6', '7'].each do |os_major_version|
+hosts.each do |host|
+  os_major_version = fact_on(host, 'operatingsystemmajrelease')
+
   describe "libreswan class for EL #{os_major_version}" do
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
@@ -122,24 +124,28 @@ EOM
     }
     let(:testfile) { testfile = "/tmp/testfile.#{Time.now.to_i}" }
     let(:nc) { # we want the full path so we can pkill intelligently
-      if  os_major_version == '6'	
-        '/usr/bin/nc'	
-      else	
+      if  os_major_version == '6'
+        '/usr/bin/nc'
+      else
         '/bin/nc'
-      end	
+      end
     }
 
     context 'test prep' do
       it 'should install haveged, nmap-ncat, and tcpdump' do
         [left, right].flatten.each do |node|
-           # Generate ALL of the entropy .
-           apply_manifest_on(node, haveged, :catch_failures => true)
-           if os_major_version == '6'	
-             node.install_package('nc')	
-           else	
-             node.install_package('nmap-ncat')
-           end
+          # Generate ALL of the entropy .
+
+          # HAVEGED is not yet built for EL8
+          apply_manifest_on(node, haveged, :catch_failures => true) unless os_major_version == '8'
+
+          if os_major_version == '6'
+            node.install_package('nc')
+          else
+            node.install_package('nmap-ncat')
+          end
         end
+
         left.install_package('tcpdump')
       end
     end
@@ -154,56 +160,64 @@ EOM
             # Apply ipsec and check for idempotency
             apply_manifest_on(node, manifest, :catch_failures => true)
             apply_manifest_on(node, manifest, :catch_changes => true)
-            on node, "ipsec status", :acceptable_exit_codes => [0]
+            on(node, "ipsec status", :acceptable_exit_codes => [0])
           end
         end
 
         it 'should listen on port 500, 4500' do
           [left, right].flatten.each do |node|
-            on node, "netstat -nuapl | grep -e '.*\/pluto' | grep -e ':500'", :acceptable_exit_codes => [0]
-            on node, "netstat -nuapl | grep -e '.*\/pluto' | grep -e ':4500'", :acceptable_exit_codes => [0]
+            on(node, "netstat -nuapl | grep -e '.*\/pluto' | grep -e ':500'", :acceptable_exit_codes => [0])
+            on(node, "netstat -nuapl | grep -e '.*\/pluto' | grep -e ':4500'", :acceptable_exit_codes => [0])
           end
         end
 
         it 'should load certs and create NSS Database' do
-          on left, "certutil -L -d sql:/etc/ipsec.d | grep -i #{leftfqdn}", :acceptable_exit_codes => [0]
-          on right, "certutil -L -d sql:/etc/ipsec.d | grep -i #{rightfqdn}", :acceptable_exit_codes => [0]
+          on(left, "certutil -L -d sql:/etc/ipsec.d | grep -i #{leftfqdn}", :acceptable_exit_codes => [0])
+          on(right, "certutil -L -d sql:/etc/ipsec.d | grep -i #{rightfqdn}", :acceptable_exit_codes => [0])
         end
       end
 
       context 'with connection but no firewall protection' do
+        it 'should disable the firewall' do
+          on(left, 'puppet resource service iptables ensure=stopped')
+          on(left, 'puppet resource service firewalld ensure=stopped')
+          on(right, 'puppet resource service iptables ensure=stopped')
+          on(right, 'puppet resource service firewalld ensure=stopped')
+        end
+
         it 'should apply manifest idempotently and restart ipsec service' do
           apply_manifest_on(left, leftconnection, :catch_failures => true)
           apply_manifest_on(right, rightconnection, :catch_failures => true)
           apply_manifest_on(left, leftconnection, :catch_changes => true)
           apply_manifest_on(right, rightconnection, :catch_changes => true)
-          on left, "ipsec status", :acceptable_exit_codes => [0]
-          on right, "ipsec status", :acceptable_exit_codes => [0]
+          on(left, "ipsec status", :acceptable_exit_codes => [0])
+          on(right, "ipsec status", :acceptable_exit_codes => [0])
         end
 
-        it "should start a usable connection in tunnel mode" do
-          wait_for_command_success(left,  "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
-          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
+        it 'should start a usable connection in tunnel mode' do
+          wait_for_command_success(left,  'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
+          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
           wait_for_command_success(left, "ip xfrm policy | grep 'mode tunnel'")
           wait_for_command_success(right, "ip xfrm policy | grep 'mode tunnel'")
+        end
 
+        it 'should test communication across the tunnel' do
           # send TCP data from right to left over the tunnel and tcpdump
           # while packets are being sent
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on(left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0])
 
           # couldn't get tcpdump to work as a background process, so run in a thread
           lthread = Thread.new {
             filter = "ip proto 50 and dst #{leftip}"
 #            filter = "dst #{leftip} and \( \(ip proto 50\) or \(port #{nc_port} \) \)"
-            on left, "tcpdump -i #{leftinterface} -c 3 -w #{testfile}.pcap #{filter}",
-              :acceptable_exit_codes => [0]
+            on(left, "tcpdump -i #{leftinterface} -c 3 -w #{testfile}.pcap #{filter}", :acceptable_exit_codes => [0])
           }
           sleep(2)
-          on right, "echo 'this is a test of a tunnel' | #{nc} -s #{rightip} #{left} #{nc_port} -w 5 ", :acceptable_exit_codes => [0]
+          on(right, "echo 'this is a test of a tunnel' | #{nc} -s #{rightip} #{left} #{nc_port} -w 5 ", :acceptable_exit_codes => [0])
           lthread.join
 
           # verify data reaches left
-          on left, "cat #{testfile}", :acceptable_exit_codes => [0] do
+          on(left, "cat #{testfile}", :acceptable_exit_codes => [0]) do
             expect(stdout).to match(/this is a test of a tunnel/)
           end
 
@@ -211,7 +225,7 @@ EOM
           # Ideally, would want to look at pairs of ESP and decrypted packets.  In an
           # automated test, this gets tricky because ESP keep-alive packets may screw
           # up exact analysis.  So, we are limited to this weak check for now.
-          on left, "tcpdump -r #{testfile}.pcap -n", :acceptable_exit_codes => [0] do
+          on(left, "tcpdump -r #{testfile}.pcap -n", :acceptable_exit_codes => [0]) do
             expect(stdout).to match(/ESP\(spi/)
           end
         end
@@ -219,27 +233,26 @@ EOM
 
       context 'when tunnel goes down' do
         it 'should detect disabled tunnel' do
-          on left, 'puppet resource service ipsec ensure=stopped', :acceptable_exit_codes => [0]
+          on(left, 'puppet resource service ipsec ensure=stopped', :acceptable_exit_codes => [0])
           wait_for_command_success(left, "ipsec status |& grep 'Pluto is not running'")
 
           # can take up to 2 minutes for right to timeout tunnel, so restart instead to detect
           # failure immediately
-          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 0\"")
+          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 0"')
           wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
 
         it "should drop data because of broken tunnel" do
           # try to send TCP data from right to left
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on(left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0])
           sleep(2)
-          on right, "echo 'this is a test of a downed tunnel without firewall' | #{nc} -s #{rightip} #{left} #{nc_port} ",
-            :acceptable_exit_codes => [1]
+          on(right, "echo 'this is a test of a downed tunnel without firewall' | #{nc} -s #{rightip} #{left} #{nc_port} ", :acceptable_exit_codes => [1])
 
           # verify data does NOT reach left
-          on left, "cat #{testfile}", :acceptable_exit_codes => [0] do
+          on(left, "cat #{testfile}", :acceptable_exit_codes => [0]) do
             expect(stdout).to_not match(/this is a test of a downed tunnel without firewall/)
           end
-          on left, "pkill -f '#{nc} -l #{nc_port}'", :acceptable_exit_codes => [0]
+          on(left, "pkill -f '#{nc} -l #{nc_port}'", :acceptable_exit_codes => [0])
         end
       end
 
@@ -308,8 +321,8 @@ EOM
           apply_manifest_on(right, rightconnection_with_firewall, :catch_changes => true)
 
           [left, right].flatten.each do |node|
-            on node, "ipsec status", :acceptable_exit_codes => [0]
-            on node, 'iptables --list -v', :acceptable_exit_codes => [0] do
+            on(node, "ipsec status", :acceptable_exit_codes => [0])
+            on(node, 'iptables --list -v', :acceptable_exit_codes => [0]) do
               expect(stdout).to match(/ACCEPT\s+udp\s+--\s+any\s+any\s+#{client_net}\s+anywhere\s+state NEW multiport dports ipsec-nat-t,isakmp/m)
               expect(stdout).to match(/ACCEPT\s+esp/m)
               expect(stdout).to match(/ACCEPT\s+ah/m)
@@ -318,21 +331,21 @@ EOM
         end
 
         it "should allow data carried by connection's tunnel" do
-          wait_for_command_success(left,  "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
-          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
+          wait_for_command_success(left,  'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
+          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
 
           # send TCP data from right to left
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on(left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0])
           sleep(2)
-          on right, "echo 'this is a test of a tunnel with firewall enabled' | #{nc} -s #{rightip} #{left} #{nc_port} ", :acceptable_exit_codes => [0]
+          on(right, "echo 'this is a test of a tunnel with firewall enabled' | #{nc} -s #{rightip} #{left} #{nc_port} ", :acceptable_exit_codes => [0])
 
           # verify data does reach left
-          on left, "cat #{testfile}", :acceptable_exit_codes => [0] do
+          on(left, "cat #{testfile}", :acceptable_exit_codes => [0]) do
             expect(stdout).to match(/this is a test of a tunnel with firewall enabled/)
           end
 
           # verify iptables packet counts for esp and nc (over tcp) traffic have incremented
-          on left, 'iptables --list -v' do
+          on(left, 'iptables --list -v') do
             expect(stdout).to match(/^(\s+[1-9]+[0-9]*\s+){2}ACCEPT\s+esp/m)
             expect(stdout).to match(/^(\s+[1-9]+[0-9]*\s+){2}ACCEPT\s+tcp/m)
           end
@@ -341,28 +354,27 @@ EOM
 
       context 'when tunnel goes down with firewall protection' do
         it 'should detect disabled tunnel' do
-          on left, 'puppet resource service ipsec ensure=stopped', :acceptable_exit_codes => [0]
+          on(left, 'puppet resource service ipsec ensure=stopped', :acceptable_exit_codes => [0])
           wait_for_command_success(left, "ipsec status |& grep 'Pluto is not running'")
 
           # can take up to 2 minutes for right to timeout tunnel,
           # so restart instead to detect
           # failure immediately
-          wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 0\"")
+          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 0"')
           wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
 
         it "should drop data because of broken tunnel" do
           # try to send TCP data from right to left
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on(left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0])
           sleep(2)
-          on right, "echo 'this is a test of a downed tunnel with firewall enabled' | #{nc} -s #{rightip} #{left} #{nc_port} ",
-            :acceptable_exit_codes => [1]
+          on(right, "echo 'this is a test of a downed tunnel with firewall enabled' | #{nc} -s #{rightip} #{left} #{nc_port} ", :acceptable_exit_codes => [1])
 
           # verify data does NOT reach left
-          on left, "cat #{testfile}", :acceptable_exit_codes => [0] do
+          on(left, "cat #{testfile}", :acceptable_exit_codes => [0]) do
             expect(stdout).to_not match(/this is a test of a downed tunnel with firewall enabled/)
           end
-          on left, "pkill -f '#{nc} -l #{nc_port}'", :acceptable_exit_codes => [0]
+          on(left, "pkill -f '#{nc} -l #{nc_port}'", :acceptable_exit_codes => [0])
         end
       end
     end

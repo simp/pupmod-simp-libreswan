@@ -1,0 +1,32 @@
+<%
+  if ENV['BEAKER_HYPERVISOR']
+    hypervisor = ENV['BEAKER_HYPERVISOR']
+  else
+    hypervisor = 'vagrant'
+  end
+-%>
+HOSTS:
+  left8:
+    roles:
+      - left8
+      - libreswan
+      - default
+    platform:   el-8-x86_64
+    box:        generic/rhel8
+    hypervisor: <%= hypervisor %>
+
+  right8:
+    roles:
+      - right8
+      - libreswan
+    platform: el-8-x86_64
+    box: generic/rhel8
+    hypervisor: <%= hypervisor %>
+
+CONFIG:
+  validate: false
+  log_level: verbose
+  type: aio
+<% if ENV['BEAKER_PUPPET_COLLECTION'] -%>
+  puppet_collection: <%= ENV['BEAKER_PUPPET_COLLECTION'] %>
+<% end -%>
