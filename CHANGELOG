@@ -1,7 +1,11 @@
+* Fri Sep 27 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 3.2.0-0
+- Removed the 'dh24' algorithm from the default list since it has been
+  deprecated by RFC.
+
 * Tue Aug 20 2019 Jeckles <joeleckles@gmail.com> - 3.2.0-0
-- Added support for Opportunistic IPsec:
+- Added support for Opportunistic IPSec:
   - Added Opportunistic Group Connections
-  - Added parameters necessary for Opportunistic IPsec
+  - Added parameters necessary for Opportunistic IPSec
 
 * Fri Aug 02 2019 Robert Vincent <pillarsdotnet@gmail.com> - 3.2.0-0
 - Drop Puppet 4 support
