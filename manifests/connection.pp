@@ -96,8 +96,8 @@
 define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',
   Integer                              $keyingtries        = 10,
-  String                               $ike                = 'aes-sha2;dh24',
-  String                               $phase2alg          = 'aes-sha2;dh24',
+  String                               $ike                = 'aes-sha2',
+  String                               $phase2alg          = 'aes-sha2',
   # TODO reorder parameters more logically
   Optional[Libreswan::ConnAddr]        $left               = undef,
   Optional[Libreswan::ConnAddr]        $right              = undef,
