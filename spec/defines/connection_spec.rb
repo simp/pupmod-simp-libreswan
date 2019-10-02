@@ -8,8 +8,8 @@ connection_conf_content = {
     "# Right Side Settings\n" +
     "\n" +
     "# Universal Settings\n" +
-    "  ike = aes-sha2;dh24\n" +
-    "  phase2alg = aes-sha2;dh24\n" +
+    "  ike = aes-sha2\n" +
+    "  phase2alg = aes-sha2\n" +
     "  fragmentation = force\n" +
     "  xauthby = pam\n" +
     "  xauthfail = hard\n" +
@@ -25,8 +25,8 @@ connection_conf_content = {
     "# Right Side Settings\n" +
     "\n" +
     "# Universal Settings\n" +
-    "  ike = aes-sha2;dh24\n" +
-    "  phase2alg = aes-sha2;dh24\n" +
+    "  ike = aes-sha2\n" +
+    "  phase2alg = aes-sha2\n" +
     "  keyingtries = 10\n",
 
   # This content is NOT a usable connection file, but exercises default logic
@@ -37,8 +37,8 @@ connection_conf_content = {
     "# Right Side Settings\n" +
     "\n" +
     "# Universal Settings\n" +
-    "  ike = aes-sha2;dh24\n" +
-    "  phase2alg = aes-sha2;dh24\n" +
+    "  ike = aes-sha2\n" +
+    "  phase2alg = aes-sha2\n" +
     "  keyingtries = 10\n",
 
   # This content is NOT a usable connection file, but exercises non-default logic

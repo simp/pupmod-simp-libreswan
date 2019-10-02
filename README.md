@@ -137,7 +137,10 @@ the directory.  You will need to remove it manually.
 
 ## Limitations
 
-Currently this has only been tested with Centos 6 and 7.
+Per acceptance testing:
+
+  * CentOS 7 and OEL 7 do not appear to function properly in FIPS mode (but RHEL 7 does)
+  * EL 8 support requires `simp-iptables` that supports `firewalld` integration.
 
 ## Development
 
