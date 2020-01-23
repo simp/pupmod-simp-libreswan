@@ -1,9 +1,14 @@
 ---
 fixtures:
   repositories:
+    disa_stig-el7-baseline:
+      repo: https://github.com/simp/inspec-profile-disa_stig-el7
+      branch: master
+      target: spec/fixtures/inspec_deps/inspec_profiles/profiles
     haveged: https://github.com/simp/pupmod-simp-haveged
     iptables: https://github.com/simp/pupmod-simp-iptables
     pki: https://github.com/simp/pupmod-simp-pki
+    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib
   symlinks:
