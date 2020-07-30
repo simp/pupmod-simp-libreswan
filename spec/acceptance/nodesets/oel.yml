@@ -6,13 +6,31 @@
   end
 -%>
 HOSTS:
+  left8:
+    roles:
+      - server
+      - left8
+      - agent
+      - libreswan
+      - default
+    platform:   el-8-x86_64
+    box:        generic/oracle8
+    hypervisor: <%= hypervisor %>
+  right8:
+    roles:
+      - server
+      - right8
+      - agent
+      - libreswan
+    platform:   el-8-x86_64
+    box:        generic/oracle8
+    hypervisor: <%= hypervisor %>
   left7:
     roles:
       - server
       - left7
       - agent
       - libreswan
-      - default
     platform:   el-7-x86_64
     box:        onyxpoint/oel-7-x86_64
     box_version: ">= 0.2.0"

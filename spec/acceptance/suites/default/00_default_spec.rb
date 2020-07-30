@@ -54,7 +54,7 @@ end
 
 test_name 'libreswan class'
 
-['6', '7'].each do |os_major_version|
+['6', '7', '8'].each do |os_major_version|
   describe "libreswan class for EL #{os_major_version}" do
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
