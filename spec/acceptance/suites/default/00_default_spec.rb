@@ -59,6 +59,8 @@ test_name 'libreswan class'
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
     let(:haveged) { "package { 'epel-release': ensure => installed, provider => 'rpm', source => \"https://dl.fedoraproject.org/pub/epel/epel-release-latest-#{os_major_version}.noarch.rpm\" } -> class { 'haveged': }" }
+    let(:disable_firewalld) { "service { 'firewalld': ensure => 'stopped', enable => false }" }
+    let(:disable_iptables) { "service { 'iptables': ensure => 'stopped', enable => false }" }
     let(:manifest) { "class { 'libreswan': }"}
 
     let(:leftinterface) { get_private_network_interface(left) }
@@ -141,6 +143,16 @@ EOM
            end
         end
         left.install_package('tcpdump')
+      end
+
+      it 'should disable firewalls' do
+        [left, right].flatten.each do |node|
+          if os_major_version == '8'
+            apply_manifest_on(node, disable_firewalld, :catch_failures => true)
+          else
+            apply_manifest_on(node, disable_iptables, :catch_failures => true)
+          end
+        end
       end
     end
 

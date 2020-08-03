@@ -6,5 +6,9 @@ fixtures:
     pki: https://github.com/simp/pupmod-simp-pki
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib
+    firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld
+    simp_firewalld:
+      repo: https://github.com/ayohrling/pupmod-simp-simp_firewalld
+      branch: SIMP-7458
   symlinks:
     libreswan: "#{source_dir}"
