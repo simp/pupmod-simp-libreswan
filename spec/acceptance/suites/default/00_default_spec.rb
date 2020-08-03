@@ -132,16 +132,17 @@ EOM
     }
 
     context 'test prep' do
-      it 'should install haveged, nmap-ncat, and tcpdump' do
+      it 'should install haveged, nmap-ncat, screen, and tcpdump' do
         [left, right].flatten.each do |node|
-           # Generate ALL of the entropy .
-           apply_manifest_on(node, haveged, :catch_failures => true)
-           if os_major_version == '6'
-             node.install_package('nc')
-           else
-             node.install_package('nmap-ncat')
-           end
+          # Generate ALL of the entropy .
+          apply_manifest_on(node, haveged, :catch_failures => true)
+          if os_major_version == '6'
+            node.install_package('nc')
+          else
+            node.install_package('nmap-ncat')
+          end
         end
+        left.install_package('screen')
         left.install_package('tcpdump')
       end
 
@@ -201,7 +202,7 @@ EOM
 
           # send TCP data from right to left over the tunnel and tcpdump
           # while packets are being sent
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on left, "/usr/bin/screen -dm bash -c '#{nc} -l #{nc_port} > #{testfile}'", :acceptable_exit_codes => [0]
 
           # couldn't get tcpdump to work as a background process, so run in a thread
           lthread = Thread.new {
@@ -242,7 +243,7 @@ EOM
 
         it "should drop data because of broken tunnel" do
           # try to send TCP data from right to left
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on left, "/usr/bin/screen -dm bash -c '#{nc} -l #{nc_port} > #{testfile}'", :acceptable_exit_codes => [0]
           sleep(2)
           on right, "echo 'this is a test of a downed tunnel without firewall' | #{nc} -s #{rightip} #{left} #{nc_port} ",
             :acceptable_exit_codes => [1]
@@ -264,15 +265,15 @@ EOM
         }
         let(:hieradata_with_firewall_left)  {
           hieradata_left +
-          "simp_options::firewall: yes\n" +
+          "simp_options::firewall: true\n" +
           "simp_options::trusted_nets : ['#{client_net}']\n"
         }
         let(:hieradata_with_firewall_right) {
           hieradata_right +
-          "simp_options::firewall: yes\n" +
+          "simp_options::firewall: true\n" +
           "simp_options::trusted_nets : ['#{client_net}']\n"
         }
-        let(:leftconnection_with_firewall) { leftconnection +
+        let(:leftconnection_with_iptables) { leftconnection +
           "      class { 'iptables': }\n" +
           "      iptables::rule {'allow_public_network_interface':\n" +
           "        content => '-A LOCAL-INPUT -i #{get_public_network_interface(left)} -j ACCEPT',\n" +
@@ -290,7 +291,19 @@ EOM
           "        dports => 22,\n" +
           "      }\n"
         }
-        let(:rightconnection_with_firewall) { rightconnection +
+        let(:leftconnection_with_firewalld) { leftconnection +
+          "      class { 'simp_firewalld': }\n" +
+          "      simp_firewalld::rule { 'allow_all_sshd':\n" +
+          "        trusted_nets => ['ALL'],\n" +
+          "        protocol     => 'tcp',\n" +
+          "        dports       => 22,\n" +
+          "      }\n" +
+          "      simp_firewalld::rule { 'allow_decrypted_nc_traffic':\n" +
+          "        protocol     => 'tcp',\n" +
+          "        dports       => #{nc_port},\n" +
+          "      }\n"
+        }
+        let(:rightconnection_with_iptables) { rightconnection +
           "      class { 'iptables': }\n" +
           "      iptables::rule {'allow_public_network_interface':\n" +
           "        content => '-A LOCAL-INPUT -i #{get_public_network_interface(right)} -j ACCEPT',\n" +
@@ -308,23 +321,50 @@ EOM
           "        dports => 22,\n" +
           "      }\n"
         }
+        let(:rightconnection_with_firewalld) { rightconnection +
+          "      class { 'simp_firewalld': }\n" +
+          "      simp_firewalld::rule { 'allow_all_sshd':\n" +
+          "        trusted_nets => ['ALL'],\n" +
+          "        protocol     => 'tcp',\n" +
+          "        dports       => 22,\n" +
+          "      }\n" +
+          "      simp_firewalld::rule { 'allow_decrypted_nc_traffic':\n" +
+          "        protocol     => 'tcp',\n" +
+          "        dports       => #{nc_port},\n" +
+          "      }\n"
+        }
 
         it 'should apply manifest idempotently, restart ipsec service, start iptables with ipsec firewall' do
           set_hieradata_on(left, hieradata_with_firewall_left)
           set_hieradata_on(right,hieradata_with_firewall_right)
 
           # Apply ipsec and check for idempotency
-          apply_manifest_on(left, leftconnection_with_firewall, :catch_failures => true)
-          apply_manifest_on(right, rightconnection_with_firewall, :catch_failures => true)
-          apply_manifest_on(left, leftconnection_with_firewall, :catch_changes => true)
-          apply_manifest_on(right, rightconnection_with_firewall, :catch_changes => true)
+          if os_major_version == '8'
+            apply_manifest_on(left, leftconnection_with_firewalld, :catch_failures => true)
+            apply_manifest_on(right, rightconnection_with_firewalld, :catch_failures => true)
+            apply_manifest_on(left, leftconnection_with_firewalld, :catch_changes => true)
+            apply_manifest_on(right, rightconnection_with_firewalld, :catch_changes => true)
+          else
+            apply_manifest_on(left, leftconnection_with_iptables, :catch_failures => true)
+            apply_manifest_on(right, rightconnection_with_iptables, :catch_failures => true)
+            apply_manifest_on(left, leftconnection_with_iptables, :catch_changes => true)
+            apply_manifest_on(right, rightconnection_with_iptables, :catch_changes => true)
+          end
 
           [left, right].flatten.each do |node|
             on node, "ipsec status", :acceptable_exit_codes => [0]
-            on node, 'iptables --list -v', :acceptable_exit_codes => [0] do
-              expect(stdout).to match(/ACCEPT\s+udp\s+--\s+any\s+any\s+#{client_net}\s+anywhere\s+state NEW multiport dports ipsec-nat-t,isakmp/m)
-              expect(stdout).to match(/ACCEPT\s+esp/m)
-              expect(stdout).to match(/ACCEPT\s+ah/m)
+            if os_major_version == '8'
+              on node, 'firewall-cmd --list-all', :acceptable_exit_codes => [0] do
+                expect(stdout).to match(/service\s+name="simp_ipsec_allow"\s+accept/m)
+                expect(stdout).to match(/protocol\s+value="esp"\s+accept/m)
+                expect(stdout).to match(/protocol\s+value="ah"\s+accept/m)
+              end
+            else
+              on node, 'iptables --list -v', :acceptable_exit_codes => [0] do
+                expect(stdout).to match(/ACCEPT\s+udp\s+--\s+any\s+any\s+#{client_net}\s+anywhere\s+state NEW multiport dports ipsec-nat-t,isakmp/m)
+                expect(stdout).to match(/ACCEPT\s+esp/m)
+                expect(stdout).to match(/ACCEPT\s+ah/m)
+              end
             end
           end
         end
@@ -334,7 +374,7 @@ EOM
           wait_for_command_success(right, "ipsec status | egrep \"Total IPsec connections: loaded [1-9]+[0-9]*, active 1\"")
 
           # send TCP data from right to left
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on left, "/usr/bin/screen -dm bash -c '#{nc} -l #{nc_port} > #{testfile}'", :acceptable_exit_codes => [0]
           sleep(2)
           on right, "echo 'this is a test of a tunnel with firewall enabled' | #{nc} -s #{rightip} #{left} #{nc_port} ", :acceptable_exit_codes => [0]
 
@@ -365,7 +405,7 @@ EOM
 
         it "should drop data because of broken tunnel" do
           # try to send TCP data from right to left
-          on left, "#{nc} -l #{nc_port} > #{testfile} &", :acceptable_exit_codes => [0]
+          on left, "/usr/bin/screen -dm bash -c '#{nc} -l #{nc_port} > #{testfile}'", :acceptable_exit_codes => [0]
           sleep(2)
           on right, "echo 'this is a test of a downed tunnel with firewall enabled' | #{nc} -s #{rightip} #{left} #{nc_port} ",
             :acceptable_exit_codes => [1]
