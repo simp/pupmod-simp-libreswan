@@ -7,8 +7,6 @@ fixtures:
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib
     firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld
-    simp_firewalld:
-      repo: https://github.com/ayohrling/pupmod-simp-simp_firewalld
-      branch: SIMP-7458
+    simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld
   symlinks:
     libreswan: "#{source_dir}"
