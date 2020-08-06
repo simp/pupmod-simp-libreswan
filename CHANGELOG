@@ -1,3 +1,6 @@
+* Mon Aug 03 2020 Adam Yohrling <adam.yohrling@onyxpoint.com> - 3.3.0-0
+- Add EL8 and firewalld support
+
 * Thu Jul 23 2020 Jeanne Greulich <jeanne.greulich@onyxpoint.com> - 3.2.1-0
 - update the upper bound of simplib for SIMP 6.5 release
 
