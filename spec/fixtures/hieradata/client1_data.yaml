@@ -1,0 +1,4 @@
+---
+libreswan::config::pki::app_pki_cert: '/etc/pki/simp_apps/libreswan/x509/public/client1.pub'
+libreswan::config::pki::app_pki_key: '/etc/pki/simp_apps/libreswan/x509/private/client1.pem'
+libreswan::config::pki::nsspki::certname: 'client1'

@@ -3,6 +3,7 @@
 # change or when the data base is initialized.
 #
 class libreswan::config::pki::nsspki(
+  String[1] $certname = $facts['fqdn'],
 ) {
   assert_private()
   Class['libreswan::config::pki'] ~> Class['libreswan::config::pki::nsspki']
@@ -13,7 +14,7 @@ class libreswan::config::pki::nsspki(
     ensure  => file,
     owner   => root,
     mode    => '0400',
-    content => ": RSA \"${::fqdn}\"",
+    content => ": RSA \"${certname}\"",
   }
 
   $_fips = $::libreswan::fips or $facts['fips_enabled']
@@ -27,7 +28,7 @@ class libreswan::config::pki::nsspki(
     require     => File['/etc/ipsec.conf'],
   }
 
-  libreswan::nss::loadcacerts{ "CA_for_${::domain}" :
+  libreswan::nss::loadcacerts{ 'CA_for_connections' :
     cert        => $::libreswan::config::pki::app_pki_ca,
     dbdir       => $::libreswan::ipsecdir,
     token       => $::libreswan::token,
@@ -35,7 +36,7 @@ class libreswan::config::pki::nsspki(
     subscribe   => Libreswan::Nss::Init_db["NSSDB ${::libreswan::ipsecdir}"]
   }
 
-  libreswan::nss::loadcerts{ $::fqdn :
+  libreswan::nss::loadcerts{ $certname :
     dbdir       => $::libreswan::ipsecdir,
     nsspwd_file => $::libreswan::nsspassword,
     cert        => $::libreswan::config::pki::app_pki_cert,

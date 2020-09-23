@@ -104,9 +104,11 @@ connection_conf_content = {
     "  xauthby = alwaysok\n" +
     "  xauthfail = soft\n" +
     "  modecfgpull = yes\n" +
+    "  modecfgdns = \"8.8.8.8 8.8.4.4\"\n" +
     "  modecfgdns1 = 8.8.8.8\n" +
     "  modecfgdns2 = 8.8.4.4\n" +
     "  modecfgdomain = test.domain\n" +
+    "  modecfgdomains = \"test.domain test2.domain\"\n" +
     "  modecfgbanner = test banner\n" +
     "  keyingtries = 5\n"
 }
@@ -216,7 +218,9 @@ describe 'libreswan::connection', :type => :define do
               :modecfgpull        => 'yes',
               :modecfgdns1        => '8.8.8.8',
               :modecfgdns2        => '8.8.4.4',
+              :modecfgdns         => ['8.8.8.8', '8.8.4.4'],
               :modecfgdomain      => 'test.domain',
+              :modecfgdomains     => ['test.domain', 'test2.domain'],
               :modecfgbanner      => 'test banner',
               :nat_ikev1_method   => 'drafts',
             })
