@@ -1,3 +1,7 @@
+* Thu Oct 08 2020 Adam Yohrling <adam.yohrling@onyxpoint.com> - 3.3.1-0
+- Add support for IKEv2 Mobility (RFC-4555) and mobile client connections
+- Add additional settings for DNS and Domains for libreswan v3.23+
+
 * Mon Aug 03 2020 Adam Yohrling <adam.yohrling@onyxpoint.com> - 3.3.0-0
 - Add EL8 and firewalld support
 
