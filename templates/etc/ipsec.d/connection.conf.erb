@@ -137,6 +137,9 @@ conn <%= @conn_name %>
 <% if @ikev2 then -%>
   ikev2 = <%= @ikev2 %>
 <% end -%>
+<% if @mobike then -%>
+  mobike = <%= @mobike %>
+<% end -%>
 <% if @phase2 then -%>
   phase2 = <%= @phase2 %>
 <% end -%>
@@ -170,6 +173,9 @@ conn <%= @conn_name %>
 <% if @modecfgpull then -%>
   modecfgpull = <%= @modecfgpull %>
 <% end -%>
+<% if @modecfgdns then -%>
+  modecfgdns = "<%= @modecfgdns.join(' ') %>"
+<% end -%>
 <% if @modecfgdns1 then -%>
   modecfgdns1 = <%= @modecfgdns1 %>
 <% end -%>
@@ -179,9 +185,21 @@ conn <%= @conn_name %>
 <% if @modecfgdomain then -%>
   modecfgdomain = <%= @modecfgdomain %>
 <% end -%>
+<% if @modecfgdomains then -%>
+  modecfgdomains = "<%= @modecfgdomains.join(' ') %>"
+<% end -%>
 <% if @modecfgbanner then -%>
   modecfgbanner = <%= @modecfgbanner %>
 <% end -%>
 <% if @keyingtries then -%>
   keyingtries = <%= @keyingtries %>
+<% end -%>
+<% if @dpddelay then -%>
+  dpddelay = <%= @dpddelay %>
+<% end -%>
+<% if @dpdtimeout then -%>
+  dpdtimeout = <%= @dpdtimeout %>
+<% end -%>
+<% if @dpdaction then -%>
+  dpdaction = <%= @dpdaction %>
 <% end -%>

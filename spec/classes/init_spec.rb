@@ -57,7 +57,7 @@ describe 'libreswan' do
               :fips        => false 
             } ) }
 
-            it { is_expected.to contain_libreswan__nss__loadcacerts("CA_for_#{facts[:domain]}").with( {
+            it { is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with( {
               :cert        => "/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem",
               :dbdir       => '/etc/ipsec.d',
               :nsspwd_file => '/etc/ipsec.d/nsspassword',
@@ -89,7 +89,7 @@ describe 'libreswan' do
               :fips        => true 
             } ) }
 
-            it { is_expected.to contain_libreswan__nss__loadcacerts("CA_for_#{facts[:domain]}").with( {
+            it { is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with( {
               :cert        => "/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem",
               :dbdir       => '/etc/ipsec.d',
               :nsspwd_file => '/etc/ipsec.d/nsspassword',
@@ -122,7 +122,7 @@ describe 'libreswan' do
               :fips        => true 
             } ) }
 
-            it { is_expected.to contain_libreswan__nss__loadcacerts("CA_for_#{facts[:domain]}").with( {
+            it { is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with( {
               :cert        => "/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem",
               :dbdir       => '/etc/ipsec.d',
               :nsspwd_file => '/etc/ipsec.d/nsspassword',

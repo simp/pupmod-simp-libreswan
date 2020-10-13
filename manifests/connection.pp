@@ -68,6 +68,7 @@
 # @param authby
 # @param type
 # @param ikev2
+# @param mobike
 # @param phase2
 # @param ikepad
 # @param fragmentation
@@ -87,11 +88,16 @@
 # @param xauthby
 # @param xauthfail
 # @param modecfgpull
-# @param modecfgdns1
-# @param modecfgdns2
-# @param modecfgdomain
+# @param modecfgdns Support 3.23+ DNS configuration
+# @param modecfgdns1 Support <= 3.22 domain configuration
+# @param modecfgdns2 Support <= 3.22 domain configuration
+# @param modecfgdomain Support <= 3.22 domain configuration
+# @param modecfgdomains Support 3.23+ domains configuration
 # @param modecfgbanner
 # @param nat_ikev1_method
+# @param dpddelay
+# @param dpdtimeout
+# @param dpdaction
 #
 define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',
@@ -150,6 +156,7 @@ define libreswan::connection (
     'passthough','reject','drop']]     $type               = undef,
   Optional[Enum['insist','permit',
     'propose','never','yes', 'no']]    $ikev2              = undef,
+  Optional[Enum['yes', 'no']]          $mobike             = undef,
   Optional[Enum['esp', 'ah']]          $phase2             = undef,
   Optional[Enum['yes','no']]           $ikepad             = undef,
   Optional[Enum['yes','no','force']]   $fragmentation      = undef,
@@ -171,12 +178,18 @@ define libreswan::connection (
     'alwaysok']]                       $xauthby            = undef,
   Optional[Enum['hard','soft']]        $xauthfail          = undef,
   Optional[Enum['yes','no']]           $modecfgpull        = undef,
+  Optional[Array[Simplib::IP]]         $modecfgdns         = undef,
   Optional[Simplib::IP]                $modecfgdns1        = undef,
   Optional[Simplib::IP]                $modecfgdns2        = undef,
   Optional[String]                     $modecfgdomain      = undef,
+  Optional[Array[String]]              $modecfgdomains     = undef,
   Optional[String]                     $modecfgbanner      = undef,
   Optional[Enum['drafts','rfc',
     'both']]                           $nat_ikev1_method   = undef,
+  Optional[Pattern[/\d+[smh]$/]]       $dpddelay           = undef,
+  Optional[Pattern[/\d+[smh]$/]]       $dpdtimeout         = undef,
+  Optional[Enum['hold', 'clear',
+    'restart']]                        $dpdaction          = undef,
 ) {
   include 'libreswan'
 
