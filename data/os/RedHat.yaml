@@ -1,0 +1,3 @@
+---
+libreswan::service_name: ipsec
+libreswan::package_name: libreswan

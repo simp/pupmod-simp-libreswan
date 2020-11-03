@@ -1,16 +1,19 @@
-#  This class initializes the NSS database, sets the correct password, and
-#  makes configures FIPS if necessary.
+# @summary Initializes the NSS database, sets the correct password, and configures FIPS if necessary.
 #
-# @param dbdir  Directory where the NSS database will be created.
+# @param dbdir
+#   Directory where the NSS database will be created.
 #
 # @param password
-#   Password used to protect the database. Each NSS database is broken up into
-#   tokens used for different types of certificates, Smart cards, FIPS compliant,
-#   non FIPD. This util sets the FIPS and non fips token to they same password.
-#   The tokens are defined by `$::libreswan::nsstoken`. You can add tokens to
-#   array if there are other parts of the database you want to protect.
+#   Password used to protect the database.
 #
-# @param destroyexisting  If true, it will remove the existing database before running the init command.
+#   * Each NSS database is broken up into tokens used for different types of
+#   certificates, Smart cards, FIPS compliant, non-FIPS. This util sets the
+#   FIPS and non-FIPS token to they same password.  The tokens are defined by
+#   `$libreswan::nsstoken`. You can add tokens to array if there are other
+#   parts of the database you want to protect.
+#
+# @param destroyexisting
+#   If true, it will remove the existing database before running the init command.
 #
 # @param fips
 # @param token
@@ -38,8 +41,8 @@ define libreswan::nss::init_db(
     }
   }
 
-  if $::operatingsystem in ['RedHat', 'CentOS', 'OracleLinux'] {
-    if (versioncmp($::operatingsystemmajrelease,'7') < 0) {
+  if $operatingsystem in ['RedHat', 'CentOS', 'OracleLinux'] {
+    if (versioncmp($operatingsystemmajrelease,'7') < 0) {
       $init_command    = '/usr/sbin/ipsec initnss'
     }
     else {

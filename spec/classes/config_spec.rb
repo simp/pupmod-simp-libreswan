@@ -138,13 +138,11 @@ ipsec_conf_content = {
 
 shared_examples_for "a libreswan ipsec config file generator" do
   it { is_expected.to compile.with_all_deps }
-  it { is_expected.to contain_file('/etc/ipsec.conf').with(
-    {
-      :owner   => 'root',
-      :mode    => '0400',
-      :notify  => 'Service[ipsec]',
-      :content => ipsec_conf_content[title]
-    })
+  it { is_expected.to contain_file('/etc/ipsec.conf')
+    .with_owner('root')
+    .with_mode('0400')
+    .with_content(ipsec_conf_content[title])
+    .that_notifies('Class[libreswan::service]')
   }
 
   it { is_expected.to contain_file(dumpdir).with(

@@ -1,12 +1,10 @@
-# This class is called from ipsec for install.
-#
-# @note The nss package is installed in simplib and can not be redeclared here.
+# @summary Installs the appropriate packages.
 #
 class libreswan::install {
   assert_private()
 
   # Make sure Libreswan is installed
-  package { $::libreswan::package_name:
+  package { $libreswan::package_name:
     ensure => present,
   }
 
@@ -27,10 +25,9 @@ class libreswan::install {
     mode   => '0500',
     source => 'puppet:///modules/libreswan/usr/local/scripts/nss/update_nssdb_password.sh'
   }
-  file { $::libreswan::ipsecdir :
+  file { $libreswan::ipsecdir :
     ensure => directory,
     owner  => root,
     mode   => '0700',
   }
-
 }

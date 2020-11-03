@@ -1,5 +1,4 @@
-# This class is meant to be called from ipsec.
-# It ensures that firewall rules are defined.
+# @summary Ensures that the required firewall rules are defined
 #
 class libreswan::config::firewall {
   assert_private()
@@ -8,24 +7,24 @@ class libreswan::config::firewall {
 
   if $use_firewalld {
     simp_firewalld::rule { 'ipsec_allow':
-      trusted_nets => $::libreswan::trusted_nets,
+      trusted_nets => $libreswan::trusted_nets,
       apply_to     => 'all',
       dports       => [
-        $::libreswan::ikeport,
-        $::libreswan::nat_ikeport,
+        $libreswan::ikeport,
+        $libreswan::nat_ikeport,
       ],
       protocol     => 'udp',
     }
 
     simp_firewalld::rule { 'allow_protocol_esp':
-      trusted_nets => $::libreswan::trusted_nets,
+      trusted_nets => $libreswan::trusted_nets,
       apply_to     => 'all',
       protocol     => 'esp',
       order        => 15,
     }
 
     simp_firewalld::rule { 'allow_protocol_ah':
-      trusted_nets => $::libreswan::trusted_nets,
+      trusted_nets => $libreswan::trusted_nets,
       apply_to     => 'all',
       protocol     => 'ah',
       order        => 15,
@@ -36,8 +35,8 @@ class libreswan::config::firewall {
       trusted_nets => $libreswan::trusted_nets,
       apply_to     => 'all',
       dports       => [
-        $::libreswan::ikeport,
-        $::libreswan::nat_ikeport,
+        $libreswan::ikeport,
+        $libreswan::nat_ikeport,
       ],
     }
 

@@ -1,16 +1,17 @@
-# This class is called by the system using the NSS database
-# located in dbdir. The default is the IPSEC database
-# dir. This module will load the CA certs into the database.
+# @summary Adds the CA certificates to the NSS trust store.
 #
-# @param dbdir  The directory where the DB is located
+# @param dbdir
+#   The directory where the DB is located
 #
 # @param nsspwd_file
 #
-# @param cert  The absolute path to the public portion CA certificate.
+# @param cert
+#   The absolute path to the public portion CA certificate.
 #
 # @param token
 #
-# @param certtype  The format the certificate is in. PEM and DER are currently acceptable.
+# @param certtype
+#   The format the certificate is in. PEM and DER are currently acceptable.
 #
 define libreswan::nss::loadcacerts(
   Stdlib::Absolutepath   $dbdir,
