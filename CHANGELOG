@@ -1,4 +1,4 @@
-* Tue Nov 03 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 3.4.0-0
+* Tue Nov 03 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 3.4.1-0
 - Updated/corrected documentation
 - Added REFERENCE.md
 - Removed the unused libreswan::use_certs parameter
