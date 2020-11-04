@@ -53,7 +53,8 @@ It will configure the IPSEC daemon using the most up to date defaults and, if yo
 
 ## Beginning with ipsec
 
-Before installing `pupmod-simp-libreswan` make sure you read the [libreswan documentation](https://libreswan.org/wiki/Introduction) thouroughly. After reading the introduction select the [Main Wiki Page](https://libreswan.org/wiki/Main_Page#User_Documentation) link to get to the user documentation.
+Before installing `pupmod-simp-libreswan`, make sure you read the [libreswan documentation](https://libreswan.org/wiki/Introduction) thoroughly. 
+After reading the introduction, select the [Main Wiki Page](https://libreswan.org/wiki/Main_Page#User_Documentation) link to get to the user documentation.
 
 * All `ipsec.conf` options can be found in `ipsec.conf(5)`.
 
@@ -62,8 +63,8 @@ Before installing `pupmod-simp-libreswan` make sure you read the [libreswan docu
 
 * Ensure the libreswan and NSS packages are available.
 
-Before installing pupmod-simp-libreswan make sure you read the libreswan documentation thoroughly.  It is located at https://libreswan.org/wiki/Introduction. After reading the introduction select the Main Wiki Page link to get to the user documentation:
-https://libreswan.org/wiki/Main_Page#User_Documentation
+Before installing `pupmod-simp-libreswan`, make sure you read the [libreswan documentation](https://libreswan.org/wiki/Introduction) thoroughly. 
+After reading the introduction, select the [Main Wiki Page](https://libreswan.org/wiki/Main_Page#User_Documentation) link to get to the user documentation.
 
 ### Defaults
 * IPSEC configuration file: `/etc/ipsec.conf`
@@ -87,8 +88,8 @@ classes:
 ```
 
 Make sure that you have all Certificate Authorities needed loaded into SIMP.  If the side you are connecting to
-uses a different CA from yours, make sure you load their CA into your CA listing in PKI.  (See the SIMP
-documentation to see how to do this.)
+uses a different CA from yours, make sure you load their CA into your CA listing in PKI.  
+(See the [SIMP documentation](https://simp.readthedocs.io/en/master/user_guide/Certificates.html) to see how to do this.)
 
 You can verify the contents of the NSS database with:
 
@@ -124,8 +125,7 @@ class site::ipsec_tunne1 {
 This will add two files to the `ipsec` directory, `default.conf` and `outgoing.conf`.  These are the connection files that will be used by the libreswan daemon.
 
 ----------------------------------------------------------------------
-> **NOTE**: If you delete a connection from the site manifest, it will not
-> delete it from the directory automatically.
+> **NOTE**: If you delete a connection from the site manifest, it will not delete it from the directory automatically.
 ----------------------------------------------------------------------
 
 ## Reference

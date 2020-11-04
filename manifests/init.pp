@@ -8,14 +8,14 @@
 # @see https://libreswan.org
 #
 # ---
-# This module is designed to install and configure system IPSEC capabilities
-# using libreswan.
+# > This module is designed to install and configure system IPSEC capabilities
+# > using libreswan.
 #
-# It will also configure and maintain the NSS database used by libreswan if you
-# have chosen to let SIMP manage your PKI certificates.
+# > It will also configure and maintain the NSS database used by libreswan if you
+# > have chosen to let SIMP manage your PKI certificates.
 #
-# To add and start tunnels that will be managed by libreswan see the manifest
-# `libreswan::add_connection`.
+# > To add and start tunnels that will be managed by libreswan see the manifest
+# > `libreswan::add_connection`.
 # ---
 #
 # This module is optimally designed for use within a larger SIMP ecosystem, but
