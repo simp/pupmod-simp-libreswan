@@ -1,39 +1,41 @@
-# Define to create a connection file in the ipsec configuration
-# directory. The name of the connection must be unique.
+# @summary Create a connection file in the IPSEC configuration directory.
 #
-# You can can set up defaults for all of your connections by using the
-# name 'default'. This will create a file default.conf with a
-# 'conn %default' header.  Then, all settings in default.conf will be
-# used as defaults for connections specified in other files.
+# You can can set up defaults for all of your connections by using the name
+# 'default'. This will create a file `default.conf` with a `'conn %default'`
+# header.  Then, all settings in default.conf will be used as defaults for
+# connections specified in other files.
 #
 # Not all available, connection-related, libreswan settings are defined
 # here. However, should you need a missing setting you can manually
 # create a correctly-formatted, connection configuration file in the
-# ipsec configuration directory.  This file must have a ".conf" suffix.
+# IPSEC configuration directory.  This file must have a `.conf` suffix.
 #
-# NOTE: Manually generated configuration files are not managed by Puppet.
+# * Manually generated configuration files are not managed, or purged, by Puppet.
 #
-# @param dir  The absolute path to the ipsec configuration
-# directory.
+# @param dir
+#   The absolute path to the IPSEC configuration directory.
 #
 # The following parameters correspond to libreswan settings for which
 # the default values are different from the libreswan defaults. You
 # can override the defaults by passing in different data in the
 # definition parameters.
 #
-# @param keyingtries  The number of times a connection will try to
-#    reconnect before exiting.
+# @param keyingtries
+#   The number of times a connection will try to reconnect before exiting.
 #
-# @param ike  The ciphers used in the connection
-#    changed from 3Des or aes/sha or md5/and diffie hellman
+# @param ike
+#   The ciphers used in the connection.
 #
-# @param phase2alg  The ciphers used in the second part of the connection.
+# @param phase2alg
+#   The ciphers used in the second part of the connection.
 #
 # The rest of the parameters map one-to-one to libreswan settings and
-# are undef. Any undef parameter will not appear in the generated
-# configuration file for the connection. See libreswan documentation for
-# the setting defaults when omitted from a connection's configuration.
-#   https://libreswan.org/man/ipsec.conf.5.html, the CONN:SETTINGS section
+# are `undef`.
+#
+# Any `undef` parameter will not appear in the generated configuration file for
+# the connection. See libreswan documentation for the setting defaults when
+# omitted from a connection's configuration.
+# https://libreswan.org/man/ipsec.conf.5.html, the `CONN:SETTINGS` section
 #
 # @param left
 # @param right
@@ -104,7 +106,6 @@ define libreswan::connection (
   Integer                              $keyingtries        = 10,
   String                               $ike                = 'aes-sha2',
   String                               $phase2alg          = 'aes-sha2',
-  # TODO reorder parameters more logically
   Optional[Libreswan::ConnAddr]        $left               = undef,
   Optional[Libreswan::ConnAddr]        $right              = undef,
   Optional[Enum['ipv4','ipv6']]        $connaddrfamily     = undef,
@@ -214,6 +215,6 @@ define libreswan::connection (
     mode    => '0600',
     owner   => root,
     content => template('libreswan/etc/ipsec.d/connection.conf.erb'),
-    notify  => Service[$::libreswan::service_name]
+    notify  => Class['libreswan::service']
   }
 }

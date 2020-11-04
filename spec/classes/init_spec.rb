@@ -5,7 +5,6 @@ describe 'libreswan' do
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to create_class('libreswan') }
     it { is_expected.to contain_class('libreswan') }
-    it { is_expected.to contain_class('libreswan::params') }
     it { is_expected.to contain_class('libreswan::config') }
     it { is_expected.to contain_class('libreswan::config').that_notifies('Class[libreswan::service]') }
     it { is_expected.to_not contain_class('libreswan::config::pki') }
@@ -54,7 +53,7 @@ describe 'libreswan' do
               :dbdir       => '/etc/ipsec.d',
               :nsspassword => '/etc/ipsec.d/nsspassword',
               :token       => 'NSS Certificate DB',
-              :fips        => false 
+              :fips        => false
             } ) }
 
             it { is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with( {
@@ -86,7 +85,7 @@ describe 'libreswan' do
               :dbdir       => '/etc/ipsec.d',
               :nsspassword => '/etc/ipsec.d/nsspassword',
               :token       => 'NSS FIPS 140-2 Certificate DB',
-              :fips        => true 
+              :fips        => true
             } ) }
 
             it { is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with( {
@@ -103,7 +102,7 @@ describe 'libreswan' do
               :key         => "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
               :token       => 'NSS FIPS 140-2 Certificate DB'
             } ) }
-            
+
           end
 
           context 'with fips=false option and fips_enabled=true fact' do
@@ -119,7 +118,7 @@ describe 'libreswan' do
               :dbdir       => '/etc/ipsec.d',
               :nsspassword => '/etc/ipsec.d/nsspassword',
               :token       => 'NSS FIPS 140-2 Certificate DB',
-              :fips        => true 
+              :fips        => true
             } ) }
 
             it { is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with( {

@@ -1,12 +1,13 @@
 ---
 fixtures:
   repositories:
+    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
+    firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld
     haveged: https://github.com/simp/pupmod-simp-haveged
     iptables: https://github.com/simp/pupmod-simp-iptables
     pki: https://github.com/simp/pupmod-simp-pki
+    simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib
-    firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld
-    simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld
   symlinks:
     libreswan: "#{source_dir}"

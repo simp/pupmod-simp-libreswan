@@ -6,17 +6,23 @@
 
 #### Table of Contents
 
-1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with ipsec](#setup)
-    * [What ipsec affects](#what-ipsec-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with ipsec](#beginning-with-ipsec)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
-      * [Acceptance Tests - Beaker env variables](#acceptance-tests)
+<!-- vim-markdown-toc GFM -->
+
+* [Overview](#overview)
+* [This is a SIMP module](#this-is-a-simp-module)
+* [Module Description](#module-description)
+* [Beginning with ipsec](#beginning-with-ipsec)
+* [Setup](#setup)
+  * [Defaults](#defaults)
+  * [Configure the IPSEC service](#configure-the-ipsec-service)
+  * [Setting up an IPSEC connection.](#setting-up-an-ipsec-connection)
+* [> delete it from the directory automatically.](#-delete-it-from-the-directory-automatically)
+* [Reference](#reference)
+* [Development](#development)
+  * [Unit tests](#unit-tests)
+  * [Acceptance tests](#acceptance-tests)
+
+<!-- vim-markdown-toc -->
 
 ## Overview
 
@@ -33,28 +39,32 @@ Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contr
 
 This module is optimally designed for use within a larger SIMP ecosystem, but it can be used independently:
 * When included within the SIMP ecosystem, security compliance settings will be managed from the Puppet server.
-* If used independently, all SIMP-managed security subsystems are disabled by default and must be explicitly opted into by administrators.  Please review the the `client_nets`, `simp_firewall`, `nssdb_password`, and
- `use_*` parameters in `manifests/init.pp` for details.
+* If used independently, all SIMP-managed security subsystems are disabled by
+  default and must be explicitly opted into by administrators.  Please see
+  parameters mapped to `simp_options::*` items in `init.pp` for details.
 
 ## Module Description
 
 This module installs the libreswan IPSEC service. IPSEC is Internet Protocol SECurity. It uses strong cryptography to provide both authentication and encryption services.
 
 This module installs the most recently RedHat approved version of libreswan, currently  3.15.
-It will configure the IPSEC deamon using the most up to date defaults and, if you are using SIMP, manage your certificates. Connections can be managed through the puppet modules or by hand.
+It will configure the IPSEC daemon using the most up to date defaults and, if you are using SIMP, manage your certificates. Connections can be managed through the puppet modules or by hand.
 
 
 ## Beginning with ipsec
-Before installing pupmod-simp-libreswan make sure you read the [libreswan documentation](https://libreswan.org/wiki/Introduction) thouroughly. After reading the introduction select the [Main Wiki Page](https://libreswan.org/wiki/Main_Page#User_Documentation) link to get to the user documentation.
 
-All ipsec.conf options can be found on the manpage "man ipsec.conf"
+Before installing `pupmod-simp-libreswan`, make sure you read the [libreswan documentation](https://libreswan.org/wiki/Introduction) thoroughly. 
+After reading the introduction, select the [Main Wiki Page](https://libreswan.org/wiki/Main_Page#User_Documentation) link to get to the user documentation.
+
+* All `ipsec.conf` options can be found in `ipsec.conf(5)`.
 
 
 ## Setup
+
 * Ensure the libreswan and NSS packages are available.
 
-Before installing pupmod-simp-libreswan make sure you read the libreswan documentation thouroughly.  It is located at https://libreswan.org/wiki/Introduction. After reading the introduction select the Main Wiki Page link to get to the user documentation:
-https://libreswan.org/wiki/Main_Page#User_Documentation
+Before installing `pupmod-simp-libreswan`, make sure you read the [libreswan documentation](https://libreswan.org/wiki/Introduction) thoroughly. 
+After reading the introduction, select the [Main Wiki Page](https://libreswan.org/wiki/Main_Page#User_Documentation) link to get to the user documentation.
 
 ### Defaults
 * IPSEC configuration file: `/etc/ipsec.conf`
@@ -78,10 +88,11 @@ classes:
 ```
 
 Make sure that you have all Certificate Authorities needed loaded into SIMP.  If the side you are connecting to
-uses a different CA from yours, make sure you load their CA into your CA listing in PKI.  (See the SIMP
-documentation to see how to do this.)
+uses a different CA from yours, make sure you load their CA into your CA listing in PKI.  
+(See the [SIMP documentation](https://simp.readthedocs.io/en/master/user_guide/Certificates.html) to see how to do this.)
 
-You can verify the contents of the nss database with:
+You can verify the contents of the NSS database with:
+
 ```bash
 certutil -L -d sql:/etc/ipsec.d/
 ```
@@ -89,67 +100,56 @@ certutil -L -d sql:/etc/ipsec.d/
 ### Setting up an IPSEC connection.
 
 
-To add a connection via puppet, create a definition file under the site manifest.  A simple VPN tunnel host to host example is given here, named `ipsec_tunnel1.pp`:
+To add a connection via puppet, create a definition file under the site manifest.  A simple VPN tunnel host to host example is given here, named `ipsec_tunne1.pp`:
 
-```ruby
-class site::ipsectunnel1 {
+```puppet
+class site::ipsec_tunne1 {
   include 'libreswan'
 
   libreswan::connection{ 'default':
-    leftcert => "${::fqdn}",
-    left   => "${ipaddress}"
-    leftrsasigkey     => '%cert',
-    leftsendcert      => 'always',
-    authby  => 'rsasig'
+    leftcert      => $facts['fqdn'],
+    left          => $facts['ipaddress'],
+    leftrsasigkey => '%cert',
+    leftsendcert  => 'always',
+    authby        => 'rsasig'
   }
 
   libreswan::connection{ 'outgoing' :
-     right  => '<the IP Address of the client you are connecting to.>'
-     rightrsasigkey     => '%cert',
-     notify => Service['ipsec'],
-     auto => 'start'
+     right          => '<the IP Address of the client you are connecting to.>'
+     rightrsasigkey => '%cert',
+     notify         => Service['ipsec'],
+     auto           => 'start'
   }
-
 }
-
 ```
-This will add two files to the `ipsec` directory, `default.conf` and `outgoing.conf`.  These are the connection files that will be read by the ipsec daemon and run.
+This will add two files to the `ipsec` directory, `default.conf` and `outgoing.conf`.  These are the connection files that will be used by the libreswan daemon.
 
-**NOTE**: If you delete a connection from the site manifest, it will not know to delete it from
-the directory.  You will need to remove it manually.
-
+----------------------------------------------------------------------
+> **NOTE**: If you delete a connection from the site manifest, it will not delete it from the directory automatically.
+----------------------------------------------------------------------
 
 ## Reference
-|Module                   | Purpose |
-|-------------------------|---------|
-| `ipsec`                     | Sets up parameters for the system and calls installation and configuration modules and maintains most dependancied beween them. Configures IPSEC to point to a specific NSS database then initiates calls to NSS routines to set up the nss database. |
-| `ipsec::install`            | Installs the libreswan module and copies scripts to needed by other modules to local system. |
-| `ipsec::config`             | Sets up ipsec directories and configures `ipsec.conf` file |
-| `ipsec::config::firewall`   | Configures the firewall setting for ipsec |
-| `ipsec::service`            | Sets up the ipsec service on the system. |
-| `ipsec::config::pki`        | Copies the certificates localy for use with ipsec. |
-| `ipsec::nsspki`             | Call NSS to load certs for ipsec use. |
-| `ipsec::nss::init_db`       | Sets up a local copy of NSS database and sets up files used to access it. |
-| `ipsec::nss::loadcerts`     | Actually load the certificates to the NSS database. |
-| `ipsec::connection`         | defines connections for IPSEC. |
 
-
-
-## Limitations
-
-Currently this has only been tested with Centos 6 and 7.
+See [REFERENCE.md](./REFERENCE.md)
 
 ## Development
 
 Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
 
+### Unit tests
+
+Unit tests, written in `rspec-puppet` can be run by calling:
+
+```shell
+bundle exec rake spec
+```
+
 ### Acceptance tests
 
-****  Section Not Complete ****
 To run the system tests, you need [Vagrant](https://www.vagrantup.com/) installed. Then, run:
 
 ```shell
-bundle exec rake acceptance
+bundle exec rake beaker:suites
 ```
 
 Some environment variables may be useful:

@@ -1,19 +1,21 @@
-# This class is used to load a server certificate
-# into the NSS database located in the directory
-# indicated by parameter dbdir.
+# @summary Load a server certificate into the NSS database.
 #
-# @param dbdir  The directory where the NSS Database is located.
+# @param dbdir
+#   The directory where the NSS Database is located.
 #
-# @param nsspwd_file  The file which contains the password if there is one.
+# @param nsspwd_file
+#   The file which contains the password if there is one.
 #
-# @param cert  The absolute path to the public portion of the cert.
+# @param cert
+#   The absolute path to the public portion of the cert.
 #
 # @param token
 #
-# @param key  The absolute path to the private portion of the cert.
+# @param key
+#   The absolute path to the private portion of the cert.
 #
-# @param certtype  The format the certificate is in.
-#   PEM and P12 are currently acceptable.
+# @param certtype
+#   The format the certificate is in.
 #
 define libreswan::nss::loadcerts(
   Stdlib::Absolutepath              $dbdir,
