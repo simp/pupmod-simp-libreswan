@@ -8,13 +8,7 @@ describe 'libreswan::nss::init_db', :type => :define do
         end
         let(:common_params) { { :dbdir => '/etc/ipsec.d', :nsspassword => '/etc/ipsec.d/nsspassword',
           :password => 'mypassword', :token => 'NSS Certificate DB' } }
-        let(:init_command) {
-          if ['centos-6-x86_64','redhat-6-x86_64','oraclelinux-6-x86_64'].include?(os)
-            '/usr/sbin/ipsec initnss'
-          else
-            '/sbin/ipsec initnss'
-          end
-        }
+        let(:init_command) { '/sbin/ipsec initnss' }
         describe 'with destroy existing database' do
           let(:title  ){ 'IPSEC NSS DB' }
           let(:params) { common_params.merge({ :destroyexisting => true }) }
