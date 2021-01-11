@@ -42,12 +42,7 @@ define libreswan::nss::init_db(
   }
 
   if $operatingsystem in ['RedHat', 'CentOS', 'OracleLinux'] {
-    if (versioncmp($operatingsystemmajrelease,'7') < 0) {
-      $init_command    = '/usr/sbin/ipsec initnss'
-    }
-    else {
-      $init_command    = '/sbin/ipsec initnss'
-    }
+    $init_command    = '/sbin/ipsec initnss'
   }
   else {
     fail("Operating System '${::operatingsystem}' is not supported by ${module_name}")
