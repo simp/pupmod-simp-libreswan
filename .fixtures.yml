@@ -1,14 +1,15 @@
 ---
 fixtures:
   repositories:
-    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
-    firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld
-    haveged: https://github.com/simp/pupmod-simp-haveged
-    iptables: https://github.com/simp/pupmod-simp-iptables
-    pki: https://github.com/simp/pupmod-simp-pki
-    simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld
-    simplib: https://github.com/simp/pupmod-simp-simplib
-    stdlib: https://github.com/simp/puppetlabs-stdlib
-    systemd: https://github.com/simp/puppet-systemd
+    augeas_core: https://github.com/simp/pupmod-puppetlabs-augeas_core.git
+    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup.git
+    firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld.git
+    haveged: https://github.com/simp/pupmod-simp-haveged.git
+    iptables: https://github.com/simp/pupmod-simp-iptables.git
+    pki: https://github.com/simp/pupmod-simp-pki.git
+    simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld.git
+    simplib: https://github.com/simp/pupmod-simp-simplib.git
+    stdlib: https://github.com/simp/puppetlabs-stdlib.git
+    systemd: https://github.com/simp/puppet-systemd.git
   symlinks:
     libreswan: "#{source_dir}"
