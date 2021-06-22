@@ -31,7 +31,7 @@
 
 ## Classes
 
-### `libreswan`
+### <a name="libreswan"></a>`libreswan`
 
 ---
 > It is very important you read the documentation that comes with libreswan
@@ -71,21 +71,73 @@ it can be used independently:
 
 #### Parameters
 
-The following parameters are available in the `libreswan` class.
+The following parameters are available in the `libreswan` class:
 
-##### `service_name`
+* [`service_name`](#service_name)
+* [`package_name`](#package_name)
+* [`trusted_nets`](#trusted_nets)
+* [`firewall`](#firewall)
+* [`fips`](#fips)
+* [`pki`](#pki)
+* [`haveged`](#haveged)
+* [`nssdb_password`](#nssdb_password)
+* [`myid`](#myid)
+* [`protostack`](#protostack)
+* [`interfaces`](#interfaces)
+* [`listen`](#listen)
+* [`ikeport`](#ikeport)
+* [`nflog_all`](#nflog_all)
+* [`nat_ikeport`](#nat_ikeport)
+* [`keep_alive`](#keep_alive)
+* [`virtual_private`](#virtual_private)
+* [`myvendorid`](#myvendorid)
+* [`nhelpers`](#nhelpers)
+* [`plutofork`](#plutofork)
+* [`crlcheckinterval`](#crlcheckinterval)
+* [`strictcrlpolicy`](#strictcrlpolicy)
+* [`ocsp_enable`](#ocsp_enable)
+* [`ocsp_strict`](#ocsp_strict)
+* [`ocsp_timeout`](#ocsp_timeout)
+* [`ocsp_uri`](#ocsp_uri)
+* [`ocsp_trustname`](#ocsp_trustname)
+* [`syslog`](#syslog)
+* [`klipsdebug`](#klipsdebug)
+* [`plutodebug`](#plutodebug)
+* [`uniqueids`](#uniqueids)
+* [`plutorestartoncrash`](#plutorestartoncrash)
+* [`logfile`](#logfile)
+* [`logappend`](#logappend)
+* [`logtime`](#logtime)
+* [`ddos_mode`](#ddos_mode)
+* [`ddos_ike_treshold`](#ddos_ike_treshold)
+* [`dumpdir`](#dumpdir)
+* [`statsbin`](#statsbin)
+* [`ipsecdir`](#ipsecdir)
+* [`secretsfile`](#secretsfile)
+* [`perpeerlog`](#perpeerlog)
+* [`perpeerlogdir`](#perpeerlogdir)
+* [`fragicmp`](#fragicmp)
+* [`hidetos`](#hidetos)
+* [`overridemtu`](#overridemtu)
+* [`block_cidrs`](#block_cidrs)
+* [`clear_cidrs`](#clear_cidrs)
+* [`clear_private_cidrs`](#clear_private_cidrs)
+* [`private_cidrs`](#private_cidrs)
+* [`private_clear_cidrs`](#private_clear_cidrs)
+
+##### <a name="service_name"></a>`service_name`
 
 Data type: `String`
 
 The name of the IPSEC service.
 
-##### `package_name`
+##### <a name="package_name"></a>`package_name`
 
 Data type: `String`
 
 The name of the libreswan package.
 
-##### `trusted_nets`
+##### <a name="trusted_nets"></a>`trusted_nets`
 
 Data type: `Simplib::Netlist`
 
@@ -94,7 +146,7 @@ explicitly for IPSEC communication
 
 Default value: `simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] })`
 
-##### `firewall`
+##### <a name="firewall"></a>`firewall`
 
 Data type: `Boolean`
 
@@ -103,7 +155,7 @@ SIMP-controlled firewall
 
 Default value: `simplib::lookup('simp_options::firewall', {'default_value' => false })`
 
-##### `fips`
+##### <a name="fips"></a>`fips`
 
 Data type: `Boolean`
 
@@ -113,7 +165,7 @@ Whether server is in FIPS mode.
 
 Default value: `simplib::lookup('simp_options::fips', {'default_value' => false })`
 
-##### `pki`
+##### <a name="pki"></a>`pki`
 
 Data type: `Variant[Boolean,Enum['simp']]`
 
@@ -131,7 +183,7 @@ Data type: `Variant[Boolean,Enum['simp']]`
 
 Default value: `simplib::lookup('simp_options::pki', {'default_value' => false })`
 
-##### `haveged`
+##### <a name="haveged"></a>`haveged`
 
 Data type: `Boolean`
 
@@ -139,7 +191,7 @@ Whether to use haveged to ensure adequate entropy
 
 Default value: `simplib::lookup('simp_options::haveged', {'default_value' => false })`
 
-##### `nssdb_password`
+##### <a name="nssdb_password"></a>`nssdb_password`
 
 Data type: `String`
 
@@ -147,7 +199,7 @@ Password for the NSS database used by ipsec
 
 Default value: `simplib::passgen('nssdb_password')`
 
-##### `myid`
+##### <a name="myid"></a>`myid`
 
 Data type: `Optional[String]`
 
@@ -155,7 +207,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `protostack`
+##### <a name="protostack"></a>`protostack`
 
 Data type: `Enum['netkey','klips','mast']`
 
@@ -163,7 +215,7 @@ Data type: `Enum['netkey','klips','mast']`
 
 Default value: `'netkey'`
 
-##### `interfaces`
+##### <a name="interfaces"></a>`interfaces`
 
 Data type: `Optional[Libreswan::Interfaces]`
 
@@ -171,7 +223,7 @@ Data type: `Optional[Libreswan::Interfaces]`
 
 Default value: ``undef``
 
-##### `listen`
+##### <a name="listen"></a>`listen`
 
 Data type: `Optional[Simplib::IP]`
 
@@ -179,15 +231,15 @@ Data type: `Optional[Simplib::IP]`
 
 Default value: ``undef``
 
-##### `ikeport`
+##### <a name="ikeport"></a>`ikeport`
 
 Data type: `Simplib::Port`
 
-
+DEPRECATED
 
 Default value: `500`
 
-##### `nflog_all`
+##### <a name="nflog_all"></a>`nflog_all`
 
 Data type: `Optional[Integer]`
 
@@ -195,15 +247,15 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `nat_ikeport`
+##### <a name="nat_ikeport"></a>`nat_ikeport`
 
 Data type: `Simplib::Port`
 
-
+DEPRECATED
 
 Default value: `4500`
 
-##### `keep_alive`
+##### <a name="keep_alive"></a>`keep_alive`
 
 Data type: `Optional[Integer]`
 
@@ -211,7 +263,7 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `virtual_private`
+##### <a name="virtual_private"></a>`virtual_private`
 
 Data type: `Libreswan::VirtualPrivate`
 
@@ -219,7 +271,7 @@ Data type: `Libreswan::VirtualPrivate`
 
 Default value: `['%v4:10.0.0.0/8','%v4:192.168.0.0/16','%v4:172.16.0.0/12']`
 
-##### `myvendorid`
+##### <a name="myvendorid"></a>`myvendorid`
 
 Data type: `Optional[String]`
 
@@ -227,7 +279,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `nhelpers`
+##### <a name="nhelpers"></a>`nhelpers`
 
 Data type: `Optional[Integer]`
 
@@ -235,7 +287,7 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `plutofork`
+##### <a name="plutofork"></a>`plutofork`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -243,7 +295,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `crlcheckinterval`
+##### <a name="crlcheckinterval"></a>`crlcheckinterval`
 
 Data type: `Optional[Integer]`
 
@@ -251,7 +303,7 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `strictcrlpolicy`
+##### <a name="strictcrlpolicy"></a>`strictcrlpolicy`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -259,7 +311,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `ocsp_enable`
+##### <a name="ocsp_enable"></a>`ocsp_enable`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -267,7 +319,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `ocsp_strict`
+##### <a name="ocsp_strict"></a>`ocsp_strict`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -275,7 +327,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `ocsp_timeout`
+##### <a name="ocsp_timeout"></a>`ocsp_timeout`
 
 Data type: `Optional[Integer]`
 
@@ -283,7 +335,7 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `ocsp_uri`
+##### <a name="ocsp_uri"></a>`ocsp_uri`
 
 Data type: `Optional[Simplib::Uri]`
 
@@ -291,7 +343,7 @@ Data type: `Optional[Simplib::Uri]`
 
 Default value: ``undef``
 
-##### `ocsp_trustname`
+##### <a name="ocsp_trustname"></a>`ocsp_trustname`
 
 Data type: `Optional[String]`
 
@@ -299,7 +351,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `syslog`
+##### <a name="syslog"></a>`syslog`
 
 Data type: `Optional[String]`
 
@@ -307,7 +359,15 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `klipsdebug`
+##### <a name="klipsdebug"></a>`klipsdebug`
+
+Data type: `String`
+
+DEPRECATED
+
+Default value: `'none'`
+
+##### <a name="plutodebug"></a>`plutodebug`
 
 Data type: `String`
 
@@ -315,15 +375,7 @@ Data type: `String`
 
 Default value: `'none'`
 
-##### `plutodebug`
-
-Data type: `String`
-
-
-
-Default value: `'none'`
-
-##### `uniqueids`
+##### <a name="uniqueids"></a>`uniqueids`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -331,7 +383,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `plutorestartoncrash`
+##### <a name="plutorestartoncrash"></a>`plutorestartoncrash`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -339,7 +391,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `logfile`
+##### <a name="logfile"></a>`logfile`
 
 Data type: `Optional[Stdlib::Absolutepath]`
 
@@ -347,7 +399,7 @@ Data type: `Optional[Stdlib::Absolutepath]`
 
 Default value: ``undef``
 
-##### `logappend`
+##### <a name="logappend"></a>`logappend`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -355,7 +407,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `logtime`
+##### <a name="logtime"></a>`logtime`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -363,7 +415,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `ddos_mode`
+##### <a name="ddos_mode"></a>`ddos_mode`
 
 Data type: `Optional[Enum['busy',
     'unlimited','auto']]`
@@ -372,7 +424,7 @@ Data type: `Optional[Enum['busy',
 
 Default value: ``undef``
 
-##### `ddos_ike_treshold`
+##### <a name="ddos_ike_treshold"></a>`ddos_ike_treshold`
 
 Data type: `Optional[Integer]`
 
@@ -380,7 +432,7 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `dumpdir`
+##### <a name="dumpdir"></a>`dumpdir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -388,7 +440,7 @@ Data type: `Stdlib::Absolutepath`
 
 Default value: `'/var/run/pluto'`
 
-##### `statsbin`
+##### <a name="statsbin"></a>`statsbin`
 
 Data type: `Optional[String]`
 
@@ -396,7 +448,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `ipsecdir`
+##### <a name="ipsecdir"></a>`ipsecdir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -404,7 +456,7 @@ The directory to store all ipsec configuration information.
 
 Default value: `'/etc/ipsec.d'`
 
-##### `secretsfile`
+##### <a name="secretsfile"></a>`secretsfile`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -412,23 +464,23 @@ Data type: `Stdlib::Absolutepath`
 
 Default value: `'/etc/ipsec.secrets'`
 
-##### `perpeerlog`
+##### <a name="perpeerlog"></a>`perpeerlog`
 
 Data type: `Optional[Enum['yes','no']]`
 
-
+DEPRECATED
 
 Default value: ``undef``
 
-##### `perpeerlogdir`
+##### <a name="perpeerlogdir"></a>`perpeerlogdir`
 
 Data type: `Stdlib::Absolutepath`
 
-
+DEPRECATED
 
 Default value: `'/var/log/pluto/peer'`
 
-##### `fragicmp`
+##### <a name="fragicmp"></a>`fragicmp`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -436,7 +488,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `hidetos`
+##### <a name="hidetos"></a>`hidetos`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -444,7 +496,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `overridemtu`
+##### <a name="overridemtu"></a>`overridemtu`
 
 Data type: `Optional[Integer]`
 
@@ -452,7 +504,7 @@ Data type: `Optional[Integer]`
 
 Default value: ``undef``
 
-##### `block_cidrs`
+##### <a name="block_cidrs"></a>`block_cidrs`
 
 Data type: `Optional[Array[Simplib::IP::V4::CIDR]]`
 
@@ -460,7 +512,7 @@ List of CIDRs to which communication should never be allowed
 
 Default value: ``undef``
 
-##### `clear_cidrs`
+##### <a name="clear_cidrs"></a>`clear_cidrs`
 
 Data type: `Optional[Array[Simplib::IP::V4::CIDR]]`
 
@@ -468,7 +520,7 @@ List of CIDRs to which communication should always be in the clear
 
 Default value: ``undef``
 
-##### `clear_private_cidrs`
+##### <a name="clear_private_cidrs"></a>`clear_private_cidrs`
 
 Data type: `Optional[Array[Simplib::IP::V4::CIDR]]`
 
@@ -477,7 +529,7 @@ side initiates IPSEC, use encryption
 
 Default value: ``undef``
 
-##### `private_cidrs`
+##### <a name="private_cidrs"></a>`private_cidrs`
 
 Data type: `Optional[Array[Simplib::IP::V4::CIDR]]`
 
@@ -485,7 +537,7 @@ List of CIDRs to which communication should always be private
 
 Default value: ``undef``
 
-##### `private_clear_cidrs`
+##### <a name="private_clear_cidrs"></a>`private_clear_cidrs`
 
 Data type: `Optional[Array[Simplib::IP::V4::CIDR]]`
 
@@ -494,23 +546,29 @@ the clear otherwise
 
 Default value: `['0.0.0.0/0']`
 
-### `libreswan::config`
+### <a name="libreswanconfig"></a>`libreswan::config`
 
 Configures `ipsec.conf` and necessary directories.
 
-### `libreswan::config::firewall`
+### <a name="libreswanconfigfirewall"></a>`libreswan::config::firewall`
 
 Ensures that the required firewall rules are defined
 
-### `libreswan::config::pki`
+### <a name="libreswanconfigpki"></a>`libreswan::config::pki`
 
 Ensure that the `simp/pki` PKI certificates are loaded into the IPSEC NSS Database.
 
 #### Parameters
 
-The following parameters are available in the `libreswan::config::pki` class.
+The following parameters are available in the `libreswan::config::pki` class:
 
-##### `app_pki_external_source`
+* [`app_pki_external_source`](#app_pki_external_source)
+* [`app_pki_dir`](#app_pki_dir)
+* [`app_pki_key`](#app_pki_key)
+* [`app_pki_cert`](#app_pki_cert)
+* [`app_pki_ca`](#app_pki_ca)
+
+##### <a name="app_pki_external_source"></a>`app_pki_external_source`
 
 Data type: `String`
 
@@ -520,7 +578,7 @@ will be copied, via `pki::copy`.
 
 Default value: `simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' })`
 
-##### `app_pki_dir`
+##### <a name="app_pki_dir"></a>`app_pki_dir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -528,7 +586,7 @@ Controls the base path of the other `app_pki_*` parameters.
 
 Default value: `'/etc/pki/simp_apps/libreswan/x509'`
 
-##### `app_pki_key`
+##### <a name="app_pki_key"></a>`app_pki_key`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -536,7 +594,7 @@ Path and name of the private SSL key file
 
 Default value: `"${app_pki_dir}/private/${::fqdn}.pem"`
 
-##### `app_pki_cert`
+##### <a name="app_pki_cert"></a>`app_pki_cert`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -544,7 +602,7 @@ Path and name of the public SSL certificate
 
 Default value: `"${app_pki_dir}/public/${::fqdn}.pub"`
 
-##### `app_pki_ca`
+##### <a name="app_pki_ca"></a>`app_pki_ca`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -552,15 +610,17 @@ Path and name of the CA.
 
 Default value: `"${app_pki_dir}/cacerts/cacerts.pem"`
 
-### `libreswan::config::pki::nsspki`
+### <a name="libreswanconfigpkinsspki"></a>`libreswan::config::pki::nsspki`
 
 Called when the certificates change or when the database is initialized.
 
 #### Parameters
 
-The following parameters are available in the `libreswan::config::pki::nsspki` class.
+The following parameters are available in the `libreswan::config::pki::nsspki` class:
 
-##### `certname`
+* [`certname`](#certname)
+
+##### <a name="certname"></a>`certname`
 
 Data type: `String[1]`
 
@@ -568,17 +628,17 @@ The name of the certificate to be used
 
 Default value: `$facts['fqdn']`
 
-### `libreswan::install`
+### <a name="libreswaninstall"></a>`libreswan::install`
 
 Installs the appropriate packages.
 
-### `libreswan::service`
+### <a name="libreswanservice"></a>`libreswan::service`
 
 Ensure that the appropriate services are running.
 
 ## Defined types
 
-### `libreswan::connection`
+### <a name="libreswanconnection"></a>`libreswan::connection`
 
 You can can set up defaults for all of your connections by using the name
 'default'. This will create a file `default.conf` with a `'conn %default'`
@@ -607,9 +667,77 @@ https://libreswan.org/man/ipsec.conf.5.html, the `CONN:SETTINGS` section
 
 #### Parameters
 
-The following parameters are available in the `libreswan::connection` defined type.
+The following parameters are available in the `libreswan::connection` defined type:
 
-##### `dir`
+* [`dir`](#dir)
+* [`keyingtries`](#keyingtries)
+* [`ike`](#ike)
+* [`phase2alg`](#phase2alg)
+* [`left`](#left)
+* [`right`](#right)
+* [`connaddrfamily`](#connaddrfamily)
+* [`leftaddresspool`](#leftaddresspool)
+* [`leftsubnet`](#leftsubnet)
+* [`leftsubnets`](#leftsubnets)
+* [`leftprotoport`](#leftprotoport)
+* [`leftsourceip`](#leftsourceip)
+* [`leftupdown`](#leftupdown)
+* [`leftcert`](#leftcert)
+* [`leftrsasigkey`](#leftrsasigkey)
+* [`leftrsasigkey2`](#leftrsasigkey2)
+* [`leftsendcert`](#leftsendcert)
+* [`leftnexthop`](#leftnexthop)
+* [`leftid`](#leftid)
+* [`leftca`](#leftca)
+* [`rightid`](#rightid)
+* [`rightrsasigkey`](#rightrsasigkey)
+* [`rightrsasigkey2`](#rightrsasigkey2)
+* [`rightca`](#rightca)
+* [`rightaddresspool`](#rightaddresspool)
+* [`rightsubnets`](#rightsubnets)
+* [`rightsubnet`](#rightsubnet)
+* [`rightprotoport`](#rightprotoport)
+* [`rightsourceip`](#rightsourceip)
+* [`rightupdown`](#rightupdown)
+* [`rightcert`](#rightcert)
+* [`rightsendcert`](#rightsendcert)
+* [`rightnexthop`](#rightnexthop)
+* [`auto`](#auto)
+* [`authby`](#authby)
+* [`type`](#type)
+* [`ikev2`](#ikev2)
+* [`mobike`](#mobike)
+* [`phase2`](#phase2)
+* [`ikepad`](#ikepad)
+* [`fragmentation`](#fragmentation)
+* [`sha2_truncbug`](#sha2_truncbug)
+* [`narrowing`](#narrowing)
+* [`sareftrack`](#sareftrack)
+* [`leftxauthserver`](#leftxauthserver)
+* [`rightxauthserver`](#rightxauthserver)
+* [`leftxauthusername`](#leftxauthusername)
+* [`rightxauthusername`](#rightxauthusername)
+* [`leftxauthclient`](#leftxauthclient)
+* [`rightxauthclient`](#rightxauthclient)
+* [`leftmodecfgserver`](#leftmodecfgserver)
+* [`rightmodecfgserver`](#rightmodecfgserver)
+* [`leftmodecfgclient`](#leftmodecfgclient)
+* [`rightmodecfgclient`](#rightmodecfgclient)
+* [`xauthby`](#xauthby)
+* [`xauthfail`](#xauthfail)
+* [`modecfgpull`](#modecfgpull)
+* [`modecfgdns`](#modecfgdns)
+* [`modecfgdns1`](#modecfgdns1)
+* [`modecfgdns2`](#modecfgdns2)
+* [`modecfgdomain`](#modecfgdomain)
+* [`modecfgdomains`](#modecfgdomains)
+* [`modecfgbanner`](#modecfgbanner)
+* [`nat_ikev1_method`](#nat_ikev1_method)
+* [`dpddelay`](#dpddelay)
+* [`dpdtimeout`](#dpdtimeout)
+* [`dpdaction`](#dpdaction)
+
+##### <a name="dir"></a>`dir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -617,7 +745,7 @@ The absolute path to the IPSEC configuration directory.
 
 Default value: `'/etc/ipsec.d'`
 
-##### `keyingtries`
+##### <a name="keyingtries"></a>`keyingtries`
 
 Data type: `Integer`
 
@@ -625,7 +753,7 @@ The number of times a connection will try to reconnect before exiting.
 
 Default value: `10`
 
-##### `ike`
+##### <a name="ike"></a>`ike`
 
 Data type: `String`
 
@@ -633,7 +761,7 @@ The ciphers used in the connection.
 
 Default value: `'aes-sha2'`
 
-##### `phase2alg`
+##### <a name="phase2alg"></a>`phase2alg`
 
 Data type: `String`
 
@@ -641,7 +769,7 @@ The ciphers used in the second part of the connection.
 
 Default value: `'aes-sha2'`
 
-##### `left`
+##### <a name="left"></a>`left`
 
 Data type: `Optional[Libreswan::ConnAddr]`
 
@@ -649,7 +777,7 @@ Data type: `Optional[Libreswan::ConnAddr]`
 
 Default value: ``undef``
 
-##### `right`
+##### <a name="right"></a>`right`
 
 Data type: `Optional[Libreswan::ConnAddr]`
 
@@ -657,7 +785,7 @@ Data type: `Optional[Libreswan::ConnAddr]`
 
 Default value: ``undef``
 
-##### `connaddrfamily`
+##### <a name="connaddrfamily"></a>`connaddrfamily`
 
 Data type: `Optional[Enum['ipv4','ipv6']]`
 
@@ -665,7 +793,7 @@ Data type: `Optional[Enum['ipv4','ipv6']]`
 
 Default value: ``undef``
 
-##### `leftaddresspool`
+##### <a name="leftaddresspool"></a>`leftaddresspool`
 
 Data type: `Optional[Array[Simplib::IP,2,2]]`
 
@@ -673,7 +801,7 @@ Data type: `Optional[Array[Simplib::IP,2,2]]`
 
 Default value: ``undef``
 
-##### `leftsubnet`
+##### <a name="leftsubnet"></a>`leftsubnet`
 
 Data type: `Optional[Variant[
     Enum['%no','%priv'],
@@ -685,7 +813,7 @@ Data type: `Optional[Variant[
 
 Default value: ``undef``
 
-##### `leftsubnets`
+##### <a name="leftsubnets"></a>`leftsubnets`
 
 Data type: `Optional[Array[Simplib::IP::CIDR]]`
 
@@ -693,7 +821,7 @@ Data type: `Optional[Array[Simplib::IP::CIDR]]`
 
 Default value: ``undef``
 
-##### `leftprotoport`
+##### <a name="leftprotoport"></a>`leftprotoport`
 
 Data type: `Optional[String]`
 
@@ -701,7 +829,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `leftsourceip`
+##### <a name="leftsourceip"></a>`leftsourceip`
 
 Data type: `Optional[Simplib::IP]`
 
@@ -709,7 +837,7 @@ Data type: `Optional[Simplib::IP]`
 
 Default value: ``undef``
 
-##### `leftupdown`
+##### <a name="leftupdown"></a>`leftupdown`
 
 Data type: `Optional[String]`
 
@@ -717,7 +845,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `leftcert`
+##### <a name="leftcert"></a>`leftcert`
 
 Data type: `Optional[String]`
 
@@ -725,7 +853,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `leftrsasigkey`
+##### <a name="leftrsasigkey"></a>`leftrsasigkey`
 
 Data type: `Optional[String]`
 
@@ -733,7 +861,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `leftrsasigkey2`
+##### <a name="leftrsasigkey2"></a>`leftrsasigkey2`
 
 Data type: `Optional[String]`
 
@@ -741,7 +869,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `leftsendcert`
+##### <a name="leftsendcert"></a>`leftsendcert`
 
 Data type: `Optional[Enum['yes', 'no',
     'never','always','sendifasked']]`
@@ -750,7 +878,7 @@ Data type: `Optional[Enum['yes', 'no',
 
 Default value: ``undef``
 
-##### `leftnexthop`
+##### <a name="leftnexthop"></a>`leftnexthop`
 
 Data type: `Optional[Variant[
     Enum['%direct','%defaultroute'],
@@ -760,7 +888,7 @@ Data type: `Optional[Variant[
 
 Default value: ``undef``
 
-##### `leftid`
+##### <a name="leftid"></a>`leftid`
 
 Data type: `Optional[String]`
 
@@ -768,7 +896,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `leftca`
+##### <a name="leftca"></a>`leftca`
 
 Data type: `Optional[String]`
 
@@ -776,7 +904,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightid`
+##### <a name="rightid"></a>`rightid`
 
 Data type: `Optional[String]`
 
@@ -784,7 +912,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightrsasigkey`
+##### <a name="rightrsasigkey"></a>`rightrsasigkey`
 
 Data type: `Optional[String]`
 
@@ -792,7 +920,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightrsasigkey2`
+##### <a name="rightrsasigkey2"></a>`rightrsasigkey2`
 
 Data type: `Optional[String]`
 
@@ -800,7 +928,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightca`
+##### <a name="rightca"></a>`rightca`
 
 Data type: `Optional[String]`
 
@@ -808,7 +936,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightaddresspool`
+##### <a name="rightaddresspool"></a>`rightaddresspool`
 
 Data type: `Optional[Array[Simplib::IP,2,2]]`
 
@@ -816,7 +944,7 @@ Data type: `Optional[Array[Simplib::IP,2,2]]`
 
 Default value: ``undef``
 
-##### `rightsubnets`
+##### <a name="rightsubnets"></a>`rightsubnets`
 
 Data type: `Optional[Array[Simplib::IP::CIDR]]`
 
@@ -824,7 +952,7 @@ Data type: `Optional[Array[Simplib::IP::CIDR]]`
 
 Default value: ``undef``
 
-##### `rightsubnet`
+##### <a name="rightsubnet"></a>`rightsubnet`
 
 Data type: `Optional[Variant[
     Enum['%no','%priv'],
@@ -836,7 +964,7 @@ Data type: `Optional[Variant[
 
 Default value: ``undef``
 
-##### `rightprotoport`
+##### <a name="rightprotoport"></a>`rightprotoport`
 
 Data type: `Optional[String]`
 
@@ -844,7 +972,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightsourceip`
+##### <a name="rightsourceip"></a>`rightsourceip`
 
 Data type: `Optional[Simplib::IP]`
 
@@ -852,7 +980,7 @@ Data type: `Optional[Simplib::IP]`
 
 Default value: ``undef``
 
-##### `rightupdown`
+##### <a name="rightupdown"></a>`rightupdown`
 
 Data type: `Optional[String]`
 
@@ -860,7 +988,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightcert`
+##### <a name="rightcert"></a>`rightcert`
 
 Data type: `Optional[String]`
 
@@ -868,7 +996,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightsendcert`
+##### <a name="rightsendcert"></a>`rightsendcert`
 
 Data type: `Optional[Enum['yes', 'no',
     'never','always','sendifasked']]`
@@ -877,7 +1005,7 @@ Data type: `Optional[Enum['yes', 'no',
 
 Default value: ``undef``
 
-##### `rightnexthop`
+##### <a name="rightnexthop"></a>`rightnexthop`
 
 Data type: `Optional[Variant[
     Enum['%direct','%defaultroute'],
@@ -887,7 +1015,7 @@ Data type: `Optional[Variant[
 
 Default value: ``undef``
 
-##### `auto`
+##### <a name="auto"></a>`auto`
 
 Data type: `Optional[Enum['add','start',
     'ondemand', 'ignore']]`
@@ -896,7 +1024,7 @@ Data type: `Optional[Enum['add','start',
 
 Default value: ``undef``
 
-##### `authby`
+##### <a name="authby"></a>`authby`
 
 Data type: `Optional[Enum['rsasig','secret',
     'secret|rsasig', 'never', 'null']]`
@@ -905,7 +1033,7 @@ Data type: `Optional[Enum['rsasig','secret',
 
 Default value: ``undef``
 
-##### `type`
+##### <a name="type"></a>`type`
 
 Data type: `Optional[Enum['tunnel','transport',
     'passthough','reject','drop']]`
@@ -914,7 +1042,7 @@ Data type: `Optional[Enum['tunnel','transport',
 
 Default value: ``undef``
 
-##### `ikev2`
+##### <a name="ikev2"></a>`ikev2`
 
 Data type: `Optional[Enum['insist','permit',
     'propose','never','yes', 'no']]`
@@ -923,7 +1051,7 @@ Data type: `Optional[Enum['insist','permit',
 
 Default value: ``undef``
 
-##### `mobike`
+##### <a name="mobike"></a>`mobike`
 
 Data type: `Optional[Enum['yes', 'no']]`
 
@@ -931,7 +1059,7 @@ Data type: `Optional[Enum['yes', 'no']]`
 
 Default value: ``undef``
 
-##### `phase2`
+##### <a name="phase2"></a>`phase2`
 
 Data type: `Optional[Enum['esp', 'ah']]`
 
@@ -939,7 +1067,7 @@ Data type: `Optional[Enum['esp', 'ah']]`
 
 Default value: ``undef``
 
-##### `ikepad`
+##### <a name="ikepad"></a>`ikepad`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -947,7 +1075,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `fragmentation`
+##### <a name="fragmentation"></a>`fragmentation`
 
 Data type: `Optional[Enum['yes','no','force']]`
 
@@ -955,7 +1083,7 @@ Data type: `Optional[Enum['yes','no','force']]`
 
 Default value: ``undef``
 
-##### `sha2_truncbug`
+##### <a name="sha2_truncbug"></a>`sha2_truncbug`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -963,7 +1091,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `narrowing`
+##### <a name="narrowing"></a>`narrowing`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -971,7 +1099,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `sareftrack`
+##### <a name="sareftrack"></a>`sareftrack`
 
 Data type: `Optional[Enum['yes','no',
     'conntrack']]`
@@ -980,7 +1108,7 @@ Data type: `Optional[Enum['yes','no',
 
 Default value: ``undef``
 
-##### `leftxauthserver`
+##### <a name="leftxauthserver"></a>`leftxauthserver`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -988,7 +1116,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `rightxauthserver`
+##### <a name="rightxauthserver"></a>`rightxauthserver`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -996,7 +1124,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `leftxauthusername`
+##### <a name="leftxauthusername"></a>`leftxauthusername`
 
 Data type: `Optional[String]`
 
@@ -1004,7 +1132,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `rightxauthusername`
+##### <a name="rightxauthusername"></a>`rightxauthusername`
 
 Data type: `Optional[String]`
 
@@ -1012,7 +1140,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `leftxauthclient`
+##### <a name="leftxauthclient"></a>`leftxauthclient`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -1020,7 +1148,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `rightxauthclient`
+##### <a name="rightxauthclient"></a>`rightxauthclient`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -1028,7 +1156,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `leftmodecfgserver`
+##### <a name="leftmodecfgserver"></a>`leftmodecfgserver`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -1036,7 +1164,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `rightmodecfgserver`
+##### <a name="rightmodecfgserver"></a>`rightmodecfgserver`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -1044,7 +1172,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `leftmodecfgclient`
+##### <a name="leftmodecfgclient"></a>`leftmodecfgclient`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -1052,7 +1180,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `rightmodecfgclient`
+##### <a name="rightmodecfgclient"></a>`rightmodecfgclient`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -1060,7 +1188,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `xauthby`
+##### <a name="xauthby"></a>`xauthby`
 
 Data type: `Optional[Enum['file','pam',
     'alwaysok']]`
@@ -1069,7 +1197,7 @@ Data type: `Optional[Enum['file','pam',
 
 Default value: ``undef``
 
-##### `xauthfail`
+##### <a name="xauthfail"></a>`xauthfail`
 
 Data type: `Optional[Enum['hard','soft']]`
 
@@ -1077,7 +1205,7 @@ Data type: `Optional[Enum['hard','soft']]`
 
 Default value: ``undef``
 
-##### `modecfgpull`
+##### <a name="modecfgpull"></a>`modecfgpull`
 
 Data type: `Optional[Enum['yes','no']]`
 
@@ -1085,7 +1213,7 @@ Data type: `Optional[Enum['yes','no']]`
 
 Default value: ``undef``
 
-##### `modecfgdns`
+##### <a name="modecfgdns"></a>`modecfgdns`
 
 Data type: `Optional[Array[Simplib::IP]]`
 
@@ -1093,7 +1221,7 @@ Support 3.23+ DNS configuration
 
 Default value: ``undef``
 
-##### `modecfgdns1`
+##### <a name="modecfgdns1"></a>`modecfgdns1`
 
 Data type: `Optional[Simplib::IP]`
 
@@ -1101,7 +1229,7 @@ Support <= 3.22 domain configuration
 
 Default value: ``undef``
 
-##### `modecfgdns2`
+##### <a name="modecfgdns2"></a>`modecfgdns2`
 
 Data type: `Optional[Simplib::IP]`
 
@@ -1109,7 +1237,7 @@ Support <= 3.22 domain configuration
 
 Default value: ``undef``
 
-##### `modecfgdomain`
+##### <a name="modecfgdomain"></a>`modecfgdomain`
 
 Data type: `Optional[String]`
 
@@ -1117,7 +1245,7 @@ Support <= 3.22 domain configuration
 
 Default value: ``undef``
 
-##### `modecfgdomains`
+##### <a name="modecfgdomains"></a>`modecfgdomains`
 
 Data type: `Optional[Array[String]]`
 
@@ -1125,7 +1253,7 @@ Support 3.23+ domains configuration
 
 Default value: ``undef``
 
-##### `modecfgbanner`
+##### <a name="modecfgbanner"></a>`modecfgbanner`
 
 Data type: `Optional[String]`
 
@@ -1133,7 +1261,7 @@ Data type: `Optional[String]`
 
 Default value: ``undef``
 
-##### `nat_ikev1_method`
+##### <a name="nat_ikev1_method"></a>`nat_ikev1_method`
 
 Data type: `Optional[Enum['drafts','rfc',
     'both']]`
@@ -1142,7 +1270,7 @@ Data type: `Optional[Enum['drafts','rfc',
 
 Default value: ``undef``
 
-##### `dpddelay`
+##### <a name="dpddelay"></a>`dpddelay`
 
 Data type: `Optional[Pattern[/\d+[smh]$/]]`
 
@@ -1150,7 +1278,7 @@ Data type: `Optional[Pattern[/\d+[smh]$/]]`
 
 Default value: ``undef``
 
-##### `dpdtimeout`
+##### <a name="dpdtimeout"></a>`dpdtimeout`
 
 Data type: `Optional[Pattern[/\d+[smh]$/]]`
 
@@ -1158,7 +1286,7 @@ Data type: `Optional[Pattern[/\d+[smh]$/]]`
 
 Default value: ``undef``
 
-##### `dpdaction`
+##### <a name="dpdaction"></a>`dpdaction`
 
 Data type: `Optional[Enum['hold', 'clear',
     'restart']]`
@@ -1167,21 +1295,28 @@ Data type: `Optional[Enum['hold', 'clear',
 
 Default value: ``undef``
 
-### `libreswan::nss::init_db`
+### <a name="libreswannssinit_db"></a>`libreswan::nss::init_db`
 
 Initializes the NSS database, sets the correct password, and configures FIPS if necessary.
 
 #### Parameters
 
-The following parameters are available in the `libreswan::nss::init_db` defined type.
+The following parameters are available in the `libreswan::nss::init_db` defined type:
 
-##### `dbdir`
+* [`dbdir`](#dbdir)
+* [`password`](#password)
+* [`destroyexisting`](#destroyexisting)
+* [`fips`](#fips)
+* [`token`](#token)
+* [`nsspassword`](#nsspassword)
+
+##### <a name="dbdir"></a>`dbdir`
 
 Data type: `Stdlib::Absolutepath`
 
 Directory where the NSS database will be created.
 
-##### `password`
+##### <a name="password"></a>`password`
 
 Data type: `String`
 
@@ -1193,7 +1328,7 @@ FIPS and non-FIPS token to they same password.  The tokens are defined by
 `$libreswan::nsstoken`. You can add tokens to array if there are other
 parts of the database you want to protect.
 
-##### `destroyexisting`
+##### <a name="destroyexisting"></a>`destroyexisting`
 
 Data type: `Boolean`
 
@@ -1201,7 +1336,7 @@ If true, it will remove the existing database before running the init command.
 
 Default value: ``false``
 
-##### `fips`
+##### <a name="fips"></a>`fips`
 
 Data type: `Boolean`
 
@@ -1209,7 +1344,7 @@ Data type: `Boolean`
 
 Default value: `simplib::lookup('simp_options::fips', { 'default_value' => false})`
 
-##### `token`
+##### <a name="token"></a>`token`
 
 Data type: `String`
 
@@ -1217,7 +1352,7 @@ Data type: `String`
 
 Default value: `'NSS Certificate DB'`
 
-##### `nsspassword`
+##### <a name="nsspassword"></a>`nsspassword`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -1225,21 +1360,27 @@ Data type: `Stdlib::Absolutepath`
 
 Default value: `"${dbdir}/nsspassword"`
 
-### `libreswan::nss::loadcacerts`
+### <a name="libreswannssloadcacerts"></a>`libreswan::nss::loadcacerts`
 
 Adds the CA certificates to the NSS trust store.
 
 #### Parameters
 
-The following parameters are available in the `libreswan::nss::loadcacerts` defined type.
+The following parameters are available in the `libreswan::nss::loadcacerts` defined type:
 
-##### `dbdir`
+* [`dbdir`](#dbdir)
+* [`nsspwd_file`](#nsspwd_file)
+* [`cert`](#cert)
+* [`token`](#token)
+* [`certtype`](#certtype)
+
+##### <a name="dbdir"></a>`dbdir`
 
 Data type: `Stdlib::Absolutepath`
 
 The directory where the DB is located
 
-##### `nsspwd_file`
+##### <a name="nsspwd_file"></a>`nsspwd_file`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -1247,13 +1388,13 @@ Data type: `Stdlib::Absolutepath`
 
 Default value: `"${dbdir}/nsspassword"`
 
-##### `cert`
+##### <a name="cert"></a>`cert`
 
 Data type: `Stdlib::Absolutepath`
 
 The absolute path to the public portion CA certificate.
 
-##### `token`
+##### <a name="token"></a>`token`
 
 Data type: `String`
 
@@ -1261,7 +1402,7 @@ Data type: `String`
 
 Default value: `'NSS Certificate DB'`
 
-##### `certtype`
+##### <a name="certtype"></a>`certtype`
 
 Data type: `Enum['PEM','DER']`
 
@@ -1269,21 +1410,28 @@ The format the certificate is in. PEM and DER are currently acceptable.
 
 Default value: `'PEM'`
 
-### `libreswan::nss::loadcerts`
+### <a name="libreswannssloadcerts"></a>`libreswan::nss::loadcerts`
 
 Load a server certificate into the NSS database.
 
 #### Parameters
 
-The following parameters are available in the `libreswan::nss::loadcerts` defined type.
+The following parameters are available in the `libreswan::nss::loadcerts` defined type:
 
-##### `dbdir`
+* [`dbdir`](#dbdir)
+* [`nsspwd_file`](#nsspwd_file)
+* [`cert`](#cert)
+* [`token`](#token)
+* [`key`](#key)
+* [`certtype`](#certtype)
+
+##### <a name="dbdir"></a>`dbdir`
 
 Data type: `Stdlib::Absolutepath`
 
 The directory where the NSS Database is located.
 
-##### `nsspwd_file`
+##### <a name="nsspwd_file"></a>`nsspwd_file`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -1291,13 +1439,13 @@ The file which contains the password if there is one.
 
 Default value: `"${dbdir}/nsspassword"`
 
-##### `cert`
+##### <a name="cert"></a>`cert`
 
 Data type: `Stdlib::Absolutepath`
 
 The absolute path to the public portion of the cert.
 
-##### `token`
+##### <a name="token"></a>`token`
 
 Data type: `String`
 
@@ -1305,7 +1453,7 @@ Data type: `String`
 
 Default value: `'NSS Certificate DB'`
 
-##### `key`
+##### <a name="key"></a>`key`
 
 Data type: `Optional[Stdlib::Absolutepath]`
 
@@ -1313,7 +1461,7 @@ The absolute path to the private portion of the cert.
 
 Default value: ``undef``
 
-##### `certtype`
+##### <a name="certtype"></a>`certtype`
 
 Data type: `Enum['PEM','P12']`
 
@@ -1323,32 +1471,23 @@ Default value: `'PEM'`
 
 ## Data types
 
-### `Libreswan::ConnAddr`
+### <a name="libreswanconnaddr"></a>`Libreswan::ConnAddr`
 
 Valid libreswan connection addresses
 
-Alias of `Variant[Enum[
+Alias of
+
+```puppet
+Variant[Enum[
     '%any',
     '%defaultroute',
     '%opportunistic',
     '%opportunisticgroup',
     '%group'
-  ], Simplib::IP::V4, Simplib::IP::V6, Pattern['^%[a-zA-Z]+\d+$']]`
+  ], Simplib::IP::V4, Simplib::IP::V6, Pattern['^%[a-zA-Z]+\d+$']]
+```
 
-### `Libreswan::IP::V4::VirtualPrivate`
-
-Matches valid IPv4 CIDR Mask addresses
-Base Regex taken from Ruby core's Resolv::IPv4::Regex
-
-Reference: ruby/lib/resolv.rb
-
-Copyright 2010 Tanaka Akira <kr@fsij.org>
-Released under the guidance of the Ruby COPYING file section 2(a)
-Commit 4e3a98d383eb3c420df5208d83f9aba70b504e33
-
-Alias of `Pattern['^(?-mix:\A%v4:(!)?((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))\.((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))\.((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))\.((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))/(3[012]|[12][0-9]|[0-9])\z)$']`
-
-### `Libreswan::IP::V6::VirtualPrivate`
+### <a name="libreswanipv4virtualprivate"></a>`Libreswan::IP::V4::VirtualPrivate`
 
 Matches valid IPv4 CIDR Mask addresses
 Base Regex taken from Ruby core's Resolv::IPv4::Regex
@@ -1359,23 +1498,52 @@ Copyright 2010 Tanaka Akira <kr@fsij.org>
 Released under the guidance of the Ruby COPYING file section 2(a)
 Commit 4e3a98d383eb3c420df5208d83f9aba70b504e33
 
-Alias of `Pattern['^(?x-mi:(\A%v6:(!)?(?x-mi:(?:(?x-mi:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}/(12[0-8]|1[01][0-9]|[0-9]?[0-9])\z))|(?:(?x-mi:((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)/(12[0-8]|1[01][0-9]|[0-9]?[0-9])\z))|(?:(?x-mi:((?:[0-9A-Fa-f]{1,4}:){6,6})(\d+)\.(\d+)\.(\d+)\.(\d+)/(12[0-8]|1[01][0-9]|[0-9]?[0-9])\z))|(?:(?x-mi:((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}:)*)(\d+)\.(\d+)\.(\d+)\.(\d+)/(12[0-8]|1[01][0-9]|[0-9]?[0-9]))))\z))$']`
+Alias of
 
-### `Libreswan::Interfaces`
+```puppet
+Pattern['^(?-mix:\A%v4:(!)?((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))\.((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))\.((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))\.((?x-mi:0|1(?:[0-9][0-9]?)?|2(?:[0-4][0-9]?|5[0-5]?|[6-9])?|[3-9][0-9]?))/(3[012]|[12][0-9]|[0-9])\z)$']
+```
+
+### <a name="libreswanipv6virtualprivate"></a>`Libreswan::IP::V6::VirtualPrivate`
+
+Matches valid IPv4 CIDR Mask addresses
+Base Regex taken from Ruby core's Resolv::IPv4::Regex
+
+Reference: ruby/lib/resolv.rb
+
+Copyright 2010 Tanaka Akira <kr@fsij.org>
+Released under the guidance of the Ruby COPYING file section 2(a)
+Commit 4e3a98d383eb3c420df5208d83f9aba70b504e33
+
+Alias of
+
+```puppet
+Pattern['^(?x-mi:(\A%v6:(!)?(?x-mi:(?:(?x-mi:(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}/(12[0-8]|1[01][0-9]|[0-9]?[0-9])\z))|(?:(?x-mi:((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)/(12[0-8]|1[01][0-9]|[0-9]?[0-9])\z))|(?:(?x-mi:((?:[0-9A-Fa-f]{1,4}:){6,6})(\d+)\.(\d+)\.(\d+)\.(\d+)/(12[0-8]|1[01][0-9]|[0-9]?[0-9])\z))|(?:(?x-mi:((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}:)*)(\d+)\.(\d+)\.(\d+)\.(\d+)/(12[0-8]|1[01][0-9]|[0-9]?[0-9]))))\z))$']
+```
+
+### <a name="libreswaninterfaces"></a>`Libreswan::Interfaces`
 
 Valid libreswan interfaces
 
-Alias of `Array[Variant[
+Alias of
+
+```puppet
+Array[Variant[
     Enum['%none','%defaultroute'],
     Pattern['(\w+=\w+)']
-  ]]`
+  ]]
+```
 
-### `Libreswan::VirtualPrivate`
+### <a name="libreswanvirtualprivate"></a>`Libreswan::VirtualPrivate`
 
 Valid virtual private addresses
 
-Alias of `Array[Variant[
+Alias of
+
+```puppet
+Array[Variant[
     Libreswan::IP::V4::VirtualPrivate,
     Libreswan::IP::V6::VirtualPrivate
-  ]]`
+  ]]
+```
 

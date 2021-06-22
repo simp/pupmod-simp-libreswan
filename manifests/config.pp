@@ -7,9 +7,7 @@ class libreswan::config {
   $protostack          = $libreswan::protostack
   $interfaces          = $libreswan::interfaces
   $listen              = $libreswan::listen
-  $ikeport             = $libreswan::ikeport
   $nflog_all           = $libreswan::nflog_all
-  $nat_ikeport         = $libreswan::nat_ikeport
   $keep_alive          = $libreswan::keep_alive
   $virtual_private     = $libreswan::virtual_private
   $myvendorid          = $libreswan::myvendorid
@@ -23,7 +21,6 @@ class libreswan::config {
   $ocsp_uri            = $libreswan::ocsp_uri
   $ocsp_trustname      = $libreswan::ocsp_trustname
   $syslog              = $libreswan::syslog
-  $klipsdebug          = $libreswan::klipsdebug
   $plutodebug          = $libreswan::plutodebug
   $uniqueids           = $libreswan::uniqueids
   $plutorestartoncrash = $libreswan::plutorestartoncrash
@@ -36,8 +33,6 @@ class libreswan::config {
   $statsbin            = $libreswan::statsbin
   $ipsecdir            = $libreswan::ipsecdir
   $secretsfile         = $libreswan::secretsfile
-  $perpeerlog          = $libreswan::perpeerlog
-  $perpeerlogdir       = $libreswan::perpeerlogdir
   $fragicmp            = $libreswan::fragicmp
   $hidetos             = $libreswan::hidetos
   $overridemtu         = $libreswan::overridemtu
