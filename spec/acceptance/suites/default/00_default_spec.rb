@@ -54,11 +54,18 @@ end
 
 test_name 'libreswan class'
 
+describe 'enable epel' do
+  it 'should enable EPEL' do
+    enable_epel_on(hosts)
+  end
+end
+
 ['7', '8'].each do |os_major_version|
   describe "libreswan class for EL #{os_major_version}" do
     let(:left) { only_host_with_role( hosts, "left#{os_major_version}" ) }
     let(:right) { only_host_with_role( hosts, "right#{os_major_version}" ) }
-    let(:haveged) { "package { 'epel-release': ensure => installed, provider => 'rpm', source => \"https://dl.fedoraproject.org/pub/epel/epel-release-latest-#{os_major_version}.noarch.rpm\" } -> class { 'haveged': }" }
+    let(:haveged) { 'include haveged' }
+
     let(:disable_firewalld) { "service { 'firewalld': ensure => 'stopped', enable => false }" }
     let(:disable_iptables) { "service { 'iptables': ensure => 'stopped', enable => false }" }
     let(:manifest) { "class { 'libreswan': }"}

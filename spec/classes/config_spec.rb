@@ -66,9 +66,6 @@ ipsec_conf_content = {
     top_comment +
     "config setup\n" +
     "  ipsecdir = /etc/ipsec.d\n" +
-    "  ikeport = 500\n" +
-    "  nat-ikeport = 4500\n" +
-    "  klipsdebug = none\n" +
     plutodebug_comment +
     "  plutodebug = none\n" +
     logfile_comment +
@@ -76,7 +73,6 @@ ipsec_conf_content = {
     dump_dir_comment +
     "  dumpdir = /var/run/pluto\n" +
     "  secretsfile = /etc/ipsec.secrets\n" +
-    "  perpeerlogdir = /var/log/pluto/peer\n" +
     protostack_comment +
     "  protostack = netkey\n" +
     virtual_private_comment +
@@ -93,9 +89,7 @@ ipsec_conf_content = {
     "  myid = @myid\n" +
     "  interfaces = \"ipsec0=eth0 ipsec1=ppp0\"\n" +
     "  listen = 1.2.3.4\n" +
-    "  ikeport = 600\n" +
     "  nflog-all = 10\n" +
-    "  nat-ikeport = 4600\n" +
     "  keep-alive = 10\n" +
     "  myvendorid = my-vendor-id\n" +
     "  nhelpers = -1\n" +
@@ -108,7 +102,6 @@ ipsec_conf_content = {
     "  ocsp-uri = https://myuri\n" +
     "  ocsp-trustname = my-trustname\n" +
     "  syslog = daemon.warning\n" +
-    "  klipsdebug = all\n" +
     plutodebug_comment +
     "  plutodebug = all\n" +
     "  uniqueids = no\n" +
@@ -123,8 +116,6 @@ ipsec_conf_content = {
     "  dumpdir = /var/run/ipsec\n" +
     "  statsbin = \"/some/external/reporter -p 266\"\n" +
     "  secretsfile = /etc/myipsec.secrets\n" +
-    "  perpeerlog = yes\n" +
-    "  perpeerlogdir = /var/log/ipsec/peer\n" +
     "  fragicmp = yes\n" +
     "  hidetos = no\n" +
     "  overridemtu = 1500\n" +

@@ -11,58 +11,55 @@
 <%-# TODO order settings to match Libreswan documentation -%>
 config setup
   ipsecdir = <%= @ipsecdir %>
-<% if @myid  then -%>
+<% if @myid -%>
   myid = <%= @myid %>
 <% end -%>
 <%-# Quotes are required because this may be an array of whitespace-separated interfaces -%>
-<% if @interfaces  then -%>
+<% if @interfaces -%>
   interfaces = "<%= @interfaces.join(' ') %>"
 <% end -%>
-<% if @listen  then -%>
+<% if @listen -%>
   listen = <%= @listen %>
 <% end -%>
-  ikeport = <%= @ikeport %>
-<% if @nflog_all  then -%>
+<% if @nflog_all -%>
   nflog-all = <%= @nflog_all %>
 <% end -%>
-  nat-ikeport = <%= @nat_ikeport %>
-<% if @keep_alive  then -%>
+<% if @keep_alive -%>
   keep-alive = <%= @keep_alive %>
 <% end -%>
-<% if @myvendorid  then -%>
+<% if @myvendorid -%>
   myvendorid = <%= @myvendorid %>
 <% end -%>
-<% if @nhelpers  then -%>
+<% if @nhelpers -%>
   nhelpers = <%= @nhelpers %>
 <% end -%>
-<% if @plutofork  then -%>
+<% if @plutofork -%>
   plutofork = <%= @plutofork %>
 <% end -%>
-<% if @crlcheckinterval  then -%>
+<% if @crlcheckinterval -%>
   crlcheckinterval = <%= @crlcheckinterval %>
 <% end -%>
-<% if @strictcrlpolicy  then -%>
+<% if @strictcrlpolicy -%>
   strictcrlpolicy = <%= @strictcrlpolicy %>
 <% end -%>
-<% if @ocsp_enable  then -%>
+<% if @ocsp_enable -%>
   ocsp-enable = <%= @ocsp_enable %>
 <% end -%>
-<% if @ocsp_strict  then -%>
+<% if @ocsp_strict -%>
   ocsp-strict = <%= @ocsp_strict %>
 <% end -%>
-<% if @ocsp_timeout  then -%>
+<% if @ocsp_timeout -%>
   ocsp-timeout = <%= @ocsp_timeout %>
 <% end -%>
-<% if @ocsp_uri  then -%>
+<% if @ocsp_uri -%>
   ocsp-uri = <%= @ocsp_uri %>
 <% end -%>
-<% if @ocsp_trustname  then -%>
+<% if @ocsp_trustname -%>
   ocsp-trustname = <%= @ocsp_trustname %>
 <% end -%>
-<% if @syslog  then -%>
+<% if @syslog -%>
   syslog = <%= @syslog %>
 <% end -%>
-  klipsdebug = <%= @klipsdebug %>
   # Do not enable debug options to debug configuration issues!
   # plutodebug "all", "none" or a combination from below:
   # "raw crypt parsing emitting control controlmore kernel pfkey
@@ -74,10 +71,10 @@ config setup
   # plutodebug="all crypt"
   # Again: only enable plutodebug when asked by a developer
   plutodebug = <%= @plutodebug %>
-<% if @uniqueids  then -%>
+<% if @uniqueids -%>
   uniqueids = <%= @uniqueids %>
 <% end -%>
-<% if @plutorestartoncrash  then -%>
+<% if @plutorestartoncrash -%>
   plutorestartoncrash = <%= @plutorestartoncrash %>
 <% end -%>
   # Normally, pluto logs via syslog. If you want to log to a file,
@@ -85,21 +82,21 @@ config setup
   # the file name /dev/null
   # Note: SElinux policies might prevent pluto writing to a log file at
   #       an unusual location.
-<% if @logfile  then -%>
+<% if @logfile -%>
   logfile = <%= @logfile %>
 <% else -%>
   #logfile=/var/log/pluto.log
 <% end -%>
-<% if @logappend  then -%>
+<% if @logappend -%>
   logappend = <%= @logappend %>
 <% end -%>
-<% if @logtime  then -%>
+<% if @logtime -%>
   logtime = <%= @logtime %>
 <% end -%>
-<% if @ddos_mode  then -%>
+<% if @ddos_mode -%>
   ddos-mode = <%= @ddos_mode %>
 <% end -%>
-<% if @ddos_ike_treshold  then -%>
+<% if @ddos_ike_treshold -%>
   ddos-ike-treshold = <%= @ddos_ike_treshold %>
 <% end -%>
   # Enable core dumps (might require system changes, like ulimit -C)
@@ -108,21 +105,17 @@ config setup
   #       unusual locations
   dumpdir = <%= @dumpdir %>
 <%-# Quotes are required because this may be an executable with command line options/args -%>
-<% if @statsbin  then -%>
+<% if @statsbin -%>
   statsbin = "<%= @statsbin %>"
 <% end -%>
   secretsfile = <%= @secretsfile %>
-<% if @perpeerlog  then -%>
-  perpeerlog = <%= @perpeerlog %>
-<% end -%>
-  perpeerlogdir = <%= @perpeerlogdir %>
-<% if @fragicmp  then -%>
+<% if @fragicmp -%>
   fragicmp = <%= @fragicmp %>
 <% end -%>
-<% if @hidetos  then -%>
+<% if @hidetos -%>
   hidetos = <%= @hidetos %>
 <% end -%>
-<% if @overridemtu  then -%>
+<% if @overridemtu -%>
   overridemtu = <%= @overridemtu %>
 <% end -%>
   # which IPsec stack to use, "netkey" (the default), "klips" or "mast".
@@ -135,7 +128,7 @@ config setup
   # using 25/8 as "private" address space on their wireless networks.
   # This range has never been announced via BGP (at least upto 2015)
   #	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
-<% if @virtual_private  then -%>
+<% if @virtual_private -%>
   virtual-private = <%= @virtual_private.join(',')%>
 <% end -%>
 #

@@ -1,3 +1,13 @@
+* Tue Jun 22 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 3.5.0
+- Removed obsolete configuration options whose presence prevent the
+  ipsec service from starting on EL8. The corresponding deprecated
+  parameters are as follows:
+  - `libreswan::ikeport` 
+  - `libreswan::nat_ikeport` 
+  - `libreswan::klipsdebug`
+  - `libreswan::perpeerlog`
+  - `libreswan::perpeerlogdir`
+  
 * Tue Jun 15 2021 Chris Tessmer <chris.tessmer@onyxpoint.com> - 3.5.0
 - Removed support for Puppet 5
 - Ensured support for Puppet 7 in requirements and stdlib

@@ -71,8 +71,10 @@
 # @param interfaces
 # @param listen
 # @param ikeport
+#   DEPRECATED
 # @param nflog_all
 # @param nat_ikeport
+#   DEPRECATED
 # @param keep_alive
 # @param virtual_private
 # @param myvendorid
@@ -87,6 +89,7 @@
 # @param ocsp_trustname
 # @param syslog
 # @param klipsdebug
+#   DEPRECATED
 # @param plutodebug
 # @param uniqueids
 # @param plutorestartoncrash
@@ -103,7 +106,9 @@
 #
 # @param secretsfile
 # @param perpeerlog
+#   DEPRECATED
 # @param perpeerlogdir
+#   DEPRECATED
 # @param fragicmp
 # @param hidetos
 # @param overridemtu
