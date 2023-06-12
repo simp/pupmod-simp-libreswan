@@ -41,7 +41,7 @@ define libreswan::nss::init_db(
     }
   }
 
-  if $operatingsystem in ['RedHat', 'CentOS', 'OracleLinux'] {
+  if $operatingsystem in ['RedHat', 'CentOS', 'OracleLinux', 'Rocky'] {
     $init_command    = '/sbin/ipsec initnss'
   }
   else {
