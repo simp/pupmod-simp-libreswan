@@ -6,7 +6,7 @@
 #   The name of the certificate to be used
 #
 class libreswan::config::pki::nsspki(
-  String[1] $certname = $facts['fqdn'],
+  String[1] $certname = $facts['networking']['fqdn'],
 ) {
   assert_private()
   Class['libreswan::config::pki'] ~> Class['libreswan::config::pki::nsspki']
