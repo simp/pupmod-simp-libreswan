@@ -41,11 +41,11 @@ define libreswan::nss::init_db(
     }
   }
 
-  if $operatingsystem in ['RedHat', 'CentOS', 'OracleLinux'] {
+  if $facts['os']['name'] in ['RedHat', 'CentOS', 'OracleLinux', 'Rocky'] {
     $init_command    = '/sbin/ipsec initnss'
   }
   else {
-    fail("Operating System '${::operatingsystem}' is not supported by ${module_name}")
+    fail("Operating System '${facts['os']['name']}' is not supported by ${module_name}")
   }
 
   exec { "init_nssdb ${dbdir}":
