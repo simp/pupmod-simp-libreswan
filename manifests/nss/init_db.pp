@@ -19,15 +19,18 @@
 # @param token
 # @param nsspassword
 #
-define libreswan::nss::init_db(
-  Stdlib::Absolutepath  $dbdir,
-  String                $password,
-  Boolean               $destroyexisting = false,
-  Boolean               $fips            = simplib::lookup('simp_options::fips', { 'default_value' => false}),
-  String                $token           = 'NSS Certificate DB',
-  Stdlib::Absolutepath  $nsspassword     = "${dbdir}/nsspassword",
-){
-
+# @param init_command
+#   Command used to create the cert db.
+#
+define libreswan::nss::init_db (
+  Stdlib::Absolutepath $dbdir,
+  String               $password,
+  Boolean              $destroyexisting = false,
+  Boolean              $fips            = simplib::lookup('simp_options::fips', { 'default_value' => false }),
+  String               $token           = 'NSS Certificate DB',
+  Stdlib::Absolutepath $nsspassword     = "${dbdir}/nsspassword",
+  Optional[String[1]]  $init_command    = simplib::lookup('libreswan::nss::init_db::init_command', { 'default_value' => undef }),
+) {
   # Because this is an initialization, the current password should be none.
   $oldpassword = 'none'
   $dbfile = "${dbdir}/cert9.db"
@@ -41,10 +44,7 @@ define libreswan::nss::init_db(
     }
   }
 
-  if $facts['os']['name'] in ['RedHat', 'CentOS', 'OracleLinux', 'Rocky'] {
-    $init_command    = '/sbin/ipsec initnss'
-  }
-  else {
+  if $init_command =~ Undef {
     fail("Operating System '${facts['os']['name']}' is not supported by ${module_name}")
   }
 
@@ -66,7 +66,7 @@ define libreswan::nss::init_db(
   if $fips or $facts['fips_enabled'] {
     exec { "nssdb in fips mode ${dbdir}":
       command => "modutil -dbdir sql:${dbdir} -fips true",
-      onlyif  =>  "modutil -dbdir sql:${dbdir} -chkfips false",
+      onlyif  => "modutil -dbdir sql:${dbdir} -chkfips false",
       path    => ['/bin', '/sbin', '/usr/bin'],
       require => Exec["init_nssdb ${dbdir}"]
     }
@@ -89,5 +89,4 @@ define libreswan::nss::init_db(
     path        => ['/bin','/sbin'],
     refreshonly => true,
   }
-
 }

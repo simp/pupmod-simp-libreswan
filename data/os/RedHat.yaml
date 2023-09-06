@@ -1,3 +1,4 @@
 ---
 libreswan::service_name: ipsec
 libreswan::package_name: libreswan
+libreswan::nss::init_db::init_command: '/sbin/ipsec initnss'

@@ -1,3 +1,14 @@
+* Wed Sep 06 2023 Steven Pritchard <steve@sicura.us> - 3.7.0
+- Add AlmaLinux 8 support
+- Move `$init_command` in `libreswan::nss::init_db` to a parameter and set
+  the default in Hiera to avoid the hard-coded list of supported operating
+  systems
+- Clean up for puppet-lint in `libreswan::nss::init_db`
+- Add support for Puppet 8 and stdlib 9
+- Drop support for Puppet 6
+- Update gem dependencies
+- Clean up Gemfile for rubocop
+
 * Mon Jun 12 2023 Chris Tessmer <chris.tessmer@onyxpoint.com> - 3.6.0
 - Add RockyLinux 8 support
 
