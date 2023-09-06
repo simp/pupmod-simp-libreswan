@@ -1369,6 +1369,7 @@ The following parameters are available in the `libreswan::nss::init_db` defined 
 * [`fips`](#-libreswan--nss--init_db--fips)
 * [`token`](#-libreswan--nss--init_db--token)
 * [`nsspassword`](#-libreswan--nss--init_db--nsspassword)
+* [`init_command`](#-libreswan--nss--init_db--init_command)
 
 ##### <a name="-libreswan--nss--init_db--dbdir"></a>`dbdir`
 
@@ -1402,7 +1403,7 @@ Data type: `Boolean`
 
 
 
-Default value: `simplib::lookup('simp_options::fips', { 'default_value' => false})`
+Default value: `simplib::lookup('simp_options::fips', { 'default_value' => false })`
 
 ##### <a name="-libreswan--nss--init_db--token"></a>`token`
 
@@ -1419,6 +1420,14 @@ Data type: `Stdlib::Absolutepath`
 
 
 Default value: `"${dbdir}/nsspassword"`
+
+##### <a name="-libreswan--nss--init_db--init_command"></a>`init_command`
+
+Data type: `Optional[String[1]]`
+
+Command used to create the cert db.
+
+Default value: `simplib::lookup('libreswan::nss::init_db::init_command', { 'default_value' => undef })`
 
 ### <a name="libreswan--nss--loadcacerts"></a>`libreswan::nss::loadcacerts`
 
