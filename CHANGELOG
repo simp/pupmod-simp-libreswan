@@ -1,3 +1,6 @@
+* Wed Sep 11 2024 Steven Pritchard <steve@sicura.us> - 3.10.0
+- [puppetsync] Update module dependencies to support simp-iptables 7.x
+
 * Mon Oct 23 2023 Steven Pritchard <steve@sicura.us> - 3.9.0
 - [puppetsync] Add EL9 support
 
