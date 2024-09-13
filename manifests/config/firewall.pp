@@ -3,7 +3,7 @@
 class libreswan::config::firewall {
   assert_private()
 
-  $use_firewalld = simplib::lookup('iptables::use_firewalld', { 'default_value' => iptables::use_firewalld(true) })
+  $use_firewalld = simplib::lookup('iptables::use_firewalld', { 'default_value' => true })
 
   if $use_firewalld {
     simp_firewalld::rule { 'ipsec_allow':

@@ -32,52 +32,50 @@ describe 'libreswan' do
           it_behaves_like "a structured module"
           it { is_expected.to contain_class('libreswan::config::firewall') }
           it { is_expected.to contain_class('libreswan::config::firewall').that_notifies('Class[libreswan::service]') }
-           if os_facts[:os][:release][:major] > '7'
-            it { is_expected.to create_simp_firewalld__rule('ipsec_allow')
-              .with_trusted_nets(params[:trusted_nets])
-              .with_apply_to('all')
-              .with_dports([50,4500])
-              .with_protocol('udp')
-            }
+          it { is_expected.to create_simp_firewalld__rule('ipsec_allow')
+            .with_trusted_nets(params[:trusted_nets])
+            .with_apply_to('all')
+            .with_dports([50,4500])
+            .with_protocol('udp')
+          }
 
-            it { is_expected.to create_simp_firewalld__rule('allow_protocol_esp')
-              .with_trusted_nets(params[:trusted_nets])
-              .with_apply_to('all')
-              .with_protocol('esp')
-              .with_order(15)
-            }
+          it { is_expected.to create_simp_firewalld__rule('allow_protocol_esp')
+            .with_trusted_nets(params[:trusted_nets])
+            .with_apply_to('all')
+            .with_protocol('esp')
+            .with_order(15)
+          }
 
-            it { is_expected.to create_simp_firewalld__rule('allow_protocol_ah')
-              .with_trusted_nets(params[:trusted_nets])
-              .with_apply_to('all')
-              .with_protocol('ah')
-              .with_order(15)
-            }
-          else
-            it { is_expected.to create_iptables__listen__udp('ipsec_allow')
-              .with_trusted_nets(params[:trusted_nets])
-              .with_apply_to('all')
-              .with_dports([50,4500])
-            }
-
-            it { is_expected.to create_iptables__rule('allow_protocol_esp')
-              .with_content('-A LOCAL-INPUT -p esp  -j ACCEPT')
-              .with_apply_to('all')
-              .with_order(15)
-            }
-
-            it { is_expected.to create_iptables__rule('allow_protocol_ah_ipv4')
-              .with_content('-A LOCAL-INPUT -p ah   -j ACCEPT')
-              .with_apply_to('ipv4')
-              .with_order(15)
-            }
-
-            it { is_expected.to create_iptables__rule('allow_protocol_ah_ipv6')
-              .with_content('-A LOCAL-INPUT -m ah   -j ACCEPT')
-              .with_apply_to('ipv6')
-              .with_order(15)
-            }
-          end
+          it { is_expected.to create_simp_firewalld__rule('allow_protocol_ah')
+            .with_trusted_nets(params[:trusted_nets])
+            .with_apply_to('all')
+            .with_protocol('ah')
+            .with_order(15)
+          }
+          # TODO: Refactor to allow for testing the non-firewalld code path
+          # it { is_expected.to create_iptables__listen__udp('ipsec_allow')
+          #   .with_trusted_nets(params[:trusted_nets])
+          #   .with_apply_to('all')
+          #   .with_dports([50,4500])
+          # }
+          #
+          # it { is_expected.to create_iptables__rule('allow_protocol_esp')
+          #   .with_content('-A LOCAL-INPUT -p esp  -j ACCEPT')
+          #   .with_apply_to('all')
+          #   .with_order(15)
+          # }
+          #
+          # it { is_expected.to create_iptables__rule('allow_protocol_ah_ipv4')
+          #   .with_content('-A LOCAL-INPUT -p ah   -j ACCEPT')
+          #   .with_apply_to('ipv4')
+          #   .with_order(15)
+          # }
+          #
+          # it { is_expected.to create_iptables__rule('allow_protocol_ah_ipv6')
+          #   .with_content('-A LOCAL-INPUT -m ah   -j ACCEPT')
+          #   .with_apply_to('ipv6')
+          #   .with_order(15)
+          # }
         end
 
         context "with pki = 'simp'" do
