@@ -13,29 +13,33 @@ describe 'libreswan::install' do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to contain_class('libreswan::install') }
           it { is_expected.to contain_package('libreswan').with_ensure('present') }
-          it { is_expected.to create_file('/usr/local/scripts').with({
-            :owner => 'root',
-            :mode  => '0755',
-            :ensure => 'directory'
-            })
+          it {
+            is_expected.to create_file('/usr/local/scripts').with({
+                                                                    owner: 'root',
+            mode: '0755',
+            ensure: 'directory'
+                                                                  })
           }
-          it { is_expected.to create_file('/usr/local/scripts/nss').with({
-            :owner => 'root',
-            :mode  => '0755',
-            :ensure => 'directory'
-            })
+          it {
+            is_expected.to create_file('/usr/local/scripts/nss').with({
+                                                                        owner: 'root',
+            mode: '0755',
+            ensure: 'directory'
+                                                                      })
           }
-          it { is_expected.to create_file('/etc/ipsec.d').with({
-            :ensure  => 'directory',
-            :owner   => 'root',
-            :mode   =>  '0700'
-            })
+          it {
+            is_expected.to create_file('/etc/ipsec.d').with({
+                                                              ensure: 'directory',
+            owner: 'root',
+            mode: '0700'
+                                                            })
           }
-          it { is_expected.to create_file('/usr/local/scripts/nss/update_nssdb_password.sh').with({
-            :source => 'puppet:///modules/libreswan/usr/local/scripts/nss/update_nssdb_password.sh',
-            :owner => 'root',
-            :mode   => '0500'
-            })
+          it {
+            is_expected.to create_file('/usr/local/scripts/nss/update_nssdb_password.sh').with({
+                                                                                                 source: 'puppet:///modules/libreswan/usr/local/scripts/nss/update_nssdb_password.sh',
+            owner: 'root',
+            mode: '0500'
+                                                                                               })
           }
         end
       end
