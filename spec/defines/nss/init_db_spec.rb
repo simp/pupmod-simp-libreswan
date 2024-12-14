@@ -1,46 +1,55 @@
 require 'spec_helper'
-describe 'libreswan::nss::init_db', :type => :define do
+describe 'libreswan::nss::init_db', type: :define do
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
         let(:facts) do
           os_facts
         end
-        let(:common_params) { { :dbdir => '/etc/ipsec.d', :nsspassword => '/etc/ipsec.d/nsspassword',
-          :password => 'mypassword', :token => 'NSS Certificate DB' } }
+        let(:common_params) do
+          { dbdir: '/etc/ipsec.d', nsspassword: '/etc/ipsec.d/nsspassword',
+          password: 'mypassword', token: 'NSS Certificate DB' }
+        end
         let(:init_command) { '/sbin/ipsec initnss' }
+
         describe 'with destroy existing database' do
-          let(:title  ){ 'IPSEC NSS DB' }
-          let(:params) { common_params.merge({ :destroyexisting => true }) }
-          it { is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
-            :creates => "#{params[:dbdir]}/cert9.db",
-            :before  => "File[#{params[:nsspassword]}]",
-            :command => init_command,
-            })
+          let(:title) { 'IPSEC NSS DB' }
+          let(:params) { common_params.merge({ destroyexisting: true }) }
+
+          it {
+            is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
+                                                                               creates: "#{params[:dbdir]}/cert9.db",
+            before: "File[#{params[:nsspassword]}]",
+            command: init_command,
+                                                                             })
           }
-          it { is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
-            :creates => "#{params[:dbdir]}/cert9.db",
-            :before  => "File[#{params[:nsspassword]}]",
-            :command => init_command,
-            })
+          it {
+            is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
+                                                                               creates: "#{params[:dbdir]}/cert9.db",
+            before: "File[#{params[:nsspassword]}]",
+            command: init_command,
+                                                                             })
           }
-          it { is_expected.to contain_exec("Remove NSS database #{params[:dbdir]}").with({
-            :command => "rm -f #{params[:dbdir]}/*.db",
-            :onlyif  => "test -f #{params[:dbdir]}/cert9.db",
-            :before  => "Exec[init_nssdb #{params[:dbdir]}]"
-            })
+          it {
+            is_expected.to contain_exec("Remove NSS database #{params[:dbdir]}").with({
+                                                                                        command: "rm -f #{params[:dbdir]}/*.db",
+            onlyif: "test -f #{params[:dbdir]}/cert9.db",
+            before: "Exec[init_nssdb #{params[:dbdir]}]"
+                                                                                      })
           }
         end
 
         describe "with don't destroy existing database" do
-          let(:params) { common_params.merge( { :destroyexisting => false } ) }
-          let(:title  ){ 'IPSEC NSS DB' }
-          it { is_expected.to_not contain_exec("Remove NSS database #{params[:dbdir]}") }
-          it { is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
-            :creates => "#{params[:dbdir]}/cert9.db",
-            :before  => "File[#{params[:nsspassword]}]",
-            :command => init_command,
-            })
+          let(:params) { common_params.merge({ destroyexisting: false }) }
+          let(:title) { 'IPSEC NSS DB' }
+
+          it { is_expected.not_to contain_exec("Remove NSS database #{params[:dbdir]}") }
+          it {
+            is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
+                                                                               creates: "#{params[:dbdir]}/cert9.db",
+            before: "File[#{params[:nsspassword]}]",
+            command: init_command,
+                                                                             })
           }
         end
 
@@ -50,24 +59,28 @@ describe 'libreswan::nss::init_db', :type => :define do
             test_facts[:fips_enabled] = false
             test_facts
           end
-          let(:params) { common_params.merge( { :fips => false, :token => 'NSS Certificate DB'} ) }
-          let(:title ){ 'IPSEC NSS DB' }
-          it { is_expected.to contain_exec("make sure nssdb not in fips mode #{params[:dbdir]}").with({
-            :command => "modutil  -dbdir sql:#{params[:dbdir]} -fips false",
-            :require => "Exec[init_nssdb #{params[:dbdir]}]"
-            })
+          let(:params) { common_params.merge({ fips: false, token: 'NSS Certificate DB' }) }
+          let(:title) { 'IPSEC NSS DB' }
+
+          it {
+            is_expected.to contain_exec("make sure nssdb not in fips mode #{params[:dbdir]}").with({
+                                                                                                     command: "modutil  -dbdir sql:#{params[:dbdir]} -fips false",
+            require: "Exec[init_nssdb #{params[:dbdir]}]"
+                                                                                                   })
           }
-          it { is_expected.to create_file("#{params[:nsspassword]}").with({
-            :content => "#{params[:token]}:#{params[:password]}\n",
-            :mode    => '0600',
-            :owner   => 'root',
-            :notify  => "Exec[update token password #{params[:dbdir]}]"
-            })
+          it {
+            is_expected.to create_file(params[:nsspassword].to_s).with({
+                                                                         content: "#{params[:token]}:#{params[:password]}\n",
+            mode: '0600',
+            owner: 'root',
+            notify: "Exec[update token password #{params[:dbdir]}]"
+                                                                       })
           }
-          it { is_expected.to contain_exec("update token password #{params[:dbdir]}").with({
-            :command => "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
-            :refreshonly => true
-            })
+          it {
+            is_expected.to contain_exec("update token password #{params[:dbdir]}").with({
+                                                                                          command: "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
+            refreshonly: true
+                                                                                        })
           }
         end
 
@@ -77,24 +90,28 @@ describe 'libreswan::nss::init_db', :type => :define do
             test_facts[:fips_enabled] = false
             test_facts
           end
-          let(:params) { common_params.merge( { :fips => true, :token => 'NSS FIPS 140-2 Certificate DB'} ) }
-          let(:title  ){ 'IPSEC NSS DB' }
-          it { is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with({
-            :command => "modutil -dbdir sql:#{params[:dbdir]} -fips true",
-            :require => "Exec[init_nssdb #{params[:dbdir]}]"
-            })
+          let(:params) { common_params.merge({ fips: true, token: 'NSS FIPS 140-2 Certificate DB' }) }
+          let(:title) { 'IPSEC NSS DB' }
+
+          it {
+            is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with({
+                                                                                       command: "modutil -dbdir sql:#{params[:dbdir]} -fips true",
+            require: "Exec[init_nssdb #{params[:dbdir]}]"
+                                                                                     })
           }
-          it { is_expected.to create_file("#{params[:nsspassword]}").with({
-            :content => "#{params[:token]}:#{params[:password]}\n",
-            :mode    => '0600',
-            :owner   => 'root',
-            :notify  => "Exec[update token password #{params[:dbdir]}]"
-            })
+          it {
+            is_expected.to create_file(params[:nsspassword].to_s).with({
+                                                                         content: "#{params[:token]}:#{params[:password]}\n",
+            mode: '0600',
+            owner: 'root',
+            notify: "Exec[update token password #{params[:dbdir]}]"
+                                                                       })
           }
-          it { is_expected.to contain_exec("update token password #{params[:dbdir]}").with({
-            :command => "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
-            :refreshonly => true
-            })
+          it {
+            is_expected.to contain_exec("update token password #{params[:dbdir]}").with({
+                                                                                          command: "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
+            refreshonly: true
+                                                                                        })
           }
         end
 
@@ -104,13 +121,14 @@ describe 'libreswan::nss::init_db', :type => :define do
             test_facts[:fips_enabled] = true
             test_facts
           end
-          let(:params) { common_params.merge( { :fips => false, :token => 'NSS FIPS 140-2 Certificate DB'} ) }
-          let(:title  ){ 'IPSEC NSS DB' }
+          let(:params) { common_params.merge({ fips: false, token: 'NSS FIPS 140-2 Certificate DB' }) }
+          let(:title) { 'IPSEC NSS DB' }
 
-          it { is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with({
-            :command => "modutil -dbdir sql:#{params[:dbdir]} -fips true",
-            :require => "Exec[init_nssdb #{params[:dbdir]}]"
-            })
+          it {
+            is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with({
+                                                                                       command: "modutil -dbdir sql:#{params[:dbdir]} -fips true",
+            require: "Exec[init_nssdb #{params[:dbdir]}]"
+                                                                                     })
           }
         end
       end
