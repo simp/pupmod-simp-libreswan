@@ -23,19 +23,15 @@ describe 'libreswan::nss::init_db', type: :define do
             command: init_command,
                                                                              })
           }
+
           it {
-            is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
-                                                                               creates: "#{params[:dbdir]}/cert9.db",
-            before: "File[#{params[:nsspassword]}]",
-            command: init_command,
-                                                                             })
-          }
-          it {
-            is_expected.to contain_exec("Remove NSS database #{params[:dbdir]}").with({
-                                                                                        command: "rm -f #{params[:dbdir]}/*.db",
-            onlyif: "test -f #{params[:dbdir]}/cert9.db",
-            before: "Exec[init_nssdb #{params[:dbdir]}]"
-                                                                                      })
+            is_expected.to contain_exec("Remove NSS database #{params[:dbdir]}").with(
+              {
+                command: "rm -f #{params[:dbdir]}/*.db",
+                onlyif: "test -f #{params[:dbdir]}/cert9.db",
+                before: "Exec[init_nssdb #{params[:dbdir]}]",
+              },
+            )
           }
         end
 
@@ -45,11 +41,13 @@ describe 'libreswan::nss::init_db', type: :define do
 
           it { is_expected.not_to contain_exec("Remove NSS database #{params[:dbdir]}") }
           it {
-            is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with({
-                                                                               creates: "#{params[:dbdir]}/cert9.db",
-            before: "File[#{params[:nsspassword]}]",
-            command: init_command,
-                                                                             })
+            is_expected.to contain_exec("init_nssdb #{params[:dbdir]}").with(
+              {
+                creates: "#{params[:dbdir]}/cert9.db",
+                before: "File[#{params[:nsspassword]}]",
+                command: init_command,
+              },
+            )
           }
         end
 
@@ -63,24 +61,30 @@ describe 'libreswan::nss::init_db', type: :define do
           let(:title) { 'IPSEC NSS DB' }
 
           it {
-            is_expected.to contain_exec("make sure nssdb not in fips mode #{params[:dbdir]}").with({
-                                                                                                     command: "modutil  -dbdir sql:#{params[:dbdir]} -fips false",
-            require: "Exec[init_nssdb #{params[:dbdir]}]"
-                                                                                                   })
+            is_expected.to contain_exec("make sure nssdb not in fips mode #{params[:dbdir]}").with(
+              {
+                command: "modutil  -dbdir sql:#{params[:dbdir]} -fips false",
+                require: "Exec[init_nssdb #{params[:dbdir]}]",
+              },
+            )
           }
           it {
-            is_expected.to create_file(params[:nsspassword].to_s).with({
-                                                                         content: "#{params[:token]}:#{params[:password]}\n",
-            mode: '0600',
-            owner: 'root',
-            notify: "Exec[update token password #{params[:dbdir]}]"
-                                                                       })
+            is_expected.to create_file(params[:nsspassword].to_s).with(
+              {
+                content: "#{params[:token]}:#{params[:password]}\n",
+                mode: '0600',
+                owner: 'root',
+                notify: "Exec[update token password #{params[:dbdir]}]",
+              },
+            )
           }
           it {
-            is_expected.to contain_exec("update token password #{params[:dbdir]}").with({
-                                                                                          command: "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
-            refreshonly: true
-                                                                                        })
+            is_expected.to contain_exec("update token password #{params[:dbdir]}").with(
+              {
+                command: "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
+                refreshonly: true,
+              },
+            )
           }
         end
 
@@ -100,18 +104,22 @@ describe 'libreswan::nss::init_db', type: :define do
                                                                                      })
           }
           it {
-            is_expected.to create_file(params[:nsspassword].to_s).with({
-                                                                         content: "#{params[:token]}:#{params[:password]}\n",
-            mode: '0600',
-            owner: 'root',
-            notify: "Exec[update token password #{params[:dbdir]}]"
-                                                                       })
+            is_expected.to create_file(params[:nsspassword].to_s).with(
+              {
+                content: "#{params[:token]}:#{params[:password]}\n",
+                mode: '0600',
+                owner: 'root',
+                notify: "Exec[update token password #{params[:dbdir]}]",
+              },
+            )
           }
           it {
-            is_expected.to contain_exec("update token password #{params[:dbdir]}").with({
-                                                                                          command: "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
-            refreshonly: true
-                                                                                        })
+            is_expected.to contain_exec("update token password #{params[:dbdir]}").with(
+              {
+                command: "/usr/local/scripts/nss/update_nssdb_password.sh #{params[:dbdir]} \"#{params[:password]}\" \"none\" \"#{params[:token]}\"",
+                refreshonly: true,
+              },
+            )
           }
         end
 
@@ -125,10 +133,12 @@ describe 'libreswan::nss::init_db', type: :define do
           let(:title) { 'IPSEC NSS DB' }
 
           it {
-            is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with({
-                                                                                       command: "modutil -dbdir sql:#{params[:dbdir]} -fips true",
-            require: "Exec[init_nssdb #{params[:dbdir]}]"
-                                                                                     })
+            is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with(
+            {
+              command: "modutil -dbdir sql:#{params[:dbdir]} -fips true",
+              require: "Exec[init_nssdb #{params[:dbdir]}]"
+            },
+          )
           }
         end
       end
