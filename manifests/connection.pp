@@ -196,7 +196,7 @@ define libreswan::connection (
   Optional[Pattern[/\d+[smh]$/]]       $dpdtimeout         = undef,
   Optional[Enum['hold', 'clear',
     'restart']]                        $dpdaction          = undef,
-  Optional[String]                     $ipsec_interface    = undef,
+  Optional[String]                     $vti_interface      = undef,
   Optional[Enum['yes', 'no']]          $vti_routing        = undef,
   Optional[Enum['yes', 'no']]          $vti_shared         = undef,
   Optional[String]                     $mark               = undef,
