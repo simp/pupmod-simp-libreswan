@@ -100,12 +100,17 @@
 # @param dpddelay
 # @param dpdtimeout
 # @param dpdaction
+# @param ipsec-interface
+# @param vti-routing
+# @param mark
+# @param vti-shared
+# @param esp
 #
 define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',
   Integer                              $keyingtries        = 10,
   String                               $ike                = 'aes-sha2',
-  String                               $phase2alg          = 'aes-sha2',
+  String                               $phase2alg          = undef,
   Optional[Libreswan::ConnAddr]        $left               = undef,
   Optional[Libreswan::ConnAddr]        $right              = undef,
   Optional[Enum['ipv4','ipv6']]        $connaddrfamily     = undef,
@@ -191,6 +196,12 @@ define libreswan::connection (
   Optional[Pattern[/\d+[smh]$/]]       $dpdtimeout         = undef,
   Optional[Enum['hold', 'clear',
     'restart']]                        $dpdaction          = undef,
+  Optional[Enum['no', 'yes',
+    'Integer']]                        $ipsec-interface    = undef,
+  Optional[Enum['yes', 'no']]          $vti-routing        = undef,
+  Optional[Enum['yes', 'no']]          $vti-shared         = undef,
+  Optional[String]                     $mark               = undef,
+  Optional[String]                     $esp                = undef, 
 ) {
   include 'libreswan'
 
