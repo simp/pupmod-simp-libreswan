@@ -203,3 +203,18 @@ conn <%= @conn_name %>
 <% if @dpdaction then -%>
   dpdaction = <%= @dpdaction %>
 <% end -%>
+<% if @ipsec-interface then -%>
+ipsec-interface = <%= @ipsec-interface %>
+<% end -%>
+<% if @vti-routing then -%>
+vti-routing = <%= @vti-routing %>
+<% end -%>
+<% if @vti-shared then -%>
+vti-shared = <%= @vti-shared %>
+<% end -%>
+<% if @mark then -%>
+mark = <%= @mark %>
+<% end -%>
+<% if @esp then -%>
+esp = <%= @esp %>
+<% end -%>
