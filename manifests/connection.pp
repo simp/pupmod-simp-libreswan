@@ -197,9 +197,9 @@ define libreswan::connection (
   Optional[Enum['hold', 'clear',
     'restart']]                        $dpdaction          = undef,
   Optional[Enum['no', 'yes',
-    'Integer']]                        $ipsec-interface    = undef,
-  Optional[Enum['yes', 'no']]          $vti-routing        = undef,
-  Optional[Enum['yes', 'no']]          $vti-shared         = undef,
+    'Integer']]                        $ipsec_interface    = undef,
+  Optional[Enum['yes', 'no']]          $vti_routing        = undef,
+  Optional[Enum['yes', 'no']]          $vti_shared         = undef,
   Optional[String]                     $mark               = undef,
   Optional[String]                     $esp                = undef, 
 ) {
