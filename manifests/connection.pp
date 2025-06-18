@@ -104,6 +104,8 @@
 # @param vti_routing
 # @param mark
 # @param vti_shared
+# @param ikelifetime
+# @param salifetime
 #
 define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',
