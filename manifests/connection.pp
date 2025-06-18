@@ -104,13 +104,12 @@
 # @param vti_routing
 # @param mark
 # @param vti_shared
-# @param esp
 #
 define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',
   Integer                              $keyingtries        = 10,
   String                               $ike                = 'aes-sha2',
-  Optional[String]                     $phase2alg          = undef,
+  String                               $phase2alg          = 'aes-sha2',
   Optional[Libreswan::ConnAddr]        $left               = undef,
   Optional[Libreswan::ConnAddr]        $right              = undef,
   Optional[Enum['ipv4','ipv6']]        $connaddrfamily     = undef,
@@ -200,7 +199,6 @@ define libreswan::connection (
   Optional[Enum['yes', 'no']]          $vti_routing        = undef,
   Optional[Enum['yes', 'no']]          $vti_shared         = undef,
   Optional[String]                     $mark               = undef,
-  Optional[String]                     $esp                = undef,
   Optional[String]                     $ikelifetime        = undef,
   Optional[String]                     $salifetime         = undef,
 ) {
