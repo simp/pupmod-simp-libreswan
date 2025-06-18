@@ -100,7 +100,7 @@
 # @param dpddelay
 # @param dpdtimeout
 # @param dpdaction
-# @param ipsec_interface
+# @param vti_interface
 # @param vti_routing
 # @param mark
 # @param vti_shared
