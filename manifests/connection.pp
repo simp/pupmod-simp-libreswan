@@ -200,7 +200,9 @@ define libreswan::connection (
   Optional[Enum['yes', 'no']]          $vti_routing        = undef,
   Optional[Enum['yes', 'no']]          $vti_shared         = undef,
   Optional[String]                     $mark               = undef,
-  Optional[String]                     $esp                = undef, 
+  Optional[String]                     $esp                = undef,
+  Optional[String]                     $ikelifetime        = undef,
+  Optional[String]                     $salifetime         = undef,
 ) {
   include 'libreswan'
 
