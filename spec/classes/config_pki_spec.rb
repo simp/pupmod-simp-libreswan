@@ -2,10 +2,10 @@ require 'spec_helper'
 
 describe 'libreswan::config::pki' do
   context 'supported operating systems' do
-    on_supported_os.each do |os, facts|
+    on_supported_os.each do |os, os_facts|
       context "on #{os}" do
         let(:facts) do
-          facts
+          os_facts
         end
 
         context 'with pki = true libreswan::config should init NSS db and copy certs' do

@@ -125,12 +125,12 @@ end
 
 describe 'libreswan::connection', type: :define do
   context 'supported operating systems' do
-    on_supported_os.each do |os, facts|
+    on_supported_os.each do |os, os_facts|
       context "on #{os}" do
         let(:facts) do
-          facts
+          os_facts
         end
-  let(:common_params) { { dir: '/etc/ipsec.d' } }
+        let(:common_params) { { dir: '/etc/ipsec.d' } }
 
         describe 'create %default connection config' do
           let(:conn_name) { '%default' }
@@ -327,8 +327,7 @@ describe 'libreswan::connection', type: :define do
           end
 
           describe 'single CIDR address when other variants are possible' do
-            [ :leftsubnet,
-              :rightsubnet].each do |cidr_param|
+            [ :leftsubnet, :rightsubnet ].each do |cidr_param|
               context "invalid CIDR address #{cidr_param}" do
                 let(:title) { "invalid_cidr_#{cidr_param}" }
                 let(:params) { { cidr_param => '1.2..30.0/24' } }
