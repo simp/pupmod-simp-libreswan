@@ -137,13 +137,11 @@ shared_examples_for 'a libreswan ipsec config file generator' do
 
   it {
     is_expected.to contain_file(dumpdir).with(
-    {
       ensure: :directory,
       owner: 'root',
       mode: '0700',
       before: 'File[/etc/ipsec.conf]',
-    },
-  )
+    )
   }
 end
 
@@ -220,12 +218,10 @@ describe 'libreswan::config' do
           it_behaves_like 'a libreswan ipsec config file generator'
           it {
             is_expected.to contain_file('/var/log/ipsec.log').with(
-            {
               owner: 'root',
               mode: '0600',
               before: 'File[/etc/ipsec.conf]',
-            },
-          )
+            )
           }
         end
       end

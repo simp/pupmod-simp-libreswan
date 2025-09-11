@@ -130,7 +130,7 @@ describe 'libreswan::connection', type: :define do
         let(:facts) do
           facts
         end
-        let(:common_params) { { dir: '/etc/ipsec.d' } }
+  let(:common_params) { { dir: '/etc/ipsec.d' } }
 
         describe 'create %default connection config' do
           let(:conn_name) { '%default' }
@@ -161,7 +161,7 @@ describe 'libreswan::connection', type: :define do
           let(:title) { 'maximally_specified_conn' }
           let(:params) do
             common_params.merge(
-            { keyingtries: 5,
+              keyingtries: 5,
               ike: 'aes_gcm256-sha2;dh23',
               phase2alg: '3des-md5;modp1024',
               left: '10.11.11.1',
@@ -222,8 +222,8 @@ describe 'libreswan::connection', type: :define do
               modecfgdomain: 'test.domain',
               modecfgdomains: ['test.domain', 'test2.domain'],
               modecfgbanner: 'test banner',
-              nat_ikev1_method: 'drafts' },
-          )
+              nat_ikev1_method: 'drafts',
+            )
           end
 
           it_behaves_like 'a libreswan connection config file generator'
