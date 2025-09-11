@@ -110,7 +110,7 @@ connection_conf_content = {
     "  modecfgdomain = test.domain\n" \
     "  modecfgdomains = \"test.domain test2.domain\"\n" \
     "  modecfgbanner = test banner\n" \
-    "  keyingtries = 5\n"
+    "  keyingtries = 5\n",
 }
 
 shared_examples_for 'a libreswan connection config file generator' do
@@ -130,7 +130,7 @@ describe 'libreswan::connection', type: :define do
         let(:facts) do
           facts
         end
-        let(:common_params) { { dir: '/etc/ipsec.d', } }
+        let(:common_params) { { dir: '/etc/ipsec.d' } }
 
         describe 'create %default connection config' do
           let(:conn_name) { '%default' }
@@ -222,7 +222,7 @@ describe 'libreswan::connection', type: :define do
               modecfgdomain: 'test.domain',
               modecfgdomains: ['test.domain', 'test2.domain'],
               modecfgbanner: 'test banner',
-              nat_ikev1_method: 'drafts', },
+              nat_ikev1_method: 'drafts' },
           )
           end
 

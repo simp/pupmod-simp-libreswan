@@ -100,7 +100,7 @@ describe 'libreswan::nss::init_db', type: :define do
           it {
             is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with({
                                                                                        command: "modutil -dbdir sql:#{params[:dbdir]} -fips true",
-            require: "Exec[init_nssdb #{params[:dbdir]}]"
+            require: "Exec[init_nssdb #{params[:dbdir]}]",
                                                                                      })
           }
           it {
@@ -136,7 +136,7 @@ describe 'libreswan::nss::init_db', type: :define do
             is_expected.to contain_exec("nssdb in fips mode #{params[:dbdir]}").with(
             {
               command: "modutil -dbdir sql:#{params[:dbdir]} -fips true",
-              require: "Exec[init_nssdb #{params[:dbdir]}]"
+              require: "Exec[init_nssdb #{params[:dbdir]}]",
             },
           )
           }

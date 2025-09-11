@@ -1,15 +1,15 @@
 require 'spec_helper'
-top_comment = <<EOM
-# /etc/ipsec.conf - Libreswan IPsec configuration file
-#
-# This file is controlled by puppet.  Changes should be done through hiera.
-#
-# This file holds only the config setup section of ipsec.conf.
-# Connection information should be placed in seperate files in the directory
-# defined by libreswan::ipsecdir (default /etc/ipsec.d)
-# There is information on the possible values in the manual page, "man ipsec.conf"
-# or at https://libreswan.org
-#
+top_comment = <<~EOM
+  # /etc/ipsec.conf - Libreswan IPsec configuration file
+  #
+  # This file is controlled by puppet.  Changes should be done through hiera.
+  #
+  # This file holds only the config setup section of ipsec.conf.
+  # Connection information should be placed in seperate files in the directory
+  # defined by libreswan::ipsecdir (default /etc/ipsec.d)
+  # There is information on the possible values in the manual page, "man ipsec.conf"
+  # or at https://libreswan.org
+  #
 EOM
 
 logfile_comment = <<EOM
@@ -55,10 +55,10 @@ virtual_private_comment = <<EOM
   #	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
 EOM
 
-include_comment = <<EOM
-#
-# You must add your IPsec connections as separate files in the ipsecdir
-#  (defined above (default /etc/ipsec.d/ )
+include_comment = <<~EOM
+  #
+  # You must add your IPsec connections as separate files in the ipsecdir
+  #  (defined above (default /etc/ipsec.d/ )
 EOM
 
 ipsec_conf_content = {
@@ -122,7 +122,7 @@ ipsec_conf_content = {
                        virtual_private_comment +
                        "  virtual-private = %v4:1.2.3.0/24,%v6:fe80::/10,%v4:!5.6.0.0/16,%v6:!fd80::/10\n" +
                        include_comment +
-                       "include /etc/myipsec.d/*.conf\n"
+                       "include /etc/myipsec.d/*.conf\n",
 }
 
 shared_examples_for 'a libreswan ipsec config file generator' do
@@ -141,7 +141,7 @@ shared_examples_for 'a libreswan ipsec config file generator' do
       ensure: :directory,
       owner: 'root',
       mode: '0700',
-      before: 'File[/etc/ipsec.conf]'
+      before: 'File[/etc/ipsec.conf]',
     },
   )
   }
@@ -167,54 +167,54 @@ describe 'libreswan::config' do
           let(:title) { :fully_specified }
           let(:dumpdir) { '/var/run/ipsec' }
           let(:pre_condition) do
-            <<-EOM
-class { "libreswan":
-  service_name        => "ipsec",
-  myid                => '@myid',
-  protostack          => 'klips',
-  interfaces          => ['ipsec0=eth0','ipsec1=ppp0'],
-  listen              => '1.2.3.4',
-  ikeport             => 600,
-  nflog_all           => 10,
-  nat_ikeport         => 4600,
-  keep_alive          => 10,
-  virtual_private     => ['%v4:1.2.3.0/24', '%v6:fe80::/10', '%v4:!5.6.0.0/16', '%v6:!fd80::/10'],
-  myvendorid          => 'my-vendor-id',
-  nhelpers            => -1,
-  #seedbits
-  #secctx-attr-type
-  plutofork           => 'no',
-  crlcheckinterval    => 60,
-  strictcrlpolicy     => 'yes',
-  ocsp_enable         => 'yes',
-  ocsp_strict         => 'yes',
-  ocsp_timeout        => 4,
-  ocsp_uri            => 'https://myuri',
-  ocsp_trustname      => 'my-trustname',
-  syslog              => 'daemon.warning',
-  klipsdebug          => 'all',
-  plutodebug          => 'all',
-  uniqueids           => 'no',
-  plutorestartoncrash => 'no',
-  logfile             => '/var/log/ipsec.log',
-  logappend           => 'no',
-  logtime             => 'no',
-  ddos_mode           => 'busy',
-  ddos_ike_treshold   => 26000,
-  #max-halfopen-ike
-  #shuntlifetime
-  #xfrmlifetime
-  dumpdir             => '/var/run/ipsec',
-  statsbin            => '/some/external/reporter -p 266',
-  ipsecdir            => '/etc/myipsec.d',
-  secretsfile         => '/etc/myipsec.secrets',
-  perpeerlog          => 'yes',
-  perpeerlogdir       => '/var/log/ipsec/peer',
-  fragicmp            => 'yes',
-  hidetos             => 'no',
-  overridemtu         => 1500,
-}
-EOM
+            <<~EOM
+              class { "libreswan":
+                service_name        => "ipsec",
+                myid                => '@myid',
+                protostack          => 'klips',
+                interfaces          => ['ipsec0=eth0','ipsec1=ppp0'],
+                listen              => '1.2.3.4',
+                ikeport             => 600,
+                nflog_all           => 10,
+                nat_ikeport         => 4600,
+                keep_alive          => 10,
+                virtual_private     => ['%v4:1.2.3.0/24', '%v6:fe80::/10', '%v4:!5.6.0.0/16', '%v6:!fd80::/10'],
+                myvendorid          => 'my-vendor-id',
+                nhelpers            => -1,
+                #seedbits
+                #secctx-attr-type
+                plutofork           => 'no',
+                crlcheckinterval    => 60,
+                strictcrlpolicy     => 'yes',
+                ocsp_enable         => 'yes',
+                ocsp_strict         => 'yes',
+                ocsp_timeout        => 4,
+                ocsp_uri            => 'https://myuri',
+                ocsp_trustname      => 'my-trustname',
+                syslog              => 'daemon.warning',
+                klipsdebug          => 'all',
+                plutodebug          => 'all',
+                uniqueids           => 'no',
+                plutorestartoncrash => 'no',
+                logfile             => '/var/log/ipsec.log',
+                logappend           => 'no',
+                logtime             => 'no',
+                ddos_mode           => 'busy',
+                ddos_ike_treshold   => 26000,
+                #max-halfopen-ike
+                #shuntlifetime
+                #xfrmlifetime
+                dumpdir             => '/var/run/ipsec',
+                statsbin            => '/some/external/reporter -p 266',
+                ipsecdir            => '/etc/myipsec.d',
+                secretsfile         => '/etc/myipsec.secrets',
+                perpeerlog          => 'yes',
+                perpeerlogdir       => '/var/log/ipsec/peer',
+                fragicmp            => 'yes',
+                hidetos             => 'no',
+                overridemtu         => 1500,
+              }
+            EOM
           end
 
           it_behaves_like 'a libreswan ipsec config file generator'
@@ -223,7 +223,7 @@ EOM
             {
               owner: 'root',
               mode: '0600',
-              before: 'File[/etc/ipsec.conf]'
+              before: 'File[/etc/ipsec.conf]',
             },
           )
           }

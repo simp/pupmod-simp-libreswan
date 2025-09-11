@@ -18,7 +18,7 @@ describe 'libreswan::config::pki' do
 
           it {
             is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with({
-                                                                                       require: 'File[/etc/ipsec.conf]'
+                                                                                       require: 'File[/etc/ipsec.conf]',
                                                                                      })
           }
           it {
@@ -28,7 +28,7 @@ describe 'libreswan::config::pki' do
           }
           it {
             is_expected.to create_pki__copy('libreswan').with({
-                                                                source: '/etc/pki/simp/x509'
+                                                                source: '/etc/pki/simp/x509',
                                                               })
           }
           it { is_expected.not_to create_class('pki') }
@@ -46,7 +46,7 @@ describe 'libreswan::config::pki' do
 
           it {
             is_expected.not_to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with({
-                                                                                           require: 'File[/etc/ipsec.conf]'
+                                                                                           require: 'File[/etc/ipsec.conf]',
                                                                                          })
           }
           it {
@@ -69,7 +69,7 @@ describe 'libreswan::config::pki' do
 
           it {
             is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with({
-                                                                                       require: 'File[/etc/ipsec.conf]'
+                                                                                       require: 'File[/etc/ipsec.conf]',
                                                                                      })
           }
           it {
@@ -79,7 +79,7 @@ describe 'libreswan::config::pki' do
           }
           it {
             is_expected.to create_pki__copy('libreswan').with({
-                                                                source: '/etc/pki/simp/x509'
+                                                                source: '/etc/pki/simp/x509',
                                                               })
           }
           it { is_expected.to create_class('pki') }

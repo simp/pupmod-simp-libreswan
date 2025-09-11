@@ -31,7 +31,7 @@ describe 'libreswan::config::pki::nsspki' do
             nsspwd_file: '/etc/ipsec.d/nsspassword',
             cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
             key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
-            token: 'NSS Certificate DB'
+            token: 'NSS Certificate DB',
                                                                                 })
           }
         end
@@ -60,7 +60,7 @@ describe 'libreswan::config::pki::nsspki' do
             nsspwd_file: '/etc/ipsec.d/nsspassword',
             cert: '/etc/pki/simp_apps/libreswan/x509/public/client1.pub',
             key: '/etc/pki/simp_apps/libreswan/x509/private/client1.pem',
-            token: 'NSS Certificate DB'
+            token: 'NSS Certificate DB',
                                                                              })
           }
         end

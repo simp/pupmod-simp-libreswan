@@ -110,24 +110,24 @@ end
   EOS
     end
     let(:hieradata_left) do
-      <<-EOS
----
-libreswan::service_name : 'ipsec'
-libreswan::interfaces : ["ipsec0=#{leftip}"]
-libreswan::listen : '#{leftip}'
-simp_options::pki: true
-simp_options::pki::source: '/etc/pki/simp-testing/pki'
-EOS
+      <<~EOS
+        ---
+        libreswan::service_name : 'ipsec'
+        libreswan::interfaces : ["ipsec0=#{leftip}"]
+        libreswan::listen : '#{leftip}'
+        simp_options::pki: true
+        simp_options::pki::source: '/etc/pki/simp-testing/pki'
+      EOS
     end
     let(:hieradata_right) do
-      <<-EOM
----
-libreswan::service_name : 'ipsec'
-libreswan::interfaces : ["ipsec0=#{rightip}"]
-libreswan::listen : '#{rightip}'
-simp_options::pki: true
-simp_options::pki::source: '/etc/pki/simp-testing/pki'
-EOM
+      <<~EOM
+        ---
+        libreswan::service_name : 'ipsec'
+        libreswan::interfaces : ["ipsec0=#{rightip}"]
+        libreswan::listen : '#{rightip}'
+        simp_options::pki: true
+        simp_options::pki::source: '/etc/pki/simp-testing/pki'
+      EOM
     end
     let(:testfile) { "/tmp/testfile.#{Time.now.to_i}" }
     let(:nc) { '/bin/nc' }

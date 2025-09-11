@@ -103,7 +103,7 @@ describe 'libreswan' do
                                                                                           dbdir: '/etc/ipsec.d',
               nsspassword: '/etc/ipsec.d/nsspassword',
               token: 'NSS Certificate DB',
-              fips: false
+              fips: false,
                                                                                         })
             }
 
@@ -112,7 +112,7 @@ describe 'libreswan' do
                                                                                               cert: '/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem',
               dbdir: '/etc/ipsec.d',
               nsspwd_file: '/etc/ipsec.d/nsspassword',
-              token: 'NSS Certificate DB'
+              token: 'NSS Certificate DB',
                                                                                             })
             }
 
@@ -122,7 +122,7 @@ describe 'libreswan' do
               nsspwd_file: '/etc/ipsec.d/nsspassword',
               cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
               key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
-              token: 'NSS Certificate DB'
+              token: 'NSS Certificate DB',
                                                                                   })
             }
           end
@@ -141,7 +141,7 @@ describe 'libreswan' do
                                                                                           dbdir: '/etc/ipsec.d',
               nsspassword: '/etc/ipsec.d/nsspassword',
               token: 'NSS FIPS 140-2 Certificate DB',
-              fips: true
+              fips: true,
                                                                                         })
             }
 
@@ -150,7 +150,7 @@ describe 'libreswan' do
                                                                                               cert: '/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem',
               dbdir: '/etc/ipsec.d',
               nsspwd_file: '/etc/ipsec.d/nsspassword',
-              token: 'NSS FIPS 140-2 Certificate DB'
+              token: 'NSS FIPS 140-2 Certificate DB',
                                                                                             })
             }
 
@@ -160,7 +160,7 @@ describe 'libreswan' do
               nsspwd_file: '/etc/ipsec.d/nsspassword',
               cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
               key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
-              token: 'NSS FIPS 140-2 Certificate DB'
+              token: 'NSS FIPS 140-2 Certificate DB',
                                                                                   })
             }
           end
@@ -179,7 +179,7 @@ describe 'libreswan' do
                                                                                           dbdir: '/etc/ipsec.d',
               nsspassword: '/etc/ipsec.d/nsspassword',
               token: 'NSS FIPS 140-2 Certificate DB',
-              fips: true
+              fips: true,
                                                                                         })
             }
 
@@ -188,7 +188,7 @@ describe 'libreswan' do
                                                                                               cert: '/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem',
               dbdir: '/etc/ipsec.d',
               nsspwd_file: '/etc/ipsec.d/nsspassword',
-              token: 'NSS FIPS 140-2 Certificate DB'
+              token: 'NSS FIPS 140-2 Certificate DB',
                                                                                             })
             }
 
@@ -198,7 +198,7 @@ describe 'libreswan' do
               nsspwd_file: '/etc/ipsec.d/nsspassword',
               cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
               key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
-              token: 'NSS FIPS 140-2 Certificate DB'
+              token: 'NSS FIPS 140-2 Certificate DB',
                                                                                   })
             }
           end
