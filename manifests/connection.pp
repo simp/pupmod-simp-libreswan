@@ -100,6 +100,12 @@
 # @param dpddelay
 # @param dpdtimeout
 # @param dpdaction
+# @param vti_interface
+# @param vti_routing
+# @param mark
+# @param vti_shared
+# @param ikelifetime
+# @param salifetime
 #
 define libreswan::connection (
   Stdlib::Absolutepath                 $dir                = '/etc/ipsec.d',
@@ -191,6 +197,12 @@ define libreswan::connection (
   Optional[Pattern[/\d+[smh]$/]]       $dpdtimeout         = undef,
   Optional[Enum['hold', 'clear',
     'restart']]                        $dpdaction          = undef,
+  Optional[String]                     $vti_interface      = undef,
+  Optional[Enum['yes', 'no']]          $vti_routing        = undef,
+  Optional[Enum['yes', 'no']]          $vti_shared         = undef,
+  Optional[String]                     $mark               = undef,
+  Optional[String]                     $ikelifetime        = undef,
+  Optional[String]                     $salifetime         = undef,
 ) {
   include 'libreswan'
 
