@@ -1,3 +1,29 @@
+* Tue May 26 2026 Steven Pritchard <steve@sicura.us> - 4.0.0
+- BREAKING: A bare `include libreswan` now only installs the libreswan package.
+  All other resources (the `ipsec.conf` file, policy files, the `ipsec`
+  service, firewall rules, PKI, NSS DB, haveged) require explicit opt-in via
+  class parameters.
+- `/etc/ipsec.conf` is no longer written from a template. Individual fields
+  are managed in place with `file_line` and only when the corresponding
+  parameter is non-`undef`. Removed `templates/etc/ipsec.conf.erb` and the
+  five policy templates under `templates/etc/ipsec.d/policies/`.
+- Service management is opt-in via the new `service_ensure` and
+  `service_enable` parameters (both default to `undef` — unmanaged).
+- Policy files in `${ipsecdir}/policies/{block,clear,clear-or-private,
+  private,private-or-clear}` are written only when their corresponding
+  `*_cidrs` parameter is set, and removed when listed in `purge_policies`.
+- Configuration fields can be removed via the new `purge_settings` array.
+- `simp_options::*` Hiera lookups are no longer consulted for defaults; sites
+  that relied on automatic opt-in to firewall/PKI/FIPS/haveged must now wire
+  those parameters explicitly.
+- Many parameters that previously had concrete defaults (`protostack`,
+  `plutodebug`, `dumpdir`, `virtual_private`, `private_clear_cidrs`,
+  `klipsdebug`, `perpeerlog*`, etc.) are now `Optional[...]` and default to
+  `undef`, meaning "not managed."
+- The NSS password-update helper script is no longer installed on bare
+  `include`; it is now installed by `libreswan::nss` and pulled in
+  automatically by `libreswan::nss::init_db`.
+
 * Wed Jun 18 2025 nunomigsilva <nunomigsilva@deloitte.pt> - 3.11.0
 - Enable setting parameters vti_interface, vti_routing, mark, vti_shared,
   ikelifetime and salifetime

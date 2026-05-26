@@ -37,11 +37,15 @@ If you find any issues, they can be submitted to our [JIRA](https://simp-project
 
 Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
 
-This module is optimally designed for use within a larger SIMP ecosystem, but it can be used independently:
-* When included within the SIMP ecosystem, security compliance settings will be managed from the Puppet server.
-* If used independently, all SIMP-managed security subsystems are disabled by
-  default and must be explicitly opted into by administrators.  Please see
-  parameters mapped to `simp_options::*` items in `init.pp` for details.
+This module is designed to be safe to apply on a system that already has
+libreswan configured: a bare `include libreswan` installs the package and
+nothing else. Service management, firewall rules, PKI, NSS DB initialization,
+haveged, and every `ipsec.conf` field are opt-in via class parameters.
+
+As of 4.0.0 the module no longer consults `simp_options::*` Hiera keys to
+auto-opt-in to firewall/PKI/FIPS/haveged. Sites that previously relied on
+that behavior must set the corresponding `libreswan::*` parameters
+explicitly.
 
 ## Module Description
 
@@ -77,11 +81,29 @@ After reading the introduction, select the [Main Wiki Page](https://libreswan.or
 * Libreswan starts an "ipsec" service, but it is listed as "pluto" in the process list.
 
 ### Configure the IPSEC service
-Add the following to hiera:
+
+> **Note (4.0.0):** A bare `include libreswan` only installs the libreswan
+> package. It does **not** write `/etc/ipsec.conf`, manage the `ipsec`
+> service, open firewall ports, or initialize the NSS database. Each of
+> those is opt-in via an explicit class parameter. Parameters that map to
+> `ipsec.conf` fields default to `undef`, which means "leave the field
+> alone in the existing file"; the underlying file is edited with
+> `file_line` only for fields the caller actually sets. To remove a
+> previously-managed field, list its key in `libreswan::purge_settings`.
+
+A minimal hiera example that actually configures something:
+
 ```yaml
 ---
-simp_options::pki: true
-simp_options::trusted_nets : <desired client nets>
+libreswan::service_ensure: running
+libreswan::service_enable: true
+libreswan::firewall:       true
+libreswan::trusted_nets:   ['<desired client nets>']
+libreswan::pki:            true
+
+# Individual ipsec.conf fields you want managed:
+libreswan::plutodebug: 'none'
+libreswan::uniqueids:  'yes'
 
 classes:
   - 'libreswan'
