@@ -80,66 +80,66 @@ EOM
   let(:ipsec_conf_content) do
     {
       default:     top_comment +
-                  "config setup\n" \
-                  "  ipsecdir = /etc/ipsec.d\n" +
-                  plutodebug_comment +
-                  "  plutodebug = none\n" +
-                  logfile_comment +
-                  "  #logfile=/var/log/pluto.log\n" +
-                  dump_dir_comment +
-                  "  dumpdir = /var/run/pluto\n" \
-                  "  secretsfile = /etc/ipsec.secrets\n" +
-                  protostack_comment +
-                  "  protostack = netkey\n" +
-                  virtual_private_comment +
-                  "  virtual-private = %v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12\n" +
-                  include_comment +
-                  "include /etc/ipsec.d/*.conf\n",
+        "config setup\n" \
+        "  ipsecdir = /etc/ipsec.d\n" +
+        plutodebug_comment +
+        "  plutodebug = none\n" +
+        logfile_comment +
+        "  #logfile=/var/log/pluto.log\n" +
+        dump_dir_comment +
+        "  dumpdir = /var/run/pluto\n" \
+        "  secretsfile = /etc/ipsec.secrets\n" +
+        protostack_comment +
+        "  protostack = netkey\n" +
+        virtual_private_comment +
+        "  virtual-private = %v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12\n" +
+        include_comment +
+        "include /etc/ipsec.d/*.conf\n",
 
       # This content is NOT a valid ipsec configuration, but simply a
       # configuration that exercises parameter processing code.
       fully_specified:     top_comment +
-                          "config setup\n" \
-                          "  ipsecdir = /etc/myipsec.d\n" \
-                          "  myid = @myid\n" \
-                          "  interfaces = \"ipsec0=eth0 ipsec1=ppp0\"\n" \
-                          "  listen = 1.2.3.4\n" \
-                          "  nflog-all = 10\n" \
-                          "  keep-alive = 10\n" \
-                          "  myvendorid = my-vendor-id\n" \
-                          "  nhelpers = -1\n" \
-                          "  plutofork = no\n" \
-                          "  crlcheckinterval = 60\n" \
-                          "  strictcrlpolicy = yes\n" \
-                          "  ocsp-enable = yes\n" \
-                          "  ocsp-strict = yes\n" \
-                          "  ocsp-timeout = 4\n" \
-                          "  ocsp-uri = https://myuri\n" \
-                          "  ocsp-trustname = my-trustname\n" \
-                          "  syslog = daemon.warning\n" +
-                          plutodebug_comment +
-                          "  plutodebug = all\n" \
-                          "  uniqueids = no\n" \
-                          "  plutorestartoncrash = no\n" +
-                          logfile_comment +
-                          "  logfile = /var/log/ipsec.log\n" \
-                          "  logappend = no\n" \
-                          "  logtime = no\n" \
-                          "  ddos-mode = busy\n" \
-                          "  ddos-ike-treshold = 26000\n" +
-                          dump_dir_comment +
-                          "  dumpdir = /var/run/ipsec\n" \
-                          "  statsbin = \"/some/external/reporter -p 266\"\n" \
-                          "  secretsfile = /etc/myipsec.secrets\n" \
-                          "  fragicmp = yes\n" \
-                          "  hidetos = no\n" \
-                          "  overridemtu = 1500\n" +
-                          protostack_comment +
-                          "  protostack = klips\n" +
-                          virtual_private_comment +
-                          "  virtual-private = %v4:1.2.3.0/24,%v6:fe80::/10,%v4:!5.6.0.0/16,%v6:!fd80::/10\n" +
-                          include_comment +
-                          "include /etc/myipsec.d/*.conf\n",
+        "config setup\n" \
+        "  ipsecdir = /etc/myipsec.d\n" \
+        "  myid = @myid\n" \
+        "  interfaces = \"ipsec0=eth0 ipsec1=ppp0\"\n" \
+        "  listen = 1.2.3.4\n" \
+        "  nflog-all = 10\n" \
+        "  keep-alive = 10\n" \
+        "  myvendorid = my-vendor-id\n" \
+        "  nhelpers = -1\n" \
+        "  plutofork = no\n" \
+        "  crlcheckinterval = 60\n" \
+        "  strictcrlpolicy = yes\n" \
+        "  ocsp-enable = yes\n" \
+        "  ocsp-strict = yes\n" \
+        "  ocsp-timeout = 4\n" \
+        "  ocsp-uri = https://myuri\n" \
+        "  ocsp-trustname = my-trustname\n" \
+        "  syslog = daemon.warning\n" +
+        plutodebug_comment +
+        "  plutodebug = all\n" \
+        "  uniqueids = no\n" \
+        "  plutorestartoncrash = no\n" +
+        logfile_comment +
+        "  logfile = /var/log/ipsec.log\n" \
+        "  logappend = no\n" \
+        "  logtime = no\n" \
+        "  ddos-mode = busy\n" \
+        "  ddos-ike-treshold = 26000\n" +
+        dump_dir_comment +
+        "  dumpdir = /var/run/ipsec\n" \
+        "  statsbin = \"/some/external/reporter -p 266\"\n" \
+        "  secretsfile = /etc/myipsec.secrets\n" \
+        "  fragicmp = yes\n" \
+        "  hidetos = no\n" \
+        "  overridemtu = 1500\n" +
+        protostack_comment +
+        "  protostack = klips\n" +
+        virtual_private_comment +
+        "  virtual-private = %v4:1.2.3.0/24,%v6:fe80::/10,%v4:!5.6.0.0/16,%v6:!fd80::/10\n" +
+        include_comment +
+        "include /etc/myipsec.d/*.conf\n",
     }
   end
 
