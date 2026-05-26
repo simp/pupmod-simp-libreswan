@@ -1,119 +1,121 @@
 require 'spec_helper'
 
-connection_conf_content = {
-  'default' =>
-    "conn %default\n" \
-    "# Left Side Settings\n" \
-    "\n" \
-    "# Right Side Settings\n" \
-    "\n" \
-    "# Universal Settings\n" \
-    "  ike = aes-sha2\n" \
-    "  phase2alg = aes-sha2\n" \
-    "  fragmentation = force\n" \
-    "  xauthby = pam\n" \
-    "  xauthfail = hard\n" \
-    "  keyingtries = 10\n",
-
-  'outgoing' =>
-    "conn outgoing\n" \
-    "# Left Side Settings\n" \
-    "  left = 10.0.0.1\n" \
-    "  leftcert = %cert\n" \
-    "  leftsendcert = always\n" \
-    "\n" \
-    "# Right Side Settings\n" \
-    "\n" \
-    "# Universal Settings\n" \
-    "  ike = aes-sha2\n" \
-    "  phase2alg = aes-sha2\n" \
-    "  keyingtries = 10\n",
-
-  # This content is NOT a usable connection file, but exercises default logic
-  'minimally_specified_conn' =>
-    "conn minimally_specified_conn\n" \
-    "# Left Side Settings\n" \
-    "\n" \
-    "# Right Side Settings\n" \
-    "\n" \
-    "# Universal Settings\n" \
-    "  ike = aes-sha2\n" \
-    "  phase2alg = aes-sha2\n" \
-    "  keyingtries = 10\n",
-
-  # This content is NOT a usable connection file, but exercises non-default logic
-  'maximally_specified_conn' =>
-    "conn maximally_specified_conn\n" \
-    "# Left Side Settings\n" \
-    "  left = 10.11.11.1\n" \
-    "  leftid = %myid\n" \
-    "  leftupdown = /some/left/updown/script\n" \
-    "  leftcert = my-left-cert-nickname\n" \
-    "  leftca = myleftca\n" \
-    "  leftprotoport = 17/1057\n" \
-    "  leftsourceip = 10.0.1.1\n" \
-    "  leftrsasigkey = %cert\n" \
-    "  leftrsasigkey2 = %dnsondemand\n" \
-    "  leftsendcert = sendifasked\n" \
-    "  leftsubnet = 10.0.1.0/24\n" \
-    "  leftsubnets = {10.0.3.0/24 10.0.5.0/24}\n" \
-    "  leftnexthop = 172.16.55.66\n" \
-    "  leftaddresspool = 10.0.1.100-10.0.1.200\n" \
-    "  leftxauthserver = yes\n" \
-    "  leftxauthusername = leftuser\n" \
-    "  leftxauthclient = yes\n" \
-    "  leftmodecfgserver = yes\n" \
-    "  leftmodecfgclient = yes\n" \
-    "\n" \
-    "# Right Side Settings\n" \
-    "  right = 192.168.22.1\n" \
-    "  rightid = %fromcert\n" \
-    "  rightupdown = /some/right/updown/script\n" \
-    "  rightcert = my-right-cert-nickname\n" \
-    "  rightca = myrightca\n" \
-    "  rightprotoport = tcp/%any\n" \
-    "  rightsourceip = 10.0.2.1\n" \
-    "  rightrsasigkey = %dnsonload\n" \
-    "  rightrsasigkey2 = %none\n" \
-    "  rightsendcert = yes\n" \
-    "  rightsubnet = 10.0.2.0/24\n" \
-    "  rightsubnets = {10.0.4.0/24 10.0.6.0/24}\n" \
-    "  rightnexthop = 172.16.88.99\n" \
-    "  rightaddresspool = 192.168.1.100-192.168.1.200\n" \
-    "  rightxauthserver = yes\n" \
-    "  rightxauthusername = rightuser\n" \
-    "  rightxauthclient = yes\n" \
-    "  rightmodecfgserver = yes\n" \
-    "  rightmodecfgclient = yes\n" \
-    "\n" \
-    "# Universal Settings\n" \
-    "  connaddrfamily = ipv4\n" \
-    "  authby = secret|rsasig\n" \
-    "  type = tunnel\n" \
-    "  auto = ondemand\n" \
-    "  ike = aes_gcm256-sha2;dh23\n" \
-    "  ikev2 = insist\n" \
-    "  phase2 = ah\n" \
-    "  phase2alg = 3des-md5;modp1024\n" \
-    "  sareftrack = conntrack\n" \
-    "  narrowing = yes\n" \
-    "  ikepad = no\n" \
-    "  fragmentation = no\n" \
-    "  sha2-truncbug = no\n" \
-    "  nat-ikev1-method = drafts\n" \
-    "  xauthby = alwaysok\n" \
-    "  xauthfail = soft\n" \
-    "  modecfgpull = yes\n" \
-    "  modecfgdns = \"8.8.8.8 8.8.4.4\"\n" \
-    "  modecfgdns1 = 8.8.8.8\n" \
-    "  modecfgdns2 = 8.8.4.4\n" \
-    "  modecfgdomain = test.domain\n" \
-    "  modecfgdomains = \"test.domain test2.domain\"\n" \
-    "  modecfgbanner = test banner\n" \
-    "  keyingtries = 5\n",
-}
-
 shared_examples_for 'a libreswan connection config file generator' do
+  let(:connection_conf_content) do
+    {
+      'default' =>
+        "conn %default\n" \
+        "# Left Side Settings\n" \
+        "\n" \
+        "# Right Side Settings\n" \
+        "\n" \
+        "# Universal Settings\n" \
+        "  ike = aes-sha2\n" \
+        "  phase2alg = aes-sha2\n" \
+        "  fragmentation = force\n" \
+        "  xauthby = pam\n" \
+        "  xauthfail = hard\n" \
+        "  keyingtries = 10\n",
+
+      'outgoing' =>
+        "conn outgoing\n" \
+        "# Left Side Settings\n" \
+        "  left = 10.0.0.1\n" \
+        "  leftcert = %cert\n" \
+        "  leftsendcert = always\n" \
+        "\n" \
+        "# Right Side Settings\n" \
+        "\n" \
+        "# Universal Settings\n" \
+        "  ike = aes-sha2\n" \
+        "  phase2alg = aes-sha2\n" \
+        "  keyingtries = 10\n",
+
+      # This content is NOT a usable connection file, but exercises default logic
+      'minimally_specified_conn' =>
+        "conn minimally_specified_conn\n" \
+        "# Left Side Settings\n" \
+        "\n" \
+        "# Right Side Settings\n" \
+        "\n" \
+        "# Universal Settings\n" \
+        "  ike = aes-sha2\n" \
+        "  phase2alg = aes-sha2\n" \
+        "  keyingtries = 10\n",
+
+      # This content is NOT a usable connection file, but exercises non-default logic
+      'maximally_specified_conn' =>
+        "conn maximally_specified_conn\n" \
+        "# Left Side Settings\n" \
+        "  left = 10.11.11.1\n" \
+        "  leftid = %myid\n" \
+        "  leftupdown = /some/left/updown/script\n" \
+        "  leftcert = my-left-cert-nickname\n" \
+        "  leftca = myleftca\n" \
+        "  leftprotoport = 17/1057\n" \
+        "  leftsourceip = 10.0.1.1\n" \
+        "  leftrsasigkey = %cert\n" \
+        "  leftrsasigkey2 = %dnsondemand\n" \
+        "  leftsendcert = sendifasked\n" \
+        "  leftsubnet = 10.0.1.0/24\n" \
+        "  leftsubnets = {10.0.3.0/24 10.0.5.0/24}\n" \
+        "  leftnexthop = 172.16.55.66\n" \
+        "  leftaddresspool = 10.0.1.100-10.0.1.200\n" \
+        "  leftxauthserver = yes\n" \
+        "  leftxauthusername = leftuser\n" \
+        "  leftxauthclient = yes\n" \
+        "  leftmodecfgserver = yes\n" \
+        "  leftmodecfgclient = yes\n" \
+        "\n" \
+        "# Right Side Settings\n" \
+        "  right = 192.168.22.1\n" \
+        "  rightid = %fromcert\n" \
+        "  rightupdown = /some/right/updown/script\n" \
+        "  rightcert = my-right-cert-nickname\n" \
+        "  rightca = myrightca\n" \
+        "  rightprotoport = tcp/%any\n" \
+        "  rightsourceip = 10.0.2.1\n" \
+        "  rightrsasigkey = %dnsonload\n" \
+        "  rightrsasigkey2 = %none\n" \
+        "  rightsendcert = yes\n" \
+        "  rightsubnet = 10.0.2.0/24\n" \
+        "  rightsubnets = {10.0.4.0/24 10.0.6.0/24}\n" \
+        "  rightnexthop = 172.16.88.99\n" \
+        "  rightaddresspool = 192.168.1.100-192.168.1.200\n" \
+        "  rightxauthserver = yes\n" \
+        "  rightxauthusername = rightuser\n" \
+        "  rightxauthclient = yes\n" \
+        "  rightmodecfgserver = yes\n" \
+        "  rightmodecfgclient = yes\n" \
+        "\n" \
+        "# Universal Settings\n" \
+        "  connaddrfamily = ipv4\n" \
+        "  authby = secret|rsasig\n" \
+        "  type = tunnel\n" \
+        "  auto = ondemand\n" \
+        "  ike = aes_gcm256-sha2;dh23\n" \
+        "  ikev2 = insist\n" \
+        "  phase2 = ah\n" \
+        "  phase2alg = 3des-md5;modp1024\n" \
+        "  sareftrack = conntrack\n" \
+        "  narrowing = yes\n" \
+        "  ikepad = no\n" \
+        "  fragmentation = no\n" \
+        "  sha2-truncbug = no\n" \
+        "  nat-ikev1-method = drafts\n" \
+        "  xauthby = alwaysok\n" \
+        "  xauthfail = soft\n" \
+        "  modecfgpull = yes\n" \
+        "  modecfgdns = \"8.8.8.8 8.8.4.4\"\n" \
+        "  modecfgdns1 = 8.8.8.8\n" \
+        "  modecfgdns2 = 8.8.4.4\n" \
+        "  modecfgdomain = test.domain\n" \
+        "  modecfgdomains = \"test.domain test2.domain\"\n" \
+        "  modecfgbanner = test banner\n" \
+        "  keyingtries = 5\n",
+    }
+  end
+
   it { is_expected.to compile.with_all_deps }
   it {
     is_expected.to contain_file(conn_name)
