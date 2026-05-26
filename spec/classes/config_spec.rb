@@ -1,26 +1,33 @@
 require 'spec_helper'
-top_comment = <<~EOM
-  # /etc/ipsec.conf - Libreswan IPsec configuration file
-  #
-  # This file is controlled by puppet.  Changes should be done through hiera.
-  #
-  # This file holds only the config setup section of ipsec.conf.
-  # Connection information should be placed in seperate files in the directory
-  # defined by libreswan::ipsecdir (default /etc/ipsec.d)
-  # There is information on the possible values in the manual page, "man ipsec.conf"
-  # or at https://libreswan.org
-  #
-EOM
 
-logfile_comment = <<EOM
+shared_examples_for 'a libreswan ipsec config file generator' do
+  let(:top_comment) do
+    <<~EOM
+      # /etc/ipsec.conf - Libreswan IPsec configuration file
+      #
+      # This file is controlled by puppet.  Changes should be done through hiera.
+      #
+      # This file holds only the config setup section of ipsec.conf.
+      # Connection information should be placed in seperate files in the directory
+      # defined by libreswan::ipsecdir (default /etc/ipsec.d)
+      # There is information on the possible values in the manual page, "man ipsec.conf"
+      # or at https://libreswan.org
+      #
+    EOM
+  end
+
+  let(:logfile_comment) do
+    <<EOM
   # Normally, pluto logs via syslog. If you want to log to a file,
   # specify below or to disable logging, eg for embedded systems, use
   # the file name /dev/null
   # Note: SElinux policies might prevent pluto writing to a log file at
   #       an unusual location.
 EOM
+  end
 
-plutodebug_comment = <<EOM
+  let(:plutodebug_comment) do
+    <<EOM
   # Do not enable debug options to debug configuration issues!
   # plutodebug "all", "none" or a combination from below:
   # "raw crypt parsing emitting control controlmore kernel pfkey
@@ -32,20 +39,26 @@ plutodebug_comment = <<EOM
   # plutodebug="all crypt"
   # Again: only enable plutodebug when asked by a developer
 EOM
+  end
 
-dump_dir_comment = <<EOM
+  let(:dump_dir_comment) do
+    <<EOM
   # Enable core dumps (might require system changes, like ulimit -C)
   # This is required for abrtd to work properly
   # Note: SElinux policies might prevent pluto writing the core at
   #       unusual locations
 EOM
+  end
 
-protostack_comment = <<EOM
+  let(:protostack_comment) do
+    <<EOM
   # which IPsec stack to use, "netkey" (the default), "klips" or "mast".
   # For MacOSX use "bsd"
 EOM
+  end
 
-virtual_private_comment = <<EOM
+  let(:virtual_private_comment) do
+    <<EOM
   #
   # NAT-TRAVERSAL support
   # exclude networks used on server side by adding %v4:!a.b.c.0/24
@@ -54,78 +67,82 @@ virtual_private_comment = <<EOM
   # This range has never been announced via BGP (at least upto 2015)
   #	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
 EOM
+  end
 
-include_comment = <<~EOM
-  #
-  # You must add your IPsec connections as separate files in the ipsecdir
-  #  (defined above (default /etc/ipsec.d/ )
-EOM
+  let(:include_comment) do
+    <<~EOM
+      #
+      # You must add your IPsec connections as separate files in the ipsecdir
+      #  (defined above (default /etc/ipsec.d/ )
+    EOM
+  end
 
-ipsec_conf_content = {
-  default:     top_comment +
-               "config setup\n" \
-               "  ipsecdir = /etc/ipsec.d\n" +
-               plutodebug_comment +
-               "  plutodebug = none\n" +
-               logfile_comment +
-               "  #logfile=/var/log/pluto.log\n" +
-               dump_dir_comment +
-               "  dumpdir = /var/run/pluto\n" \
-               "  secretsfile = /etc/ipsec.secrets\n" +
-               protostack_comment +
-               "  protostack = netkey\n" +
-               virtual_private_comment +
-               "  virtual-private = %v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12\n" +
-               include_comment +
-               "include /etc/ipsec.d/*.conf\n",
+  let(:ipsec_conf_content) do
+    {
+      default:     top_comment +
+                  "config setup\n" \
+                  "  ipsecdir = /etc/ipsec.d\n" +
+                  plutodebug_comment +
+                  "  plutodebug = none\n" +
+                  logfile_comment +
+                  "  #logfile=/var/log/pluto.log\n" +
+                  dump_dir_comment +
+                  "  dumpdir = /var/run/pluto\n" \
+                  "  secretsfile = /etc/ipsec.secrets\n" +
+                  protostack_comment +
+                  "  protostack = netkey\n" +
+                  virtual_private_comment +
+                  "  virtual-private = %v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12\n" +
+                  include_comment +
+                  "include /etc/ipsec.d/*.conf\n",
 
-  # This content is NOT a valid ipsec configuration, but simply a
-  # configuration that exercises parameter processing code.
-  fully_specified:     top_comment +
-                       "config setup\n" \
-                       "  ipsecdir = /etc/myipsec.d\n" \
-                       "  myid = @myid\n" \
-                       "  interfaces = \"ipsec0=eth0 ipsec1=ppp0\"\n" \
-                       "  listen = 1.2.3.4\n" \
-                       "  nflog-all = 10\n" \
-                       "  keep-alive = 10\n" \
-                       "  myvendorid = my-vendor-id\n" \
-                       "  nhelpers = -1\n" \
-                       "  plutofork = no\n" \
-                       "  crlcheckinterval = 60\n" \
-                       "  strictcrlpolicy = yes\n" \
-                       "  ocsp-enable = yes\n" \
-                       "  ocsp-strict = yes\n" \
-                       "  ocsp-timeout = 4\n" \
-                       "  ocsp-uri = https://myuri\n" \
-                       "  ocsp-trustname = my-trustname\n" \
-                       "  syslog = daemon.warning\n" +
-                       plutodebug_comment +
-                       "  plutodebug = all\n" \
-                       "  uniqueids = no\n" \
-                       "  plutorestartoncrash = no\n" +
-                       logfile_comment +
-                       "  logfile = /var/log/ipsec.log\n" \
-                       "  logappend = no\n" \
-                       "  logtime = no\n" \
-                       "  ddos-mode = busy\n" \
-                       "  ddos-ike-treshold = 26000\n" +
-                       dump_dir_comment +
-                       "  dumpdir = /var/run/ipsec\n" \
-                       "  statsbin = \"/some/external/reporter -p 266\"\n" \
-                       "  secretsfile = /etc/myipsec.secrets\n" \
-                       "  fragicmp = yes\n" \
-                       "  hidetos = no\n" \
-                       "  overridemtu = 1500\n" +
-                       protostack_comment +
-                       "  protostack = klips\n" +
-                       virtual_private_comment +
-                       "  virtual-private = %v4:1.2.3.0/24,%v6:fe80::/10,%v4:!5.6.0.0/16,%v6:!fd80::/10\n" +
-                       include_comment +
-                       "include /etc/myipsec.d/*.conf\n",
-}
+      # This content is NOT a valid ipsec configuration, but simply a
+      # configuration that exercises parameter processing code.
+      fully_specified:     top_comment +
+                          "config setup\n" \
+                          "  ipsecdir = /etc/myipsec.d\n" \
+                          "  myid = @myid\n" \
+                          "  interfaces = \"ipsec0=eth0 ipsec1=ppp0\"\n" \
+                          "  listen = 1.2.3.4\n" \
+                          "  nflog-all = 10\n" \
+                          "  keep-alive = 10\n" \
+                          "  myvendorid = my-vendor-id\n" \
+                          "  nhelpers = -1\n" \
+                          "  plutofork = no\n" \
+                          "  crlcheckinterval = 60\n" \
+                          "  strictcrlpolicy = yes\n" \
+                          "  ocsp-enable = yes\n" \
+                          "  ocsp-strict = yes\n" \
+                          "  ocsp-timeout = 4\n" \
+                          "  ocsp-uri = https://myuri\n" \
+                          "  ocsp-trustname = my-trustname\n" \
+                          "  syslog = daemon.warning\n" +
+                          plutodebug_comment +
+                          "  plutodebug = all\n" \
+                          "  uniqueids = no\n" \
+                          "  plutorestartoncrash = no\n" +
+                          logfile_comment +
+                          "  logfile = /var/log/ipsec.log\n" \
+                          "  logappend = no\n" \
+                          "  logtime = no\n" \
+                          "  ddos-mode = busy\n" \
+                          "  ddos-ike-treshold = 26000\n" +
+                          dump_dir_comment +
+                          "  dumpdir = /var/run/ipsec\n" \
+                          "  statsbin = \"/some/external/reporter -p 266\"\n" \
+                          "  secretsfile = /etc/myipsec.secrets\n" \
+                          "  fragicmp = yes\n" \
+                          "  hidetos = no\n" \
+                          "  overridemtu = 1500\n" +
+                          protostack_comment +
+                          "  protostack = klips\n" +
+                          virtual_private_comment +
+                          "  virtual-private = %v4:1.2.3.0/24,%v6:fe80::/10,%v4:!5.6.0.0/16,%v6:!fd80::/10\n" +
+                          include_comment +
+                          "include /etc/myipsec.d/*.conf\n",
+    }
+  end
 
-shared_examples_for 'a libreswan ipsec config file generator' do
   it { is_expected.to compile.with_all_deps }
   it {
     is_expected.to contain_file('/etc/ipsec.conf')
