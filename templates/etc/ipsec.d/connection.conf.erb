@@ -203,3 +203,24 @@ conn <%= @conn_name %>
 <% if @dpdaction then -%>
   dpdaction = <%= @dpdaction %>
 <% end -%>
+<% if @vti_interface then -%>
+  vti-interface = <%= @vti_interface %>
+<% end -%>
+<% if @vti_routing then -%>
+  vti-routing = <%= @vti_routing %>
+<% end -%>
+<% if @vti_shared then -%>
+  vti-shared = <%= @vti_shared %>
+<% end -%>
+<% if @mark then -%>
+  mark = <%= @mark %>
+<% end -%>
+<% if @esp then -%>
+  esp = <%= @esp %>
+<% end -%>
+<% if @ikelifetime then -%>
+  ikelifetime = <%= @ikelifetime %>
+<% end -%>
+<% if @salifetime then -%>
+  salifetime = <%= @salifetime %>
+<% end -%>

@@ -740,6 +740,12 @@ The following parameters are available in the `libreswan::connection` defined ty
 * [`dpddelay`](#-libreswan--connection--dpddelay)
 * [`dpdtimeout`](#-libreswan--connection--dpdtimeout)
 * [`dpdaction`](#-libreswan--connection--dpdaction)
+* [`vti_interface`](#-libreswan--connection--vti_interface)
+* [`vti_routing`](#-libreswan--connection--vti_routing)
+* [`mark`](#-libreswan--connection--mark)
+* [`vti_shared`](#-libreswan--connection--vti_shared)
+* [`ikelifetime`](#-libreswan--connection--ikelifetime)
+* [`salifetime`](#-libreswan--connection--salifetime)
 
 ##### <a name="-libreswan--connection--dir"></a>`dir`
 
@@ -1350,6 +1356,54 @@ Data type:
 Optional[Enum['hold', 'clear',
     'restart']]
 ```
+
+
+
+Default value: `undef`
+
+##### <a name="-libreswan--connection--vti_interface"></a>`vti_interface`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-libreswan--connection--vti_routing"></a>`vti_routing`
+
+Data type: `Optional[Enum['yes', 'no']]`
+
+
+
+Default value: `undef`
+
+##### <a name="-libreswan--connection--mark"></a>`mark`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-libreswan--connection--vti_shared"></a>`vti_shared`
+
+Data type: `Optional[Enum['yes', 'no']]`
+
+
+
+Default value: `undef`
+
+##### <a name="-libreswan--connection--ikelifetime"></a>`ikelifetime`
+
+Data type: `Optional[String]`
+
+
+
+Default value: `undef`
+
+##### <a name="-libreswan--connection--salifetime"></a>`salifetime`
+
+Data type: `Optional[String]`
 
 
 
