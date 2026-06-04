@@ -36,7 +36,7 @@ describe 'libreswan' do
           end
         end
 
-        %w[block clear clear-or-private private].each do |policy|
+        ['block', 'clear', 'clear-or-private', 'private'].each do |policy|
           it "writes an empty #{policy} policy file" do
             is_expected.to contain_file("/etc/ipsec.d/policies/#{policy}").with(
               ensure:  'file',

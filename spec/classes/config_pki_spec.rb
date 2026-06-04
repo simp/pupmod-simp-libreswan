@@ -16,11 +16,7 @@ describe 'libreswan::config::pki' do
             }"
           end
 
-          it {
-            is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with(
-              require: 'File[/etc/ipsec.conf]',
-            )
-          }
+          it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d') }
           it {
             is_expected.to create_file('/etc/pki/simp_apps/libreswan/x509').with(
               ensure: 'directory',
@@ -44,11 +40,7 @@ describe 'libreswan::config::pki' do
           end
           let(:hieradata) { 'test1_hiera' }
 
-          it {
-            is_expected.not_to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with(
-              require: 'File[/etc/ipsec.conf]',
-            )
-          }
+          it { is_expected.not_to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d') }
           it {
             is_expected.not_to create_file('/etc/pki/simp_apps/libreswan/x509').with(
               ensure: 'directory',
@@ -67,11 +59,7 @@ describe 'libreswan::config::pki' do
             }"
           end
 
-          it {
-            is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with(
-              require: 'File[/etc/ipsec.conf]',
-            )
-          }
+          it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d') }
           it {
             is_expected.to create_file('/etc/pki/simp_apps/libreswan/x509').with(
               ensure: 'directory',

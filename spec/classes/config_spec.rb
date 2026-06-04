@@ -18,7 +18,7 @@ describe 'libreswan::config' do
           end
 
           it 'declares no policy files' do
-            %w[block clear clear-or-private private private-or-clear].each do |p|
+            ['block', 'clear', 'clear-or-private', 'private', 'private-or-clear'].each do |p|
               is_expected.not_to contain_file("/etc/ipsec.d/policies/#{p}")
             end
           end
@@ -59,7 +59,7 @@ describe 'libreswan::config' do
             'plutodebug'        => 'all',
             'logfile'           => '/var/log/ipsec.log',
             'ddos-mode'         => 'busy',
-            'ddos-ike-treshold' => 26000,
+            'ddos-ike-treshold' => 26_000,
             'dumpdir'           => '/var/run/ipsec',
             'statsbin'          => '"/some/external/reporter -p 266"',
             'overridemtu'       => 1500,

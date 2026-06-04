@@ -28,11 +28,16 @@ define libreswan::config::setting (
 
   $_match = "^\\s*${regsubst($key, '[.\\-]', '\\\\\\0', 'G')}\\s*="
 
+  $_match_for_absence = $ensure ? {
+    'absent' => true,
+    default  => undef,
+  }
+
   file_line { "libreswan ${path} ${key}":
     ensure            => $ensure,
     path              => $path,
     line              => "  ${key} = ${value}",
     match             => $_match,
-    match_for_absence => $ensure ? { absent => true, default => undef },
+    match_for_absence => $_match_for_absence,
   }
 }
