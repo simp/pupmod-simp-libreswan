@@ -47,6 +47,12 @@
 # @param haveged
 #   When `true`, include `haveged` to provide entropy.
 #
+# @param nss_scripts
+#   When `true`, install the NSS helper scripts under `/usr/local/scripts/nss/`.
+#   These were always installed before 4.0.0. They are also pulled in
+#   automatically by `libreswan::nss::init_db`, so most sites do not need to
+#   set this directly.
+#
 # @param nssdb_password
 #   Password used to protect the NSS database.
 #
@@ -120,6 +126,7 @@ class libreswan (
   Boolean                                            $fips                       = false,
   Variant[Boolean,Enum['simp']]                      $pki                        = false,
   Boolean                                            $haveged                    = false,
+  Boolean                                            $nss_scripts                = false,
   String[1]                                          $nssdb_password             = simplib::passgen('nssdb_password'),
   Simplib::Port                                      $ikeport                    = 500,
   Simplib::Port                                      $nat_ikeport                = 4500,
@@ -208,5 +215,9 @@ class libreswan (
     if $service_ensure =~ NotUndef or $service_enable =~ NotUndef {
       Class['libreswan::config::pki::nsspki'] ~> Class['libreswan::service']
     }
+  }
+
+  if $nss_scripts {
+    include 'libreswan::nss'
   }
 }

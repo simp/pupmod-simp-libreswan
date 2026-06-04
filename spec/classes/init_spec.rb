@@ -132,6 +132,16 @@ describe 'libreswan' do
           it { is_expected.to contain_class('haveged') }
         end
 
+        context 'with nss_scripts => true' do
+          let(:params) { { nss_scripts: true } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_class('libreswan::nss') }
+          it {
+            is_expected.to contain_file('/usr/local/scripts/nss/update_nssdb_password.sh')
+          }
+        end
+
         describe 'with invalid parameters' do
           context 'invalid virtual_private' do
             let(:params) { { virtual_private: '%v4:1.2.3.0/24' } }

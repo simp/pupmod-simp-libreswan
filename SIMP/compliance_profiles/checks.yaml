@@ -1,0 +1,82 @@
+---
+version: 2.0.0
+checks:
+  simp:defaults.libreswan.service_ensure:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::service_ensure
+      value: running
+  simp:defaults.libreswan.service_enable:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::service_enable
+      value: true
+  simp:defaults.libreswan.protostack:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::protostack
+      value: netkey
+  simp:defaults.libreswan.dumpdir:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::dumpdir
+      value: /var/run/pluto
+  simp:defaults.libreswan.plutodebug:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::plutodebug
+      value: none
+  simp:defaults.libreswan.virtual_private:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::virtual_private
+      value:
+        - '%v4:10.0.0.0/8'
+        - '%v4:192.168.0.0/16'
+        - '%v4:172.16.0.0/12'
+  simp:defaults.libreswan.block_cidrs:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::block_cidrs
+      value: []
+  simp:defaults.libreswan.clear_cidrs:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::clear_cidrs
+      value: []
+  simp:defaults.libreswan.clear_private_cidrs:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::clear_private_cidrs
+      value: []
+  simp:defaults.libreswan.private_cidrs:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::private_cidrs
+      value: []
+  simp:defaults.libreswan.private_clear_cidrs:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::private_clear_cidrs
+      value:
+        - '0.0.0.0/0'
+  simp:defaults.libreswan.firewall:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::firewall
+      value: true
+  simp:defaults.libreswan.pki:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::pki
+      value: simp
+  simp:defaults.libreswan.haveged:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::haveged
+      value: true
+  simp:defaults.libreswan.nss_scripts:
+    type: puppet-class-parameter
+    settings:
+      parameter: libreswan::nss_scripts
+      value: true

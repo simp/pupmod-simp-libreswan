@@ -1,0 +1,20 @@
+---
+version: 2.0.0
+profiles:
+  simp:defaults:
+    checks:
+      simp:defaults.libreswan.service_ensure: true
+      simp:defaults.libreswan.service_enable: true
+      simp:defaults.libreswan.protostack: true
+      simp:defaults.libreswan.dumpdir: true
+      simp:defaults.libreswan.plutodebug: true
+      simp:defaults.libreswan.virtual_private: true
+      simp:defaults.libreswan.block_cidrs: true
+      simp:defaults.libreswan.clear_cidrs: true
+      simp:defaults.libreswan.clear_private_cidrs: true
+      simp:defaults.libreswan.private_cidrs: true
+      simp:defaults.libreswan.private_clear_cidrs: true
+      simp:defaults.libreswan.firewall: true
+      simp:defaults.libreswan.pki: true
+      simp:defaults.libreswan.haveged: true
+      simp:defaults.libreswan.nss_scripts: true

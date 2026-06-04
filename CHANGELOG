@@ -22,7 +22,14 @@
   `undef`, meaning "not managed."
 - The NSS password-update helper script is no longer installed on bare
   `include`; it is now installed by `libreswan::nss` and pulled in
-  automatically by `libreswan::nss::init_db`.
+  automatically by `libreswan::nss::init_db`. A new `libreswan::nss_scripts`
+  Boolean parameter (default `false`) can be set to install them directly.
+- Ships a `simp:defaults` compliance_engine profile under
+  `SIMP/compliance_profiles/` that restores pre-4.0.0 behavior for SIMP
+  sites (config file fields, policy files, service running+enabled,
+  firewall, PKI, haveged, NSS scripts). Activate by installing the
+  `simp-compliance_engine` gem and setting `compliance_engine::enforcement:
+  [simp:defaults]` in Hiera.
 
 * Wed Jun 18 2025 nunomigsilva <nunomigsilva@deloitte.pt> - 3.11.0
 - Enable setting parameters vti_interface, vti_routing, mark, vti_shared,
