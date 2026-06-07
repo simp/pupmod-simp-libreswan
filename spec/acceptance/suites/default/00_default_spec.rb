@@ -214,7 +214,7 @@ end
 
           # verify data reaches left
           on left, "cat #{testfile}", acceptable_exit_codes: [0] do
-            expect(stdout).to match(%r{this is a test of a tunnel})
+            expect(stdout).to include('this is a test of a tunnel')
           end
 
           # verify data carried over ESP
@@ -222,7 +222,7 @@ end
           # automated test, this gets tricky because ESP keep-alive packets may screw
           # up exact analysis.  So, we are limited to this weak check for now.
           on left, "tcpdump -r #{testfile}.pcap -n", acceptable_exit_codes: [0] do
-            expect(stdout).to match(%r{ESP\(spi})
+            expect(stdout).to include('ESP(spi')
           end
         end
       end
@@ -247,7 +247,7 @@ end
 
           # verify data does NOT reach left
           on left, "cat #{testfile}", acceptable_exit_codes: [0] do
-            expect(stdout).not_to match(%r{this is a test of a downed tunnel without firewall})
+            expect(stdout).not_to include('this is a test of a downed tunnel without firewall')
           end
           on left, "pkill -f '#{nc} -l #{nc_port}'", acceptable_exit_codes: [0]
         end
@@ -381,7 +381,7 @@ end
 
           # verify data does reach left
           on left, "cat #{testfile}", acceptable_exit_codes: [0] do
-            expect(stdout).to match(%r{this is a test of a tunnel with firewall enabled})
+            expect(stdout).to include('this is a test of a tunnel with firewall enabled')
           end
 
           # verify iptables packet counts for esp and nc (over tcp) traffic have incremented
@@ -413,7 +413,7 @@ end
 
           # verify data does NOT reach left
           on left, "cat #{testfile}", acceptable_exit_codes: [0] do
-            expect(stdout).not_to match(%r{this is a test of a downed tunnel with firewall enabled})
+            expect(stdout).not_to include('this is a test of a downed tunnel with firewall enabled')
           end
           on left, "pkill -f '#{nc} -l #{nc_port}'", acceptable_exit_codes: [0]
         end
