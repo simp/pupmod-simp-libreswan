@@ -61,6 +61,12 @@ class libreswan::config {
     },
   }
 
+  $_managed_keys = $_settings.filter |$_, $v| { $v =~ NotUndef }.keys
+  $_setting_conflicts = $libreswan::purge_settings.filter |$k| { $k in $_managed_keys }
+  unless $_setting_conflicts.empty {
+    fail("libreswan: keys cannot appear in both managed settings and \$purge_settings: ${_setting_conflicts.join(', ')}")
+  }
+
   $_settings.each |String $key, $value| {
     if $value =~ NotUndef {
       libreswan::config::setting { $key:
@@ -72,7 +78,7 @@ class libreswan::config {
 
   $libreswan::purge_settings.each |String $key| {
     libreswan::config::setting { "purge-${key}":
-      ensure => absent,
+      ensure => 'absent',
       key    => $key,
       path   => $ipsec_conf,
     }
@@ -86,10 +92,20 @@ class libreswan::config {
     'private-or-clear' => $libreswan::private_clear_cidrs,
   }
 
+  $_managed_policies = $_policies.filter |$_, $v| { $v =~ NotUndef }.keys
+  $_policy_conflicts = $libreswan::purge_policies.filter |$p| { $p in $_managed_policies }
+  unless $_policy_conflicts.empty {
+    fail("libreswan: names cannot appear in both managed policies and \$purge_policies: ${_policy_conflicts.join(', ')}")
+  }
+
+  if $_managed_policies.size > 0 or $libreswan::purge_policies.size > 0 {
+    ensure_resource('file', "${libreswan::ipsecdir}/policies", { 'ensure' => 'directory' })
+  }
+
   $_policies.each |String $policy, $cidrs| {
     if $cidrs =~ NotUndef {
       file { "${libreswan::ipsecdir}/policies/${policy}":
-        ensure  => file,
+        ensure  => 'file',
         owner   => 'root',
         group   => 'root',
         mode    => '0644',
@@ -100,7 +116,7 @@ class libreswan::config {
 
   $libreswan::purge_policies.each |String $policy| {
     file { "${libreswan::ipsecdir}/policies/${policy}":
-      ensure => absent,
+      ensure => 'absent',
     }
   }
 }

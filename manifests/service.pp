@@ -7,10 +7,14 @@
 class libreswan::service {
   assert_private()
 
-  if $libreswan::service_ensure =~ NotUndef or $libreswan::service_enable =~ NotUndef {
+  $_attrs = {
+    'ensure' => $libreswan::service_ensure,
+    'enable' => $libreswan::service_enable,
+  }.filter |$_, $v| { $v =~ NotUndef }
+
+  if $_attrs.size > 0 {
     service { $libreswan::service_name:
-      ensure     => $libreswan::service_ensure,
-      enable     => $libreswan::service_enable,
+      *          => $_attrs,
       hasstatus  => true,
       hasrestart => true,
     }

@@ -45,6 +45,30 @@ describe 'libreswan' do
           it { is_expected.to contain_service('ipsec').with(ensure: 'running', enable: true) }
         end
 
+        context 'with only service_ensure set' do
+          let(:params) { { service_ensure: 'running' } }
+
+          it { is_expected.to compile.with_all_deps }
+          it 'declares the service with ensure but no enable attribute' do
+            res = catalogue.resource('Service', 'ipsec')
+            expect(res).not_to be_nil
+            expect(res[:ensure]).to eq('running')
+            expect(res[:enable]).to be_nil
+          end
+        end
+
+        context 'with only service_enable set' do
+          let(:params) { { service_enable: false } }
+
+          it { is_expected.to compile.with_all_deps }
+          it 'declares the service with enable but no ensure attribute' do
+            res = catalogue.resource('Service', 'ipsec')
+            expect(res).not_to be_nil
+            expect(res[:enable]).to eq(false)
+            expect(res[:ensure]).to be_nil
+          end
+        end
+
         context 'with a single setting overridden' do
           let(:params) { { plutodebug: 'all' } }
 

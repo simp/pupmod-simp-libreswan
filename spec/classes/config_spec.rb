@@ -92,6 +92,59 @@ describe 'libreswan::config' do
           it 'does not write unmanaged policy files' do
             is_expected.not_to contain_file('/etc/ipsec.d/policies/private')
           end
+
+          it 'declares the policies directory when any policy file is managed' do
+            is_expected.to contain_file('/etc/ipsec.d/policies').with_ensure('directory')
+          end
+        end
+
+        context 'with purge_settings overlapping a managed key' do
+          let(:pre_condition) do
+            <<~EOM
+              class { 'libreswan':
+                protostack     => 'netkey',
+                purge_settings => ['protostack'],
+              }
+            EOM
+          end
+
+          it 'fails compilation with a helpful message' do
+            is_expected.to compile.and_raise_error(%r{cannot appear in both managed settings and \$purge_settings: protostack})
+          end
+        end
+
+        context 'with purge_policies overlapping a managed policy' do
+          let(:pre_condition) do
+            <<~EOM
+              class { 'libreswan':
+                block_cidrs    => ['10.0.0.0/8'],
+                purge_policies => ['block'],
+              }
+            EOM
+          end
+
+          it 'fails compilation with a helpful message' do
+            is_expected.to compile.and_raise_error(%r{cannot appear in both managed policies and \$purge_policies: block})
+          end
+        end
+
+        context 'with purge_policies and no managed policies' do
+          let(:pre_condition) do
+            <<~EOM
+              class { 'libreswan':
+                purge_policies => ['block', 'clear'],
+              }
+            EOM
+          end
+
+          it 'declares the policies directory' do
+            is_expected.to contain_file('/etc/ipsec.d/policies').with_ensure('directory')
+          end
+
+          it 'declares each policy file as absent' do
+            is_expected.to contain_file('/etc/ipsec.d/policies/block').with_ensure('absent')
+            is_expected.to contain_file('/etc/ipsec.d/policies/clear').with_ensure('absent')
+          end
         end
       end
     end

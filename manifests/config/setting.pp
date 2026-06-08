@@ -17,27 +17,27 @@
 #   `present` to set the line, `absent` to remove it.
 #
 define libreswan::config::setting (
-  Stdlib::Absolutepath  $path,
-  Optional[ScalarData]  $value  = undef,
-  String[1]             $key    = $title,
-  Enum[present, absent] $ensure = present,
+  Stdlib::Absolutepath          $path,
+  Optional[ScalarData]          $value  = undef,
+  String[1]                     $key    = $title,
+  Enum['present', 'absent']     $ensure = 'present',
 ) {
-  if $ensure == present and $value =~ Undef {
-    fail("libreswan::config::setting[${title}]: \$value is required when ensure => present")
+  if $ensure == 'present' and $value =~ Undef {
+    fail("libreswan::config::setting[${title}]: \$value is required when ensure => 'present'")
   }
 
   $_match = "^\\s*${regsubst($key, '[.\\-]', '\\\\\\0', 'G')}\\s*="
 
-  $_match_for_absence = $ensure ? {
-    'absent' => true,
-    default  => undef,
+  $_extra = $ensure ? {
+    'absent' => { 'match_for_absence' => true },
+    default  => {},
   }
 
   file_line { "libreswan ${path} ${key}":
-    ensure            => $ensure,
-    path              => $path,
-    line              => "  ${key} = ${value}",
-    match             => $_match,
-    match_for_absence => $_match_for_absence,
+    ensure => $ensure,
+    path   => $path,
+    line   => "  ${key} = ${value}",
+    match  => $_match,
+    *      => $_extra,
   }
 }
