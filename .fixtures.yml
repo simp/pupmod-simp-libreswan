@@ -2,6 +2,9 @@
 fixtures:
   repositories:
     augeas_core: https://github.com/simp/pupmod-puppetlabs-augeas_core.git
+    compliance_engine:
+      repo: https://github.com/simp/rubygem-simp-compliance_engine.git
+      ref: '1.0.0'
     firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld.git
     haveged: https://github.com/simp/pupmod-simp-haveged.git
     iptables: https://github.com/simp/pupmod-simp-iptables.git

@@ -1,245 +1,150 @@
 require 'spec_helper'
 
-shared_examples_for 'a libreswan ipsec config file generator' do
-  let(:top_comment) do
-    <<~EOM
-      # /etc/ipsec.conf - Libreswan IPsec configuration file
-      #
-      # This file is controlled by puppet.  Changes should be done through hiera.
-      #
-      # This file holds only the config setup section of ipsec.conf.
-      # Connection information should be placed in seperate files in the directory
-      # defined by libreswan::ipsecdir (default /etc/ipsec.d)
-      # There is information on the possible values in the manual page, "man ipsec.conf"
-      # or at https://libreswan.org
-      #
-    EOM
-  end
-
-  let(:logfile_comment) do
-    <<EOM
-  # Normally, pluto logs via syslog. If you want to log to a file,
-  # specify below or to disable logging, eg for embedded systems, use
-  # the file name /dev/null
-  # Note: SElinux policies might prevent pluto writing to a log file at
-  #       an unusual location.
-EOM
-  end
-
-  let(:plutodebug_comment) do
-    <<EOM
-  # Do not enable debug options to debug configuration issues!
-  # plutodebug "all", "none" or a combination from below:
-  # "raw crypt parsing emitting control controlmore kernel pfkey
-  #  natt x509 dpd dns oppo oppoinfo private".
-  # Note: "private" is not included with "all", as it can show confidential
-  #       information. It must be specifically specified
-  # examples:
-  # plutodebug="control parsing"
-  # plutodebug="all crypt"
-  # Again: only enable plutodebug when asked by a developer
-EOM
-  end
-
-  let(:dump_dir_comment) do
-    <<EOM
-  # Enable core dumps (might require system changes, like ulimit -C)
-  # This is required for abrtd to work properly
-  # Note: SElinux policies might prevent pluto writing the core at
-  #       unusual locations
-EOM
-  end
-
-  let(:protostack_comment) do
-    <<EOM
-  # which IPsec stack to use, "netkey" (the default), "klips" or "mast".
-  # For MacOSX use "bsd"
-EOM
-  end
-
-  let(:virtual_private_comment) do
-    <<EOM
-  #
-  # NAT-TRAVERSAL support
-  # exclude networks used on server side by adding %v4:!a.b.c.0/24
-  # It seems that T-Mobile in the US and Rogers/Fido in Canada are
-  # using 25/8 as "private" address space on their wireless networks.
-  # This range has never been announced via BGP (at least upto 2015)
-  #	virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v4:100.64.0.0/10,%v6:fd00::/8,%v6:fe80::/10
-EOM
-  end
-
-  let(:include_comment) do
-    <<~EOM
-      #
-      # You must add your IPsec connections as separate files in the ipsecdir
-      #  (defined above (default /etc/ipsec.d/ )
-    EOM
-  end
-
-  let(:ipsec_conf_content) do
-    {
-      default:     top_comment +
-        "config setup\n" \
-        "  ipsecdir = /etc/ipsec.d\n" +
-        plutodebug_comment +
-        "  plutodebug = none\n" +
-        logfile_comment +
-        "  #logfile=/var/log/pluto.log\n" +
-        dump_dir_comment +
-        "  dumpdir = /var/run/pluto\n" \
-        "  secretsfile = /etc/ipsec.secrets\n" +
-        protostack_comment +
-        "  protostack = netkey\n" +
-        virtual_private_comment +
-        "  virtual-private = %v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12\n" +
-        include_comment +
-        "include /etc/ipsec.d/*.conf\n",
-
-      # This content is NOT a valid ipsec configuration, but simply a
-      # configuration that exercises parameter processing code.
-      fully_specified:     top_comment +
-        "config setup\n" \
-        "  ipsecdir = /etc/myipsec.d\n" \
-        "  myid = @myid\n" \
-        "  interfaces = \"ipsec0=eth0 ipsec1=ppp0\"\n" \
-        "  listen = 1.2.3.4\n" \
-        "  nflog-all = 10\n" \
-        "  keep-alive = 10\n" \
-        "  myvendorid = my-vendor-id\n" \
-        "  nhelpers = -1\n" \
-        "  plutofork = no\n" \
-        "  crlcheckinterval = 60\n" \
-        "  strictcrlpolicy = yes\n" \
-        "  ocsp-enable = yes\n" \
-        "  ocsp-strict = yes\n" \
-        "  ocsp-timeout = 4\n" \
-        "  ocsp-uri = https://myuri\n" \
-        "  ocsp-trustname = my-trustname\n" \
-        "  syslog = daemon.warning\n" +
-        plutodebug_comment +
-        "  plutodebug = all\n" \
-        "  uniqueids = no\n" \
-        "  plutorestartoncrash = no\n" +
-        logfile_comment +
-        "  logfile = /var/log/ipsec.log\n" \
-        "  logappend = no\n" \
-        "  logtime = no\n" \
-        "  ddos-mode = busy\n" \
-        "  ddos-ike-treshold = 26000\n" +
-        dump_dir_comment +
-        "  dumpdir = /var/run/ipsec\n" \
-        "  statsbin = \"/some/external/reporter -p 266\"\n" \
-        "  secretsfile = /etc/myipsec.secrets\n" \
-        "  fragicmp = yes\n" \
-        "  hidetos = no\n" \
-        "  overridemtu = 1500\n" +
-        protostack_comment +
-        "  protostack = klips\n" +
-        virtual_private_comment +
-        "  virtual-private = %v4:1.2.3.0/24,%v6:fe80::/10,%v4:!5.6.0.0/16,%v6:!fd80::/10\n" +
-        include_comment +
-        "include /etc/myipsec.d/*.conf\n",
-    }
-  end
-
-  it { is_expected.to compile.with_all_deps }
-  it {
-    is_expected.to contain_file('/etc/ipsec.conf')
-      .with_owner('root')
-      .with_mode('0400')
-      .with_content(ipsec_conf_content[title])
-      .that_notifies('Class[libreswan::service]')
-  }
-
-  it {
-    is_expected.to contain_file(dumpdir).with(
-      ensure: :directory,
-      owner: 'root',
-      mode: '0700',
-      before: 'File[/etc/ipsec.conf]',
-    )
-  }
-end
-
 describe 'libreswan::config' do
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
-        let(:facts) do
-          os_facts
-        end
+        let(:facts) { os_facts }
 
         context 'with default parameters' do
-          let(:pre_condition) { 'class { "libreswan": service_name => "ipsec",}' }
-          let(:title) { :default }
-          let(:dumpdir) { '/var/run/pluto' }
+          let(:pre_condition) { 'include libreswan' }
 
-          it_behaves_like 'a libreswan ipsec config file generator'
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.not_to contain_file('/etc/ipsec.conf') }
+
+          it 'declares no file_line resources' do
+            file_lines = catalogue.resources.select { |r| r.type == 'File_line' }
+            expect(file_lines).to be_empty
+          end
+
+          it 'declares no policy files' do
+            ['block', 'clear', 'clear-or-private', 'private', 'private-or-clear'].each do |p|
+              is_expected.not_to contain_file("/etc/ipsec.d/policies/#{p}")
+            end
+          end
         end
 
-        context 'with fully-specified parameters' do
-          let(:title) { :fully_specified }
-          let(:dumpdir) { '/var/run/ipsec' }
+        context 'with a representative set of settings' do
           let(:pre_condition) do
             <<~EOM
-              class { "libreswan":
-                service_name        => "ipsec",
+              class { 'libreswan':
                 myid                => '@myid',
                 protostack          => 'klips',
                 interfaces          => ['ipsec0=eth0','ipsec1=ppp0'],
                 listen              => '1.2.3.4',
-                ikeport             => 600,
                 nflog_all           => 10,
-                nat_ikeport         => 4600,
                 keep_alive          => 10,
-                virtual_private     => ['%v4:1.2.3.0/24', '%v6:fe80::/10', '%v4:!5.6.0.0/16', '%v6:!fd80::/10'],
-                myvendorid          => 'my-vendor-id',
-                nhelpers            => -1,
-                #seedbits
-                #secctx-attr-type
-                plutofork           => 'no',
-                crlcheckinterval    => 60,
-                strictcrlpolicy     => 'yes',
-                ocsp_enable         => 'yes',
-                ocsp_strict         => 'yes',
-                ocsp_timeout        => 4,
-                ocsp_uri            => 'https://myuri',
-                ocsp_trustname      => 'my-trustname',
-                syslog              => 'daemon.warning',
-                klipsdebug          => 'all',
+                virtual_private     => ['%v4:1.2.3.0/24', '%v6:fe80::/10'],
                 plutodebug          => 'all',
-                uniqueids           => 'no',
-                plutorestartoncrash => 'no',
                 logfile             => '/var/log/ipsec.log',
-                logappend           => 'no',
-                logtime             => 'no',
                 ddos_mode           => 'busy',
                 ddos_ike_treshold   => 26000,
-                #max-halfopen-ike
-                #shuntlifetime
-                #xfrmlifetime
                 dumpdir             => '/var/run/ipsec',
                 statsbin            => '/some/external/reporter -p 266',
-                ipsecdir            => '/etc/myipsec.d',
-                secretsfile         => '/etc/myipsec.secrets',
-                perpeerlog          => 'yes',
-                perpeerlogdir       => '/var/log/ipsec/peer',
-                fragicmp            => 'yes',
-                hidetos             => 'no',
                 overridemtu         => 1500,
+                block_cidrs         => ['10.0.0.0/8'],
+                clear_cidrs         => ['192.168.0.0/16'],
               }
             EOM
           end
 
-          it_behaves_like 'a libreswan ipsec config file generator'
-          it {
-            is_expected.to contain_file('/var/log/ipsec.log').with(
-              owner: 'root',
-              mode: '0600',
-              before: 'File[/etc/ipsec.conf]',
-            )
-          }
+          {
+            'myid'              => '@myid',
+            'protostack'        => 'klips',
+            'interfaces'        => '"ipsec0=eth0 ipsec1=ppp0"',
+            'listen'            => '1.2.3.4',
+            'nflog-all'         => 10,
+            'keep-alive'        => 10,
+            'virtual-private'   => '%v4:1.2.3.0/24,%v6:fe80::/10',
+            'plutodebug'        => 'all',
+            'logfile'           => '/var/log/ipsec.log',
+            'ddos-mode'         => 'busy',
+            'ddos-ike-treshold' => 26_000,
+            'dumpdir'           => '/var/run/ipsec',
+            'statsbin'          => '"/some/external/reporter -p 266"',
+            'overridemtu'       => 1500,
+          }.each do |key, value|
+            it "manages #{key} = #{value}" do
+              is_expected.to contain_file_line("libreswan /etc/ipsec.conf #{key}")
+                .with(
+                  ensure: 'present',
+                  path:  '/etc/ipsec.conf',
+                  line:  "  #{key} = #{value}",
+                )
+            end
+          end
+
+          it 'does NOT manage fields that were not passed' do
+            is_expected.not_to contain_file_line('libreswan /etc/ipsec.conf uniqueids')
+            is_expected.not_to contain_file_line('libreswan /etc/ipsec.conf ocsp-enable')
+          end
+
+          it 'writes the block policy file' do
+            is_expected.to contain_file('/etc/ipsec.d/policies/block')
+              .with(ensure: 'file', content: "10.0.0.0/8\n")
+          end
+
+          it 'writes the clear policy file' do
+            is_expected.to contain_file('/etc/ipsec.d/policies/clear')
+              .with(ensure: 'file', content: "192.168.0.0/16\n")
+          end
+
+          it 'does not write unmanaged policy files' do
+            is_expected.not_to contain_file('/etc/ipsec.d/policies/private')
+          end
+
+          it 'declares the policies directory when any policy file is managed' do
+            is_expected.to contain_file('/etc/ipsec.d/policies').with_ensure('directory')
+          end
+        end
+
+        context 'with purge_settings overlapping a managed key' do
+          let(:pre_condition) do
+            <<~EOM
+              class { 'libreswan':
+                protostack     => 'netkey',
+                purge_settings => ['protostack'],
+              }
+            EOM
+          end
+
+          it 'fails compilation with a helpful message' do
+            is_expected.to compile.and_raise_error(%r{cannot appear in both managed settings and \$purge_settings: protostack})
+          end
+        end
+
+        context 'with purge_policies overlapping a managed policy' do
+          let(:pre_condition) do
+            <<~EOM
+              class { 'libreswan':
+                block_cidrs    => ['10.0.0.0/8'],
+                purge_policies => ['block'],
+              }
+            EOM
+          end
+
+          it 'fails compilation with a helpful message' do
+            is_expected.to compile.and_raise_error(%r{cannot appear in both managed policies and \$purge_policies: block})
+          end
+        end
+
+        context 'with purge_policies and no managed policies' do
+          let(:pre_condition) do
+            <<~EOM
+              class { 'libreswan':
+                purge_policies => ['block', 'clear'],
+              }
+            EOM
+          end
+
+          it 'declares the policies directory' do
+            is_expected.to contain_file('/etc/ipsec.d/policies').with_ensure('directory')
+          end
+
+          it 'declares each policy file as absent' do
+            is_expected.to contain_file('/etc/ipsec.d/policies/block').with_ensure('absent')
+            is_expected.to contain_file('/etc/ipsec.d/policies/clear').with_ensure('absent')
+          end
         end
       end
     end

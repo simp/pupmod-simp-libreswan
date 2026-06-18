@@ -1,32 +1,18 @@
-# @summary Installs and configures libreswan to provide IPSEC capabilities.
+# @summary Manage libreswan IPSEC settings without overwriting the config file or disrupting the service.
 #
-# ---
-# > It is very important you read the documentation that comes with libreswan
-# > before attempting to use this module.
-# ---
+# A bare `include libreswan` installs the libreswan package and does nothing
+# else. All configuration management, service management, firewall management,
+# and PKI management are opt-in via class parameters.
 #
-# @see https://libreswan.org
+# Configuration fields in `/etc/ipsec.conf` are managed in-place with
+# `file_line` (one resource per field). Fields whose parameters are `undef`
+# are not managed at all — the value in the package-provided file is left
+# untouched. To remove a previously-managed field, pass its key in
+# `purge_settings`. To remove a policy file in `${ipsecdir}/policies`, pass
+# its name in `purge_policies`.
 #
-# ---
-# > This module is designed to install and configure system IPSEC capabilities
-# > using libreswan.
-#
-# > It will also configure and maintain the NSS database used by libreswan if you
-# > have chosen to let SIMP manage your PKI certificates.
-#
-# > To add and start tunnels that will be managed by libreswan see the manifest
-# > `libreswan::add_connection`.
-# ---
-#
-# This module is optimally designed for use within a larger SIMP ecosystem, but
-# it can be used independently:
-#
-# * When included within the SIMP ecosystem,
-#   security compliance settings will be managed from the Puppet server.
-#
-# * If used independently, all SIMP-managed security subsystems are disabled by
-#   default, and must be explicitly opted into by administrators. Please review
-#   items referring to `simp_options::*` for additional information.
+# See @link https://libreswan.org/man/ipsec.conf.5.html for the meaning of
+# each ipsec.conf field.
 #
 # @param service_name
 #   The name of the IPSEC service.
@@ -34,47 +20,68 @@
 # @param package_name
 #   The name of the libreswan package.
 #
+# @param service_ensure
+#   `ensure` for the `ipsec` service. If `undef` (the default), the service
+#   resource is not declared and the running state is not managed.
+#
+# @param service_enable
+#   `enable` for the `ipsec` service. If `undef` (the default), the service
+#   resource is not declared and the boot state is not managed.
+#
 # @param trusted_nets
-#   An allowed set of subnetworks (in CIDR notataion) with permitted access
-#   explicitly for IPSEC communication
+#   Subnetworks (in CIDR notation) permitted to reach the IPSEC ports.
+#   Only consumed when `firewall => true`.
 #
 # @param firewall
-#   Whether to add appropriate rules to allow IPSEC traffic to the
-#   SIMP-controlled firewall
+#   When `true`, declare firewall rules opening the IKE/NAT-T/ESP/AH paths.
 #
 # @param fips
-#   Whether server is in FIPS mode.
-#
-#   * Affects cryptography allowed to be used by IPSEC.
+#   Whether the IPSEC subsystem should be configured for FIPS mode. Only
+#   consumed when `pki` is enabled.
 #
 # @param pki
-#   * If `'simp'`, include `simp/pki` and use `pki::copy` to manage application
-#     certs in `/etc/pki/simp_apps/libreswan/x509`
-#   * If `true`, do *not* include `simp/pki`, but still use `pki::copy` to
-#     manage certs in `/etc/pki/simp_apps/libreswan/x509`
-#   * If `false`, do *not* include `simp/pki` and do *not* use pki::copy to
-#     manage certs.  You will need to appropriately assign a subset of:
-#       * app_pki_dir
-#       * app_pki_key
-#       * app_pki_cert
-#       * app_pki_ca
-#       * app_pki_ca_dir
+#   * `'simp'`  — include `simp/pki` and copy certs into the app PKI dir.
+#   * `true`    — do not include `simp/pki`, but still copy certs.
+#   * `false`   — do not manage certs at all.
 #
 # @param haveged
-#   Whether to use haveged to ensure adequate entropy
+#   When `true`, include `haveged` to provide entropy.
+#
+# @param nss_scripts
+#   When `true`, install the NSS helper scripts under `/usr/local/scripts/nss/`.
+#   These were always installed before 4.0.0. They are also pulled in
+#   automatically by `libreswan::nss::init_db`, so most sites do not need to
+#   set this directly.
 #
 # @param nssdb_password
-#   Password for the NSS database used by ipsec
+#   Password used to protect the NSS database.
+#
+# @param ikeport
+#   IKE port used in firewall rules. Not emitted to `ipsec.conf`.
+#
+# @param nat_ikeport
+#   NAT-T port used in firewall rules. Not emitted to `ipsec.conf`.
+#
+# @param ipsecdir
+#   Operational path to the IPSEC configuration directory. Used by the policy
+#   files, PKI, and NSS code paths. Not emitted as a setting in `ipsec.conf`;
+#   to override the in-file `ipsecdir =` line, manage it out-of-band.
+#
+# @param secretsfile
+#   Operational path to the IPSEC secrets file. Used by the PKI code path.
+#   Not emitted as a setting in `ipsec.conf`.
+#
+# @param purge_settings
+#   Field names to remove from `/etc/ipsec.conf` if present.
+#
+# @param purge_policies
+#   Policy file names (under `${ipsecdir}/policies`) to remove if present.
 #
 # @param myid
 # @param protostack
 # @param interfaces
 # @param listen
-# @param ikeport
-#   DEPRECATED
 # @param nflog_all
-# @param nat_ikeport
-#   DEPRECATED
 # @param keep_alive
 # @param virtual_private
 # @param myvendorid
@@ -88,8 +95,6 @@
 # @param ocsp_uri
 # @param ocsp_trustname
 # @param syslog
-# @param klipsdebug
-#   DEPRECATED
 # @param plutodebug
 # @param uniqueids
 # @param plutorestartoncrash
@@ -100,136 +105,119 @@
 # @param ddos_ike_treshold
 # @param dumpdir
 # @param statsbin
-#
-# @param ipsecdir
-#   The directory to store all ipsec configuration information.
-#
-# @param secretsfile
-# @param perpeerlog
-#   DEPRECATED
-# @param perpeerlogdir
-#   DEPRECATED
 # @param fragicmp
 # @param hidetos
 # @param overridemtu
-#
 # @param block_cidrs
-#   List of CIDRs to which communication should never be allowed
-#
 # @param clear_cidrs
-#   List of CIDRs to which communication should always be in the clear
-#
 # @param clear_private_cidrs
-#   List of CIDRs to which communication will be in the clear, or, if the other
-#   side initiates IPSEC, use encryption
-#
 # @param private_cidrs
-#   List of CIDRs to which communication should always be private
 # @param private_clear_cidrs
-#   List of CIDRs to which communication should be private if possible but in
-#   the clear otherwise
-#
-# * See the libreswan documentation https://libreswan.org/man/ipsec.conf.5.html
-#   for more information regarding these variables.
-#
-# * Any variable set to `undef` will not appear in the configuration file and
-#   will default to the value set by libreswan. Those set will appear in the
-#   configuration file but can be overwritten using Hiera.
 #
 # @author https://github.com/simp/pupmod-simp-libreswan/graphs/contributors
 #
 class libreswan (
-  String                                 $service_name,
-  String                                 $package_name,
-  Simplib::Netlist                       $trusted_nets        = simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] }),
-  Boolean                                $firewall            = simplib::lookup('simp_options::firewall', {'default_value' => false }),
-  Boolean                                $fips                = simplib::lookup('simp_options::fips', {'default_value' => false }),
-  Variant[Boolean,Enum['simp']]          $pki                 = simplib::lookup('simp_options::pki', {'default_value' => false }),
-  Boolean                                $haveged             = simplib::lookup('simp_options::haveged', {'default_value' => false }),
-  String                                 $nssdb_password      = simplib::passgen('nssdb_password'),
-  # Possible Values in ipsec.conf file
-  Optional[String]                       $myid                = undef,
-  Enum['netkey','klips','mast']          $protostack          = 'netkey',
-  Optional[Libreswan::Interfaces]        $interfaces          = undef,
-  Optional[Simplib::IP]                  $listen              = undef,
-  Simplib::Port                          $ikeport             = 500,
-  Optional[Integer]                      $nflog_all           = undef,
-  Simplib::Port                          $nat_ikeport         = 4500,
-  Optional[Integer]                      $keep_alive          = undef,
-  Libreswan::VirtualPrivate              $virtual_private     = ['%v4:10.0.0.0/8','%v4:192.168.0.0/16','%v4:172.16.0.0/12'],
-  Optional[String]                       $myvendorid          = undef,
-  Optional[Integer]                      $nhelpers            = undef,
-  Optional[Enum['yes','no']]             $plutofork           = undef,
-  Optional[Integer]                      $crlcheckinterval    = undef,
-  Optional[Enum['yes','no']]             $strictcrlpolicy     = undef,
-  Optional[Enum['yes','no']]             $ocsp_enable         = undef,
-  Optional[Enum['yes','no']]             $ocsp_strict         = undef,
-  Optional[Integer]                      $ocsp_timeout        = undef,
-  Optional[Simplib::Uri]                 $ocsp_uri            = undef,
-  Optional[String]                       $ocsp_trustname      = undef,
-  Optional[String]                       $syslog              = undef,
-  String                                 $klipsdebug          = 'none',
-  String                                 $plutodebug          = 'none',
-  Optional[Enum['yes','no']]             $uniqueids           = undef,
-  Optional[Enum['yes','no']]             $plutorestartoncrash = undef,
-  Optional[Stdlib::Absolutepath]         $logfile             = undef,
-  Optional[Enum['yes','no']]             $logappend           = undef,
-  Optional[Enum['yes','no']]             $logtime             = undef,
-  Optional[Enum['busy',
-    'unlimited','auto']]                 $ddos_mode           = undef,
-  Optional[Integer]                      $ddos_ike_treshold   = undef,  # incorrect spelling in libreswan 3.1.5 source code verified
-  Stdlib::Absolutepath                   $dumpdir             = '/var/run/pluto',
-  Optional[String]                       $statsbin            = undef,
-  Stdlib::Absolutepath                   $ipsecdir            = '/etc/ipsec.d',
-  Stdlib::Absolutepath                   $secretsfile         = '/etc/ipsec.secrets',
-  Optional[Enum['yes','no']]             $perpeerlog          = undef,
-  Stdlib::Absolutepath                   $perpeerlogdir       = '/var/log/pluto/peer',
-  Optional[Enum['yes','no']]             $fragicmp            = undef,
-  Optional[Enum['yes','no']]             $hidetos             = undef,
-  Optional[Integer]                      $overridemtu         = undef,
-  Optional[Array[Simplib::IP::V4::CIDR]] $block_cidrs         = undef,
-  Optional[Array[Simplib::IP::V4::CIDR]] $clear_cidrs         = undef,
-  Optional[Array[Simplib::IP::V4::CIDR]] $clear_private_cidrs = undef,
-  Optional[Array[Simplib::IP::V4::CIDR]] $private_cidrs       = undef,
-  Array[Simplib::IP::V4::CIDR] $private_clear_cidrs = ['0.0.0.0/0']
-
+  String[1]                                          $service_name,
+  String[1]                                          $package_name,
+  Optional[Enum['running','stopped']]                $service_ensure             = undef,
+  Optional[Boolean]                                  $service_enable             = undef,
+  Simplib::Netlist                                   $trusted_nets               = ['127.0.0.1/32'],
+  Boolean                                            $firewall                   = false,
+  Boolean                                            $fips                       = false,
+  Variant[Boolean,Enum['simp']]                      $pki                        = false,
+  Boolean                                            $haveged                    = false,
+  Boolean                                            $nss_scripts                = false,
+  String[1]                                          $nssdb_password             = simplib::passgen('nssdb_password'),
+  Simplib::Port                                      $ikeport                    = 500,
+  Simplib::Port                                      $nat_ikeport                = 4500,
+  Stdlib::Absolutepath                               $ipsecdir                   = '/etc/ipsec.d',
+  Stdlib::Absolutepath                               $secretsfile                = '/etc/ipsec.secrets',
+  Array[String[1]]                                   $purge_settings             = [],
+  Array[String[1]]                                   $purge_policies             = [],
+  Optional[String[1]]                                $myid                       = undef,
+  Optional[Enum['netkey','klips','mast']]            $protostack                 = undef,
+  Optional[Libreswan::Interfaces]                    $interfaces                 = undef,
+  Optional[Simplib::IP]                              $listen                     = undef,
+  Optional[Integer]                                  $nflog_all                  = undef,
+  Optional[Integer]                                  $keep_alive                 = undef,
+  Optional[Libreswan::VirtualPrivate]                $virtual_private            = undef,
+  Optional[String[1]]                                $myvendorid                 = undef,
+  Optional[Integer]                                  $nhelpers                   = undef,
+  Optional[Enum['yes','no']]                         $plutofork                  = undef,
+  Optional[Integer]                                  $crlcheckinterval           = undef,
+  Optional[Enum['yes','no']]                         $strictcrlpolicy            = undef,
+  Optional[Enum['yes','no']]                         $ocsp_enable                = undef,
+  Optional[Enum['yes','no']]                         $ocsp_strict                = undef,
+  Optional[Integer]                                  $ocsp_timeout               = undef,
+  Optional[Simplib::Uri]                             $ocsp_uri                   = undef,
+  Optional[String[1]]                                $ocsp_trustname             = undef,
+  Optional[String[1]]                                $syslog                     = undef,
+  Optional[String[1]]                                $plutodebug                 = undef,
+  Optional[Enum['yes','no']]                         $uniqueids                  = undef,
+  Optional[Enum['yes','no']]                         $plutorestartoncrash        = undef,
+  Optional[Stdlib::Absolutepath]                     $logfile                    = undef,
+  Optional[Enum['yes','no']]                         $logappend                  = undef,
+  Optional[Enum['yes','no']]                         $logtime                    = undef,
+  Optional[Enum['busy','unlimited','auto']]          $ddos_mode                  = undef,
+  Optional[Integer]                                  $ddos_ike_treshold          = undef,
+  Optional[Stdlib::Absolutepath]                     $dumpdir                    = undef,
+  Optional[String[1]]                                $statsbin                   = undef,
+  Optional[Enum['yes','no']]                         $fragicmp                   = undef,
+  Optional[Enum['yes','no']]                         $hidetos                    = undef,
+  Optional[Integer]                                  $overridemtu                = undef,
+  Optional[Array[Simplib::IP::V4::CIDR]]             $block_cidrs                = undef,
+  Optional[Array[Simplib::IP::V4::CIDR]]             $clear_cidrs                = undef,
+  Optional[Array[Simplib::IP::V4::CIDR]]             $clear_private_cidrs        = undef,
+  Optional[Array[Simplib::IP::V4::CIDR]]             $private_cidrs              = undef,
+  Optional[Array[Simplib::IP::V4::CIDR]]             $private_clear_cidrs        = undef,
 ) {
 
   simplib::assert_metadata($module_name)
 
-  # set the token for the NSS database.
   if $fips or $facts['fips_enabled'] {
-    $token = 'NSS FIPS 140-2 Certificate DB' }
+    $token = 'NSS FIPS 140-2 Certificate DB'
+  }
   else {
     $token = 'NSS Certificate DB'
-  }
-
-  if $haveged {
-    include 'haveged'
-
-    Class[ 'haveged' ] -> Class[ 'libreswan::service' ]
   }
 
   $nsspassword = "${ipsecdir}/nsspassword"
 
   contain 'libreswan::install'
   contain 'libreswan::config'
-  contain 'libreswan::service'
 
-  Class[ 'libreswan::install' ] -> Class[ 'libreswan::config'  ]
-  Class[ 'libreswan::config'  ] ~> Class[ 'libreswan::service' ]
+  Class['libreswan::install'] -> Class['libreswan::config']
+
+  if $service_ensure =~ NotUndef or $service_enable =~ NotUndef {
+    contain 'libreswan::service'
+    Class['libreswan::config'] ~> Class['libreswan::service']
+  }
+
+  if $haveged {
+    include 'haveged'
+    if $service_ensure =~ NotUndef or $service_enable =~ NotUndef {
+      Class['haveged'] -> Class['libreswan::service']
+    }
+  }
 
   if $firewall {
     contain 'libreswan::config::firewall'
-
-    Class[ 'libreswan::config::firewall' ] ~> Class[ 'libreswan::service'  ]
+    if $service_ensure =~ NotUndef or $service_enable =~ NotUndef {
+      Class['libreswan::config::firewall'] ~> Class['libreswan::service']
+    }
   }
 
   if $pki {
     contain 'libreswan::config::pki'
     contain 'libreswan::config::pki::nsspki'
 
-    Class[ 'libreswan::config::pki' ] ~> Class[ 'libreswan::config::pki::nsspki' ]
-    Class[ 'libreswan::config::pki::nsspki' ] ~> Class[ 'libreswan::service' ]
+    Class['libreswan::config::pki'] ~> Class['libreswan::config::pki::nsspki']
+    if $service_ensure =~ NotUndef or $service_enable =~ NotUndef {
+      Class['libreswan::config::pki::nsspki'] ~> Class['libreswan::service']
+    }
+  }
+
+  if $nss_scripts {
+    include 'libreswan::nss'
   }
 }
