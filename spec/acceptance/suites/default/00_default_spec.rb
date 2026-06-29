@@ -60,10 +60,17 @@ describe 'enable epel' do
   end
 end
 
-['7', '8'].each do |os_major_version|
-  describe "libreswan class for EL #{os_major_version}" do
-    let(:left) { only_host_with_role(hosts, "left#{os_major_version}") }
-    let(:right) { only_host_with_role(hosts, "right#{os_major_version}") }
+# The acceptance matrix runs one OS per nodeset, with a dedicated 'left' and
+# 'right' host for the two-ended IPsec tunnel.  Derive the EL major version
+# from the nodeset's platform string (e.g. 'el-9-x86_64') at load time so we
+# do not need a live host connection while building example groups.
+left_host        = only_host_with_role(hosts, 'left')
+os_major_version = left_host[:platform].to_s[/el-(\d+)-/, 1]
+
+describe "libreswan class for EL #{os_major_version}" do
+  context 'with left and right hosts' do
+    let(:left)  { only_host_with_role(hosts, 'left') }
+    let(:right) { only_host_with_role(hosts, 'right') }
     let(:haveged) { 'include haveged' }
 
     let(:disable_firewalld) { "service { 'firewalld': ensure => 'stopped', enable => false }" }
@@ -418,7 +425,7 @@ end
           on left, "pkill -f '#{nc} -l #{nc_port}'", acceptable_exit_codes: [0]
         end
       end
+      # TODO: ipv6 tests
     end
-    # TODO: ipv6 tests
   end
 end

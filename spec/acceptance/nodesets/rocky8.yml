@@ -1,10 +1,26 @@
 ---
 HOSTS:
-  rocky8:
+  left8:
     roles:
     - default
-    - master
     - server
+    - agent
+    - libreswan
+    - left
+    - el8
+    platform: el-8-x86_64
+    box: rockylinux/8
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    vagrant_memsize: 2048
+    vagrant_cpus: 2
+    family: rocky-linux-cloud/rocky-linux-8
+    gce_machine_type: n1-standard-2
+  right8:
+    roles:
+    - server
+    - agent
+    - libreswan
+    - right
     - el8
     platform: el-8-x86_64
     box: rockylinux/8
