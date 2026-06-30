@@ -28,6 +28,11 @@ def get_public_network_interface(host)
   interfaces.sort[0]
 end
 
+# Derive the EL major version from a host's platform string (e.g. 'el-9-x86_64').
+def el_major_version(host)
+  host[:platform].to_s[%r{el-(\d+)-}, 1]
+end
+
 # TODO: move to Simp::BeakerHelpers
 require 'timeout'
 def wait_for_command_success(
@@ -54,16 +59,20 @@ end
 
 test_name 'libreswan class'
 
-describe 'enable epel' do
-  it 'enables EPEL' do
-    enable_epel_on(hosts)
+# The acceptance matrix runs one OS per nodeset, with a dedicated 'left' and
+# 'right' host for the two-ended IPsec tunnel.  Derive the EL major version
+# from the nodeset's platform string (e.g. 'el-9-x86_64') at load time so we
+# do not need a live host connection while building example groups.
+describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, 'left'))}" do
+  context 'enable epel' do
+    it 'enables EPEL' do
+      enable_epel_on(hosts)
+    end
   end
-end
 
-['7', '8'].each do |os_major_version|
-  describe "libreswan class for EL #{os_major_version}" do
-    let(:left) { only_host_with_role(hosts, "left#{os_major_version}") }
-    let(:right) { only_host_with_role(hosts, "right#{os_major_version}") }
+  context 'with left and right hosts' do
+    let(:left)  { only_host_with_role(hosts, 'left') }
+    let(:right) { only_host_with_role(hosts, 'right') }
     let(:haveged) { 'include haveged' }
 
     let(:disable_firewalld) { "service { 'firewalld': ensure => 'stopped', enable => false }" }
@@ -145,7 +154,7 @@ end
 
       it 'disables firewalls' do
         [left, right].flatten.each do |node|
-          if os_major_version == '8'
+          if el_major_version(node) == '8'
             apply_manifest_on(node, disable_firewalld, catch_failures: true)
           else
             apply_manifest_on(node, disable_iptables, catch_failures: true)
@@ -340,7 +349,7 @@ end
           set_hieradata_on(right, hieradata_with_firewall_right)
 
           # Apply ipsec and check for idempotency
-          if os_major_version == '8'
+          if el_major_version(left) == '8'
             apply_manifest_on(left, leftconnection_with_firewalld, catch_failures: true)
             apply_manifest_on(right, rightconnection_with_firewalld, catch_failures: true)
             apply_manifest_on(left, leftconnection_with_firewalld, catch_changes: true)
@@ -354,7 +363,7 @@ end
 
           [left, right].flatten.each do |node|
             on node, 'ipsec status', acceptable_exit_codes: [0]
-            if os_major_version == '8'
+            if el_major_version(node) == '8'
               on node, 'firewall-cmd --list-all', acceptable_exit_codes: [0] do
                 expect(stdout).to match(%r{service\s+name="simp_ipsec_allow"\s+accept}m)
                 expect(stdout).to match(%r{protocol\s+value="esp"\s+accept}m)
@@ -418,7 +427,7 @@ end
           on left, "pkill -f '#{nc} -l #{nc_port}'", acceptable_exit_codes: [0]
         end
       end
+      # TODO: ipv6 tests
     end
-    # TODO: ipv6 tests
   end
 end
