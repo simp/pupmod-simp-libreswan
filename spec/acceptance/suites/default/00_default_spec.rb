@@ -149,6 +149,12 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
           node.install_package('nmap-ncat')
         end
         left.install_package('screen')
+        # screen 5.x (EL10) refuses to start unless its socket directory has
+        # mode 777, but the package's tmpfiles.d entry recreates it 0775 on
+        # every systemd-tmpfiles --create (e.g. any later RPM install), so a
+        # one-shot chmod does not survive; override via /etc/tmpfiles.d
+        on left, "echo 'd /run/screen 0777 root root' > /etc/tmpfiles.d/screen.conf"
+        on left, 'systemd-tmpfiles --create /etc/tmpfiles.d/screen.conf'
         left.install_package('tcpdump')
       end
 
@@ -204,8 +210,8 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
         end
 
         it 'starts a usable connection in tunnel mode' do
-          wait_for_command_success(left,  'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
-          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
+          wait_for_command_success(left,  'ipsec status | grep -E "Total IPsec connections: loaded [1-9][0-9]*,( routed [0-9]+,)? active 1"')
+          wait_for_command_success(right, 'ipsec status | grep -E "Total IPsec connections: loaded [1-9][0-9]*,( routed [0-9]+,)? active 1"')
           wait_for_command_success(left, "ip xfrm policy | grep 'mode tunnel'")
           wait_for_command_success(right, "ip xfrm policy | grep 'mode tunnel'")
 
@@ -246,7 +252,7 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
 
           # can take up to 2 minutes for right to timeout tunnel, so restart instead to detect
           # failure immediately
-          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 0"')
+          wait_for_command_success(right, 'ipsec status | grep -E "Total IPsec connections: loaded [1-9][0-9]*,( routed [0-9]+,)? active 0"')
           wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
 
@@ -377,8 +383,8 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
         end
 
         it "allows data carried by connection's tunnel" do
-          wait_for_command_success(left,  'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
-          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 1"')
+          wait_for_command_success(left,  'ipsec status | grep -E "Total IPsec connections: loaded [1-9][0-9]*,( routed [0-9]+,)? active 1"')
+          wait_for_command_success(right, 'ipsec status | grep -E "Total IPsec connections: loaded [1-9][0-9]*,( routed [0-9]+,)? active 1"')
 
           # send TCP data from right to left
           on left, "/usr/bin/screen -dm bash -c '#{nc} -l #{nc_port} > #{testfile}'", acceptable_exit_codes: [0]
@@ -405,7 +411,7 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
           # can take up to 2 minutes for right to timeout tunnel,
           # so restart instead to detect
           # failure immediately
-          wait_for_command_success(right, 'ipsec status | egrep "Total IPsec connections: loaded [1-9]+[0-9]*, active 0"')
+          wait_for_command_success(right, 'ipsec status | grep -E "Total IPsec connections: loaded [1-9][0-9]*,( routed [0-9]+,)? active 0"')
           wait_for_command_success(right, "ip xfrm policy | grep 'mode transport'")
         end
 
