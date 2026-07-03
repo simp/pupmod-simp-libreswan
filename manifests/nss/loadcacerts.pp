@@ -13,14 +13,13 @@
 # @param certtype
 #   The format the certificate is in. PEM and DER are currently acceptable.
 #
-define libreswan::nss::loadcacerts(
+define libreswan::nss::loadcacerts (
   Stdlib::Absolutepath   $dbdir,
   Stdlib::Absolutepath   $cert,
   String                 $token       = 'NSS Certificate DB',
   Enum['PEM','DER']      $certtype    = 'PEM',
   Stdlib::Absolutepath   $nsspwd_file = "${dbdir}/nsspassword",
 ) {
-
   $nickname = $title
 
   case $certtype {
@@ -42,5 +41,4 @@ define libreswan::nss::loadcacerts(
       fail("unsupported CA certificate type ${certtype}")
     }
   }
-
 }
