@@ -113,6 +113,7 @@ The following parameters are available in the `libreswan` class:
 * [`dumpdir`](#-libreswan--dumpdir)
 * [`statsbin`](#-libreswan--statsbin)
 * [`ipsecdir`](#-libreswan--ipsecdir)
+* [`nssdir`](#-libreswan--nssdir)
 * [`secretsfile`](#-libreswan--secretsfile)
 * [`perpeerlog`](#-libreswan--perpeerlog)
 * [`perpeerlogdir`](#-libreswan--perpeerlogdir)
@@ -144,7 +145,7 @@ Data type: `Simplib::Netlist`
 An allowed set of subnetworks (in CIDR notataion) with permitted access
 explicitly for IPSEC communication
 
-Default value: `simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] })`
+Default value: `simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1/32'] })`
 
 ##### <a name="-libreswan--firewall"></a>`firewall`
 
@@ -153,7 +154,7 @@ Data type: `Boolean`
 Whether to add appropriate rules to allow IPSEC traffic to the
 SIMP-controlled firewall
 
-Default value: `simplib::lookup('simp_options::firewall', {'default_value' => false })`
+Default value: `simplib::lookup('simp_options::firewall', { 'default_value' => false })`
 
 ##### <a name="-libreswan--fips"></a>`fips`
 
@@ -163,7 +164,7 @@ Whether server is in FIPS mode.
 
 * Affects cryptography allowed to be used by IPSEC.
 
-Default value: `simplib::lookup('simp_options::fips', {'default_value' => false })`
+Default value: `simplib::lookup('simp_options::fips', { 'default_value' => false })`
 
 ##### <a name="-libreswan--pki"></a>`pki`
 
@@ -181,7 +182,7 @@ Data type: `Variant[Boolean,Enum['simp']]`
     * app_pki_ca
     * app_pki_ca_dir
 
-Default value: `simplib::lookup('simp_options::pki', {'default_value' => false })`
+Default value: `simplib::lookup('simp_options::pki', { 'default_value' => false })`
 
 ##### <a name="-libreswan--haveged"></a>`haveged`
 
@@ -189,7 +190,7 @@ Data type: `Boolean`
 
 Whether to use haveged to ensure adequate entropy
 
-Default value: `simplib::lookup('simp_options::haveged', {'default_value' => false })`
+Default value: `simplib::lookup('simp_options::haveged', { 'default_value' => false })`
 
 ##### <a name="-libreswan--nssdb_password"></a>`nssdb_password`
 
@@ -421,7 +422,7 @@ Data type:
 
 ```puppet
 Optional[Enum['busy',
-    'unlimited','auto']]
+  'unlimited','auto']]
 ```
 
 
@@ -459,6 +460,15 @@ Data type: `Stdlib::Absolutepath`
 The directory to store all ipsec configuration information.
 
 Default value: `'/etc/ipsec.d'`
+
+##### <a name="-libreswan--nssdir"></a>`nssdir`
+
+Data type: `Stdlib::Absolutepath`
+
+The directory where the NSS database used by libreswan is stored.
+
+* libreswan >= 4 on EL9+ uses ``/var/lib/ipsec/nss``; EL8 builds keep
+  the legacy ``/etc/ipsec.d`` location (see module Hiera data)
 
 ##### <a name="-libreswan--secretsfile"></a>`secretsfile`
 
@@ -820,7 +830,7 @@ Optional[Variant[
     Enum['%no','%priv'],
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
-    Simplib::IP::CIDR]]
+  Simplib::IP::CIDR]]
 ```
 
 
@@ -889,7 +899,7 @@ Data type:
 
 ```puppet
 Optional[Enum['yes', 'no',
-    'never','always','sendifasked']]
+  'never','always','sendifasked']]
 ```
 
 
@@ -903,7 +913,7 @@ Data type:
 ```puppet
 Optional[Variant[
     Enum['%direct','%defaultroute'],
-    Simplib::IP]]
+  Simplib::IP]]
 ```
 
 
@@ -983,7 +993,7 @@ Optional[Variant[
     Enum['%no','%priv'],
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
-    Simplib::IP::CIDR]]
+  Simplib::IP::CIDR]]
 ```
 
 
@@ -1028,7 +1038,7 @@ Data type:
 
 ```puppet
 Optional[Enum['yes', 'no',
-    'never','always','sendifasked']]
+  'never','always','sendifasked']]
 ```
 
 
@@ -1042,7 +1052,7 @@ Data type:
 ```puppet
 Optional[Variant[
     Enum['%direct','%defaultroute'],
-    Simplib::IP]]
+  Simplib::IP]]
 ```
 
 
@@ -1055,7 +1065,7 @@ Data type:
 
 ```puppet
 Optional[Enum['add','start',
-    'ondemand', 'ignore']]
+  'ondemand', 'ignore']]
 ```
 
 
@@ -1068,7 +1078,7 @@ Data type:
 
 ```puppet
 Optional[Enum['rsasig','secret',
-    'secret|rsasig', 'never', 'null']]
+  'secret|rsasig', 'never', 'null']]
 ```
 
 
@@ -1081,7 +1091,7 @@ Data type:
 
 ```puppet
 Optional[Enum['tunnel','transport',
-    'passthough','reject','drop']]
+  'passthough','reject','drop']]
 ```
 
 
@@ -1094,7 +1104,7 @@ Data type:
 
 ```puppet
 Optional[Enum['insist','permit',
-    'propose','never','yes', 'no']]
+  'propose','never','yes', 'no']]
 ```
 
 
@@ -1155,7 +1165,7 @@ Data type:
 
 ```puppet
 Optional[Enum['yes','no',
-    'conntrack']]
+  'conntrack']]
 ```
 
 
@@ -1248,7 +1258,7 @@ Data type:
 
 ```puppet
 Optional[Enum['file','pam',
-    'alwaysok']]
+  'alwaysok']]
 ```
 
 
@@ -1325,7 +1335,7 @@ Data type:
 
 ```puppet
 Optional[Enum['drafts','rfc',
-    'both']]
+  'both']]
 ```
 
 
@@ -1354,7 +1364,7 @@ Data type:
 
 ```puppet
 Optional[Enum['hold', 'clear',
-    'restart']]
+  'restart']]
 ```
 
 

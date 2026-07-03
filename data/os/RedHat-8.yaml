@@ -1,0 +1,3 @@
+---
+# EL8's libreswan build keeps the legacy NSS database location
+libreswan::nssdir: /etc/ipsec.d

@@ -81,7 +81,8 @@ EOM
     {
       default:     top_comment +
         "config setup\n" \
-        "  ipsecdir = /etc/ipsec.d\n" +
+        "  ipsecdir = /etc/ipsec.d\n" \
+        "  nssdir = #{nssdir}\n" +
         plutodebug_comment +
         "  plutodebug = none\n" +
         logfile_comment +
@@ -101,6 +102,7 @@ EOM
       fully_specified:     top_comment +
         "config setup\n" \
         "  ipsecdir = /etc/myipsec.d\n" \
+        "  nssdir = #{nssdir}\n" \
         "  myid = @myid\n" \
         "  interfaces = \"ipsec0=eth0 ipsec1=ppp0\"\n" \
         "  listen = 1.2.3.4\n" \
@@ -163,6 +165,8 @@ EOM
 end
 
 describe 'libreswan::config' do
+  let(:nssdir) { ((facts.dig(:os, :release, :major) || facts.dig(:os, 'release', 'major')).to_i >= 9) ? '/var/lib/ipsec/nss' : '/etc/ipsec.d' }
+
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do

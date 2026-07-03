@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'libreswan::config::pki' do
+  let(:nssdir) { ((facts.dig(:os, :release, :major) || facts.dig(:os, 'release', 'major')).to_i >= 9) ? '/var/lib/ipsec/nss' : '/etc/ipsec.d' }
+
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
@@ -17,7 +19,7 @@ describe 'libreswan::config::pki' do
           end
 
           it {
-            is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with(
+            is_expected.to create_libreswan__nss__init_db("NSSDB #{nssdir}").with(
               require: 'File[/etc/ipsec.conf]',
             )
           }
@@ -45,7 +47,7 @@ describe 'libreswan::config::pki' do
           let(:hieradata) { 'test1_hiera' }
 
           it {
-            is_expected.not_to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with(
+            is_expected.not_to create_libreswan__nss__init_db("NSSDB #{nssdir}").with(
               require: 'File[/etc/ipsec.conf]',
             )
           }
@@ -68,7 +70,7 @@ describe 'libreswan::config::pki' do
           end
 
           it {
-            is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with(
+            is_expected.to create_libreswan__nss__init_db("NSSDB #{nssdir}").with(
               require: 'File[/etc/ipsec.conf]',
             )
           }

@@ -104,6 +104,12 @@
 # @param ipsecdir
 #   The directory to store all ipsec configuration information.
 #
+# @param nssdir
+#   The directory where the NSS database used by libreswan is stored.
+#
+#   * libreswan >= 4 on EL9+ uses ``/var/lib/ipsec/nss``; EL8 builds keep
+#     the legacy ``/etc/ipsec.d`` location (see module Hiera data)
+#
 # @param secretsfile
 # @param perpeerlog
 #   DEPRECATED
@@ -141,11 +147,11 @@
 class libreswan (
   String                                 $service_name,
   String                                 $package_name,
-  Simplib::Netlist                       $trusted_nets        = simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] }),
-  Boolean                                $firewall            = simplib::lookup('simp_options::firewall', {'default_value' => false }),
-  Boolean                                $fips                = simplib::lookup('simp_options::fips', {'default_value' => false }),
-  Variant[Boolean,Enum['simp']]          $pki                 = simplib::lookup('simp_options::pki', {'default_value' => false }),
-  Boolean                                $haveged             = simplib::lookup('simp_options::haveged', {'default_value' => false }),
+  Simplib::Netlist                       $trusted_nets        = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1/32'] }),
+  Boolean                                $firewall            = simplib::lookup('simp_options::firewall', { 'default_value' => false }),
+  Boolean                                $fips                = simplib::lookup('simp_options::fips', { 'default_value' => false }),
+  Variant[Boolean,Enum['simp']]          $pki                 = simplib::lookup('simp_options::pki', { 'default_value' => false }),
+  Boolean                                $haveged             = simplib::lookup('simp_options::haveged', { 'default_value' => false }),
   String                                 $nssdb_password      = simplib::passgen('nssdb_password'),
   # Possible Values in ipsec.conf file
   Optional[String]                       $myid                = undef,
@@ -176,11 +182,12 @@ class libreswan (
   Optional[Enum['yes','no']]             $logappend           = undef,
   Optional[Enum['yes','no']]             $logtime             = undef,
   Optional[Enum['busy',
-    'unlimited','auto']]                 $ddos_mode           = undef,
+  'unlimited','auto']]                 $ddos_mode           = undef,
   Optional[Integer]                      $ddos_ike_treshold   = undef,  # incorrect spelling in libreswan 3.1.5 source code verified
   Stdlib::Absolutepath                   $dumpdir             = '/var/run/pluto',
   Optional[String]                       $statsbin            = undef,
   Stdlib::Absolutepath                   $ipsecdir            = '/etc/ipsec.d',
+  Stdlib::Absolutepath                   $nssdir,
   Stdlib::Absolutepath                   $secretsfile         = '/etc/ipsec.secrets',
   Optional[Enum['yes','no']]             $perpeerlog          = undef,
   Stdlib::Absolutepath                   $perpeerlogdir       = '/var/log/pluto/peer',
@@ -194,12 +201,11 @@ class libreswan (
   Array[Simplib::IP::V4::CIDR] $private_clear_cidrs = ['0.0.0.0/0']
 
 ) {
-
   simplib::assert_metadata($module_name)
 
   # set the token for the NSS database.
   if $fips or $facts['fips_enabled'] {
-    $token = 'NSS FIPS 140-2 Certificate DB' }
+  $token = 'NSS FIPS 140-2 Certificate DB' }
   else {
     $token = 'NSS Certificate DB'
   }
@@ -207,29 +213,31 @@ class libreswan (
   if $haveged {
     include 'haveged'
 
-    Class[ 'haveged' ] -> Class[ 'libreswan::service' ]
+    Class['haveged'] -> Class['libreswan::service']
   }
 
+  # pluto reads the NSS password file from the config directory (ipsecdir),
+  # even when the NSS database itself lives in $nssdir
   $nsspassword = "${ipsecdir}/nsspassword"
 
   contain 'libreswan::install'
   contain 'libreswan::config'
   contain 'libreswan::service'
 
-  Class[ 'libreswan::install' ] -> Class[ 'libreswan::config'  ]
-  Class[ 'libreswan::config'  ] ~> Class[ 'libreswan::service' ]
+  Class['libreswan::install'] -> Class['libreswan::config']
+  Class['libreswan::config'] ~> Class['libreswan::service']
 
   if $firewall {
     contain 'libreswan::config::firewall'
 
-    Class[ 'libreswan::config::firewall' ] ~> Class[ 'libreswan::service'  ]
+    Class['libreswan::config::firewall'] ~> Class['libreswan::service']
   }
 
   if $pki {
     contain 'libreswan::config::pki'
     contain 'libreswan::config::pki::nsspki'
 
-    Class[ 'libreswan::config::pki' ] ~> Class[ 'libreswan::config::pki::nsspki' ]
-    Class[ 'libreswan::config::pki::nsspki' ] ~> Class[ 'libreswan::service' ]
+    Class['libreswan::config::pki'] ~> Class['libreswan::config::pki::nsspki']
+    Class['libreswan::config::pki::nsspki'] ~> Class['libreswan::service']
   }
 }
