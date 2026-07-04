@@ -20,7 +20,7 @@ class libreswan::install {
     mode   => '0755',
   }
   file { '/usr/local/scripts/nss/update_nssdb_password.sh':
-    ensure => present,
+    ensure => file,
     owner  => root,
     mode   => '0500',
     source => 'puppet:///modules/libreswan/usr/local/scripts/nss/update_nssdb_password.sh'

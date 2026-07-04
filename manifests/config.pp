@@ -4,6 +4,7 @@ class libreswan::config {
   assert_private()
 
   $myid                = $libreswan::myid
+  $nssdir              = $libreswan::nssdir
   $protostack          = $libreswan::protostack
   $interfaces          = $libreswan::interfaces
   $listen              = $libreswan::listen

@@ -17,7 +17,7 @@
 # @param certtype
 #   The format the certificate is in.
 #
-define libreswan::nss::loadcerts(
+define libreswan::nss::loadcerts (
   Stdlib::Absolutepath              $dbdir,
   Stdlib::Absolutepath              $cert,
   String                            $token       = 'NSS Certificate DB',
@@ -25,7 +25,6 @@ define libreswan::nss::loadcerts(
   Optional[Stdlib::Absolutepath]    $key         = undef,
   Stdlib::Absolutepath              $nsspwd_file = "${dbdir}/nsspassword",
 ) {
-
   $nickname = $title
 
   case $certtype {
@@ -62,5 +61,4 @@ define libreswan::nss::loadcerts(
       fail("unsupported Server certificate type ${certtype}")
     }
   }
-
 }

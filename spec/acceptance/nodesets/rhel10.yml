@@ -1,33 +1,33 @@
 ---
 HOSTS:
-  left9:
+  left10:
     roles:
     - default
     - server
     - agent
     - libreswan
     - left
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
+    - el10
+    platform: el-10-x86_64
+    box: generic/rhel10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: rhel-cloud/rhel-10
     gce_machine_type: n1-standard-2
-  right9:
+  right10:
     roles:
     - server
     - agent
     - libreswan
     - right
-    - el9
-    platform: el-9-x86_64
-    box: almalinux/9
+    - el10
+    platform: el-10-x86_64
+    box: generic/rhel10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
-    family: almalinux-cloud/almalinux-9
+    family: rhel-cloud/rhel-10
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose

@@ -1,0 +1,3 @@
+---
+# libreswan >= 4 on EL9+ stores the NSS database in /var/lib/ipsec/nss
+libreswan::nssdir: /var/lib/ipsec/nss
