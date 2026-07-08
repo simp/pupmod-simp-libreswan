@@ -470,6 +470,8 @@ The directory where the NSS database used by libreswan is stored.
 * libreswan >= 4 on EL9+ uses ``/var/lib/ipsec/nss``; EL8 builds keep
   the legacy ``/etc/ipsec.d`` location (see module Hiera data)
 
+Default value: `'/var/lib/ipsec/nss'`
+
 ##### <a name="-libreswan--secretsfile"></a>`secretsfile`
 
 Data type: `Stdlib::Absolutepath`
