@@ -17,47 +17,47 @@ public API for defining individual IPsec tunnels.
 The main class orchestrates a set of contained sub-classes; the public API for
 *tunnels* is the `libreswan::connection` define.
 
-- **`libreswan` (`manifests/init.pp:147-243`)** — Public entry class. Three
+- **`libreswan` (`manifests/init.pp`)** — Public entry class. Three
   parameters are **required** and come from module data: `$service_name`,
-  `$package_name` (`init.pp:148-149`), and `$nssdir` (`init.pp:190`). It:
+  `$package_name` (`init.pp`), and `$nssdir` (`init.pp`). It:
   - Sets the NSS `$token` based on FIPS: `'NSS FIPS 140-2 Certificate DB'` when
     `$fips or $facts['fips_enabled']`, else `'NSS Certificate DB'`
-    (`init.pp:207-211`). This token must match everywhere NSS is manipulated.
+    (`init.pp`). This token must match everywhere NSS is manipulated.
   - `include`s `haveged` (ordered before the service) when `$haveged`
-    (`init.pp:213-217`).
+    (`init.pp`).
   - Computes `$nsspassword = "${ipsecdir}/nsspassword"` — pluto reads the
     password file from the **config** dir even when the DB lives in `$nssdir`
-    (`init.pp:219-221`).
+    (`init.pp`).
   - **`contain`s** `libreswan::install` → `libreswan::config` ~>
-    `libreswan::service` (`init.pp:223-228`).
+    `libreswan::service` (`init.pp`).
   - When `$firewall`, contains `libreswan::config::firewall`
-    (`init.pp:230-234`); when `$pki`, contains `libreswan::config::pki` ~>
-    `libreswan::config::pki::nsspki` ~> service (`init.pp:236-242`).
+    (`init.pp`); when `$pki`, contains `libreswan::config::pki` ~>
+    `libreswan::config::pki::nsspki` ~> service (`init.pp`).
 
-- **`libreswan::install` (private, `install.pp:4`)** — installs `$package_name`,
+- **`libreswan::install` (private, `install.pp`)** — installs `$package_name`,
   creates the `/usr/local/scripts/nss/` password-management scripts and the
   `$ipsecdir` (mode `0700`).
 
-- **`libreswan::service` (private, `service.pp:4`)** — runs/enables
+- **`libreswan::service` (private, `service.pp`)** — runs/enables
   `$service_name`.
 
-- **`libreswan::config` (private, `config.pp:4`)** — renders `/etc/ipsec.conf`
+- **`libreswan::config` (private, `config.pp`)** — renders `/etc/ipsec.conf`
   from `ipsec.conf.erb` and the five policy-group files (`block`, `clear`,
   `clear-or-private`, `private`, `private-or-clear`) under
-  `${ipsecdir}/policies/` (`config.pp:46-93`). The policy files are always
+  `${ipsecdir}/policies/` (`config.pp`). The policy files are always
   written but stay empty when their `$*_cidrs` params are unset — harmless.
 
-- **`libreswan::config::firewall` (private, `config/firewall.pp:4`)** — opens
+- **`libreswan::config::firewall` (private, `config/firewall.pp`)** — opens
   IKE (500), NAT-T (4500), ESP, and AH. It selects the backend from
   `simplib::lookup('iptables::use_firewalld', { 'default_value' => true })`
-  (`config/firewall.pp:6`): `simp_firewalld::rule` when firewalld, else
+  (`config/firewall.pp`): `simp_firewalld::rule` when firewalld, else
   `iptables::listen::udp` / `iptables::rule`.
 
 - **`libreswan::config::pki` (internal, no `assert_private`; called only from
   `init`) / `libreswan::config::pki::nsspki` (private,
-  `config/pki/nsspki.pp:11`)** — `config::pki` copies SIMP PKI certs into
+  `config/pki/nsspki.pp`)** — `config::pki` copies SIMP PKI certs into
   `/etc/pki/simp_apps/libreswan/x509` via `pki::copy` using
-  `simp_options::pki::source` (`config/pki.pp:21`); `nsspki` loads those certs
+  `simp_options::pki::source` (`config/pki.pp`); `nsspki` loads those certs
   into the NSS DB (calling the `nss::*` defines below) and writes the cert name
   into `$secretsfile` (`/etc/ipsec.secrets`).
 
@@ -76,20 +76,20 @@ The main class orchestrates a set of contained sub-classes; the public API for
 ### Gotchas / non-obvious details
 
 - **`libreswan::nss::init_db::init_command` has no default** and the define
-  fails if it is unset (`nss/init_db.pp:32`). It is OS-specific and supplied
+  fails if it is unset (`nss/init_db.pp`). It is OS-specific and supplied
   from module data (`data/os/*.yaml`), so it is not a `simp_options::*` toggle.
 - **Firewall backend is chosen by `iptables::use_firewalld`, not
-  `simp_options::firewall`** (`config/firewall.pp:6`). `simp_options::firewall`
-  only decides *whether* to manage the firewall at all (`init.pp:151`,
-  `init.pp:230`).
+  `simp_options::firewall`** (`config/firewall.pp`). `simp_options::firewall`
+  only decides *whether* to manage the firewall at all (`init.pp`,
+  `init.pp`).
 - **The NSS token name must line up everywhere.** It is derived once in
-  `init.pp:207-211` and reused by every `certutil`/`pk12util`/`modutil` call;
+  `init.pp` and reused by every `certutil`/`pk12util`/`modutil` call;
   a mismatch makes cert loading fail.
 - **`$nssdir` vs `$ipsecdir`.** On EL9+ the NSS DB lives in `/var/lib/ipsec/nss`
-  while the password file stays in `$ipsecdir` (`init.pp:219-221`) — don't
+  while the password file stays in `$ipsecdir` (`init.pp`) — don't
   assume they are the same directory.
 - **`ddos_ike_treshold` is intentionally misspelled** to match a Libreswan
-  3.1.5 source typo (`init.pp:186`) — do not "fix" it.
+  3.1.5 source typo (`init.pp`) — do not "fix" it.
 - **`simp/simp_options` is NOT a declared dependency** in `metadata.json`, yet
   the manifests consume the `simp_options::*` seam via `simplib::lookup`
   (provided by `simp/simplib`); `simp_options` is a test fixture only.
@@ -98,17 +98,17 @@ The main class orchestrates a set of contained sub-classes; the public API for
 
 The module's lookup seam (the natural target for a lookup-path unit test):
 
-| Line | Key | `default_value` |
+| File | Key | `default_value` |
 |------|-----|-----------------|
-| `init.pp:150` | `simp_options::trusted_nets` | `['127.0.0.1/32']` |
-| `init.pp:151` | `simp_options::firewall` | `false` |
-| `init.pp:152` | `simp_options::fips` | `false` |
-| `init.pp:153` | `simp_options::pki` | `false` |
-| `init.pp:154` | `simp_options::haveged` | `false` |
-| `config/pki.pp:21` | `simp_options::pki::source` | `/etc/pki/simp/x509` |
-| `nss/init_db.pp:29` | `simp_options::fips` | `false` |
-| `config/firewall.pp:6` | `iptables::use_firewalld` (module-local, not `simp_options::*`) | `true` |
-| `nss/init_db.pp:32` | `libreswan::nss::init_db::init_command` (module-local; **no default**, fails if unset) | — |
+| `init.pp` | `simp_options::trusted_nets` | `['127.0.0.1/32']` |
+| `init.pp` | `simp_options::firewall` | `false` |
+| `init.pp` | `simp_options::fips` | `false` |
+| `init.pp` | `simp_options::pki` | `false` |
+| `init.pp` | `simp_options::haveged` | `false` |
+| `config/pki.pp` | `simp_options::pki::source` | `/etc/pki/simp/x509` |
+| `nss/init_db.pp` | `simp_options::fips` | `false` |
+| `config/firewall.pp` | `iptables::use_firewalld` (module-local, not `simp_options::*`) | `true` |
+| `nss/init_db.pp` | `libreswan::nss::init_db::init_command` (module-local; **no default**, fails if unset) | — |
 
 Keep routing SIMP feature toggles through `simplib::lookup('simp_options::*', {
 'default_value' => ... })` with an explicit default rather than assuming
