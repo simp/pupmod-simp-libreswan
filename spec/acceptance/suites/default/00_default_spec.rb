@@ -141,6 +141,22 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
     let(:testfile) { "/tmp/testfile.#{Time.now.to_i}" }
     let(:nc) { '/bin/nc' }
 
+    # Exercise noop from a clean (uninstalled) state: on a fresh node the Sicura
+    # console previews the module with `puppet apply --noop`, which must not error
+    # even though nothing libreswan manages exists yet. Real idempotence is covered
+    # by the applies below. A post-convergence noop check is deliberately omitted:
+    # `puppet apply --noop --detailed-exitcodes` always exits 0, so it could never
+    # fail and would test nothing.
+    context 'in noop mode from a clean state' do
+      before(:context) do
+        on(hosts, 'puppet resource package libreswan ensure=absent')
+      end
+
+      it 'applies without errors in noop mode' do
+        apply_manifest_on(hosts, manifest, catch_failures: true, noop: true)
+      end
+    end
+
     context 'test prep' do
       it 'installs haveged, nmap-ncat, screen, and tcpdump' do
         [left, right].flatten.each do |node|
