@@ -10,7 +10,10 @@ describe 'libreswan' do
 
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
-        let(:facts) { os_facts }
+        # Some factsets ship haveged__rngd_enabled=true, which sends the
+        # haveged fixture down its stop-and-mask path instead of running the
+        # service the profile restores.
+        let(:facts) { os_facts.merge(haveged__rngd_enabled: false) }
 
         it { is_expected.to compile.with_all_deps }
 
@@ -71,7 +74,7 @@ describe 'libreswan' do
 
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
-        let(:facts) { os_facts }
+        let(:facts) { os_facts.merge(haveged__rngd_enabled: false) }
 
         it { is_expected.to compile.with_all_deps }
 

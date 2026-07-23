@@ -10,7 +10,7 @@
 
 * [Overview](#overview)
 * [This is a SIMP module](#this-is-a-simp-module)
-* [Breaking changes in 4.0.0](#breaking-changes-in-400)
+* [Breaking changes in 5.0.0](#breaking-changes-in-500)
   * [Path 1: opt in per-parameter](#path-1-opt-in-per-parameter)
   * [Path 2: bulk restore via the `simp:defaults` compliance_engine profile](#path-2-bulk-restore-via-the-simpdefaults-compliance_engine-profile)
 * [Module Description](#module-description)
@@ -40,11 +40,11 @@ If you find any issues, they can be submitted to our [JIRA](https://simp-project
 
 Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
 
-## Breaking changes in 4.0.0
+## Breaking changes in 5.0.0
 
 `include libreswan` is now safe to apply on a system that already has libreswan
 configured. A bare include installs the libreswan package and **nothing else**.
-The following used to happen automatically before 4.0.0 and now do not:
+The following used to happen automatically before 5.0.0 and now do not:
 
 * `/etc/ipsec.conf` is no longer written from a template. Individual fields
   are managed in place with `file_line`, but only for the parameters you set.
@@ -87,7 +87,7 @@ remove a policy file, list its name in `libreswan::purge_policies`.
 
 ### Path 2: bulk restore via the `simp:defaults` compliance_engine profile
 
-For SIMP sites that want pre-4.0.0 behavior wholesale, the module ships a
+For SIMP sites that want pre-5.0.0 behavior wholesale, the module ships a
 `simp:defaults` profile under `SIMP/compliance_profiles/`. Activating it
 restores: service running+enabled, the five hardcoded `ipsec.conf` fields
 (`protostack`, `dumpdir`, `plutodebug`, `virtual_private`,
@@ -149,7 +149,7 @@ After reading the introduction, select the [Main Wiki Page](https://libreswan.or
 
 ### Configure the IPSEC service
 
-See [Breaking changes in 4.0.0](#breaking-changes-in-400) for the two ways to
+See [Breaking changes in 5.0.0](#breaking-changes-in-500) for the two ways to
 opt in to configuration management.
 
 A minimal hiera example that actually configures something:
