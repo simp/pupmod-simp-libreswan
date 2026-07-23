@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'libreswan::config::pki' do
+  let(:nssdir) { ((facts.dig(:os, :release, :major) || facts.dig(:os, 'release', 'major')).to_i >= 9) ? '/var/lib/ipsec/nss' : '/etc/ipsec.d' }
+
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
@@ -16,7 +18,7 @@ describe 'libreswan::config::pki' do
             }"
           end
 
-          it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d') }
+          it { is_expected.to create_libreswan__nss__init_db("NSSDB #{nssdir}") }
           it {
             is_expected.to create_file('/etc/pki/simp_apps/libreswan/x509').with(
               ensure: 'directory',
@@ -40,7 +42,7 @@ describe 'libreswan::config::pki' do
           end
           let(:hieradata) { 'test1_hiera' }
 
-          it { is_expected.not_to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d') }
+          it { is_expected.not_to create_libreswan__nss__init_db("NSSDB #{nssdir}") }
           it {
             is_expected.not_to create_file('/etc/pki/simp_apps/libreswan/x509').with(
               ensure: 'directory',
@@ -59,7 +61,7 @@ describe 'libreswan::config::pki' do
             }"
           end
 
-          it { is_expected.to create_libreswan__nss__init_db('NSSDB /etc/ipsec.d') }
+          it { is_expected.to create_libreswan__nss__init_db("NSSDB #{nssdir}") }
           it {
             is_expected.to create_file('/etc/pki/simp_apps/libreswan/x509').with(
               ensure: 'directory',

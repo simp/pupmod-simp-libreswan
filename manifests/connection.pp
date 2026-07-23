@@ -120,7 +120,7 @@ define libreswan::connection (
     Enum['%no','%priv'],
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
-    Simplib::IP::CIDR]]                $leftsubnet         = undef,
+  Simplib::IP::CIDR]]                $leftsubnet         = undef,
   Optional[Array[Simplib::IP::CIDR]]   $leftsubnets        = undef,
   Optional[String]                     $leftprotoport      = undef,
   Optional[Simplib::IP]                $leftsourceip       = undef,
@@ -129,10 +129,10 @@ define libreswan::connection (
   Optional[String]                     $leftrsasigkey      = undef,
   Optional[String]                     $leftrsasigkey2     = undef,
   Optional[Enum['yes', 'no',
-    'never','always','sendifasked']]   $leftsendcert       = undef,
+  'never','always','sendifasked']]   $leftsendcert       = undef,
   Optional[Variant[
     Enum['%direct','%defaultroute'],
-    Simplib::IP]]                      $leftnexthop        = undef,
+  Simplib::IP]]                      $leftnexthop        = undef,
   Optional[String]                     $leftid             = undef,
   Optional[String]                     $leftca             = undef,
   Optional[String]                     $rightid            = undef,
@@ -145,24 +145,24 @@ define libreswan::connection (
     Enum['%no','%priv'],
     Pattern['^vhost:*'],
     Pattern['^vnet:*'],
-    Simplib::IP::CIDR]]                $rightsubnet        = undef,
+  Simplib::IP::CIDR]]                $rightsubnet        = undef,
   Optional[String]                     $rightprotoport     = undef,
   Optional[Simplib::IP]                $rightsourceip      = undef,
   Optional[String]                     $rightupdown        = undef,
   Optional[String]                     $rightcert          = undef,
   Optional[Enum['yes', 'no',
-    'never','always','sendifasked']]   $rightsendcert      = undef,
+  'never','always','sendifasked']]   $rightsendcert      = undef,
   Optional[Variant[
     Enum['%direct','%defaultroute'],
-    Simplib::IP]]                      $rightnexthop       = undef,
+  Simplib::IP]]                      $rightnexthop       = undef,
   Optional[Enum['add','start',
-    'ondemand', 'ignore']]             $auto               = undef,
+  'ondemand', 'ignore']]             $auto               = undef,
   Optional[Enum['rsasig','secret',
-    'secret|rsasig', 'never', 'null']] $authby             = undef,
+  'secret|rsasig', 'never', 'null']] $authby             = undef,
   Optional[Enum['tunnel','transport',
-    'passthough','reject','drop']]     $type               = undef,
+  'passthough','reject','drop']]     $type               = undef,
   Optional[Enum['insist','permit',
-    'propose','never','yes', 'no']]    $ikev2              = undef,
+  'propose','never','yes', 'no']]    $ikev2              = undef,
   Optional[Enum['yes', 'no']]          $mobike             = undef,
   Optional[Enum['esp', 'ah']]          $phase2             = undef,
   Optional[Enum['yes','no']]           $ikepad             = undef,
@@ -170,7 +170,7 @@ define libreswan::connection (
   Optional[Enum['yes','no']]           $sha2_truncbug      = undef,
   Optional[Enum['yes','no']]           $narrowing          = undef,
   Optional[Enum['yes','no',
-    'conntrack']]                      $sareftrack         = undef,
+  'conntrack']]                      $sareftrack         = undef,
   Optional[Enum['yes','no']]           $leftxauthserver    = undef,
   Optional[Enum['yes','no']]           $rightxauthserver   = undef,
   Optional[String]                     $leftxauthusername  = undef,
@@ -182,7 +182,7 @@ define libreswan::connection (
   Optional[Enum['yes','no']]           $leftmodecfgclient  = undef,
   Optional[Enum['yes','no']]           $rightmodecfgclient = undef,
   Optional[Enum['file','pam',
-    'alwaysok']]                       $xauthby            = undef,
+  'alwaysok']]                       $xauthby            = undef,
   Optional[Enum['hard','soft']]        $xauthfail          = undef,
   Optional[Enum['yes','no']]           $modecfgpull        = undef,
   Optional[Array[Simplib::IP]]         $modecfgdns         = undef,
@@ -192,11 +192,11 @@ define libreswan::connection (
   Optional[Array[String]]              $modecfgdomains     = undef,
   Optional[String]                     $modecfgbanner      = undef,
   Optional[Enum['drafts','rfc',
-    'both']]                           $nat_ikev1_method   = undef,
+  'both']]                           $nat_ikev1_method   = undef,
   Optional[Pattern[/\d+[smh]$/]]       $dpddelay           = undef,
   Optional[Pattern[/\d+[smh]$/]]       $dpdtimeout         = undef,
   Optional[Enum['hold', 'clear',
-    'restart']]                        $dpdaction          = undef,
+  'restart']]                        $dpdaction          = undef,
   Optional[String]                     $vti_interface      = undef,
   Optional[Enum['yes', 'no']]          $vti_routing        = undef,
   Optional[Enum['yes', 'no']]          $vti_shared         = undef,
@@ -206,11 +206,9 @@ define libreswan::connection (
 ) {
   include 'libreswan'
 
-
   # TODO Create custom type for *protoport to allow following types of permutations:
   #   *protoport=17   *protoport=17/1701  *protoport=17/%any  *protoport=tcp
   #   *protoport=tcp/22  *protoport=tcp/%any
-
 
   if $title == 'default' {
     $conn_name = '%default'

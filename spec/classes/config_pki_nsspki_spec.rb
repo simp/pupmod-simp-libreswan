@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'libreswan::config::pki::nsspki' do
+  let(:nssdir) { ((facts.dig(:os, :release, :major) || facts.dig(:os, 'release', 'major')).to_i >= 9) ? '/var/lib/ipsec/nss' : '/etc/ipsec.d' }
+
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
@@ -27,7 +29,7 @@ describe 'libreswan::config::pki::nsspki' do
 
           it {
             is_expected.to contain_libreswan__nss__loadcerts(facts[:fqdn]).with(
-              dbdir: '/etc/ipsec.d',
+              dbdir: nssdir,
               nsspwd_file: '/etc/ipsec.d/nsspassword',
               cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
               key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
@@ -56,7 +58,7 @@ describe 'libreswan::config::pki::nsspki' do
 
           it {
             is_expected.to contain_libreswan__nss__loadcerts('client1').with(
-              dbdir: '/etc/ipsec.d',
+              dbdir: nssdir,
               nsspwd_file: '/etc/ipsec.d/nsspassword',
               cert: '/etc/pki/simp_apps/libreswan/x509/public/client1.pub',
               key: '/etc/pki/simp_apps/libreswan/x509/private/client1.pem',

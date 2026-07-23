@@ -67,6 +67,13 @@
 #   files, PKI, and NSS code paths. Not emitted as a setting in `ipsec.conf`;
 #   to override the in-file `ipsecdir =` line, manage it out-of-band.
 #
+# @param nssdir
+#   Operational path to the directory where the NSS database used by
+#   libreswan is stored. Used by the PKI and NSS code paths. Not emitted as a
+#   setting in `ipsec.conf` — the module data matches each OS's package
+#   default (libreswan >= 4 on EL9+ uses ``/var/lib/ipsec/nss``; EL8 builds
+#   keep the legacy ``/etc/ipsec.d`` location).
+#
 # @param secretsfile
 #   Operational path to the IPSEC secrets file. Used by the PKI code path.
 #   Not emitted as a setting in `ipsec.conf`.
@@ -131,6 +138,7 @@ class libreswan (
   Simplib::Port                                      $ikeport                    = 500,
   Simplib::Port                                      $nat_ikeport                = 4500,
   Stdlib::Absolutepath                               $ipsecdir                   = '/etc/ipsec.d',
+  Stdlib::Absolutepath                               $nssdir,
   Stdlib::Absolutepath                               $secretsfile                = '/etc/ipsec.secrets',
   Array[String[1]]                                   $purge_settings             = [],
   Array[String[1]]                                   $purge_policies             = [],
@@ -171,7 +179,6 @@ class libreswan (
   Optional[Array[Simplib::IP::V4::CIDR]]             $private_cidrs              = undef,
   Optional[Array[Simplib::IP::V4::CIDR]]             $private_clear_cidrs        = undef,
 ) {
-
   simplib::assert_metadata($module_name)
 
   if $fips or $facts['fips_enabled'] {
@@ -181,6 +188,8 @@ class libreswan (
     $token = 'NSS Certificate DB'
   }
 
+  # pluto reads the NSS password file from the config directory (ipsecdir),
+  # even when the NSS database itself lives in $nssdir
   $nsspassword = "${ipsecdir}/nsspassword"
 
   contain 'libreswan::install'

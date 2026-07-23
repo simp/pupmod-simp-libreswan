@@ -8,6 +8,8 @@ hierarchy:
     path: "os/%{facts.os.name}-%{facts.os.release.major}.yaml"
   - name: "OS"
     path: "os/%{facts.os.name}.yaml"
+  - name: "OSFamily + Release"
+    path: "os/%{facts.os.family}-%{facts.os.release.major}.yaml"
   - name: "OSFamily"
     path: "os/%{facts.os.family}.yaml"
   - name: "Kernel"

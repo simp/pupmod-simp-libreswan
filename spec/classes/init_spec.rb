@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'libreswan' do
+  let(:nssdir) { ((facts.dig(:os, :release, :major) || facts.dig(:os, 'release', 'major')).to_i >= 9) ? '/var/lib/ipsec/nss' : '/etc/ipsec.d' }
+
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
@@ -138,14 +140,102 @@ describe 'libreswan' do
           let(:facts) { os_facts.merge(fips_enabled: false) }
           let(:params) { { pki: 'simp', fips: false } }
 
+          it { is_expected.to compile.with_all_deps }
           it { is_expected.to contain_class('libreswan::config::pki') }
+          it { is_expected.to contain_class('libreswan::config::pki').that_notifies('Class[libreswan::config::pki::nsspki]') }
           it { is_expected.to contain_class('libreswan::config::pki::nsspki') }
+
           it {
-            is_expected.to contain_libreswan__nss__init_db('NSSDB /etc/ipsec.d').with(
-              dbdir: '/etc/ipsec.d',
+            is_expected.to contain_libreswan__nss__init_db("NSSDB #{nssdir}").with(
+              dbdir: nssdir,
               nsspassword: '/etc/ipsec.d/nsspassword',
               token: 'NSS Certificate DB',
               fips: false,
+            )
+          }
+
+          it {
+            is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with(
+              cert: '/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem',
+              dbdir: nssdir,
+              nsspwd_file: '/etc/ipsec.d/nsspassword',
+              token: 'NSS Certificate DB',
+            )
+          }
+
+          it {
+            is_expected.to contain_libreswan__nss__loadcerts(facts[:fqdn]).with(
+              dbdir: nssdir,
+              nsspwd_file: '/etc/ipsec.d/nsspassword',
+              cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
+              key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
+              token: 'NSS Certificate DB',
+            )
+          }
+        end
+
+        context "with pki => 'simp', fips => true, and fips_enabled fact = false" do
+          let(:facts) { os_facts.merge(fips_enabled: false) }
+          let(:params) { { pki: 'simp', fips: true } }
+
+          it {
+            is_expected.to contain_libreswan__nss__init_db("NSSDB #{nssdir}").with(
+              dbdir: nssdir,
+              nsspassword: '/etc/ipsec.d/nsspassword',
+              token: 'NSS FIPS 140-2 Certificate DB',
+              fips: true,
+            )
+          }
+
+          it {
+            is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with(
+              cert: '/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem',
+              dbdir: nssdir,
+              nsspwd_file: '/etc/ipsec.d/nsspassword',
+              token: 'NSS FIPS 140-2 Certificate DB',
+            )
+          }
+
+          it {
+            is_expected.to contain_libreswan__nss__loadcerts(facts[:fqdn]).with(
+              dbdir: nssdir,
+              nsspwd_file: '/etc/ipsec.d/nsspassword',
+              cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
+              key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
+              token: 'NSS FIPS 140-2 Certificate DB',
+            )
+          }
+        end
+
+        context "with pki => 'simp', fips => false, and fips_enabled fact = true" do
+          let(:facts) { os_facts.merge(fips_enabled: true) }
+          let(:params) { { pki: 'simp', fips: false } }
+
+          it {
+            is_expected.to contain_libreswan__nss__init_db("NSSDB #{nssdir}").with(
+              dbdir: nssdir,
+              nsspassword: '/etc/ipsec.d/nsspassword',
+              token: 'NSS FIPS 140-2 Certificate DB',
+              fips: true,
+            )
+          }
+
+          it {
+            is_expected.to contain_libreswan__nss__loadcacerts('CA_for_connections').with(
+              cert: '/etc/pki/simp_apps/libreswan/x509/cacerts/cacerts.pem',
+              dbdir: nssdir,
+              nsspwd_file: '/etc/ipsec.d/nsspassword',
+              token: 'NSS FIPS 140-2 Certificate DB',
+            )
+          }
+
+          it {
+            is_expected.to contain_libreswan__nss__loadcerts(facts[:fqdn]).with(
+              dbdir: nssdir,
+              nsspwd_file: '/etc/ipsec.d/nsspassword',
+              cert: "/etc/pki/simp_apps/libreswan/x509/public/#{facts[:fqdn]}.pub",
+              key: "/etc/pki/simp_apps/libreswan/x509/private/#{facts[:fqdn]}.pem",
+              token: 'NSS FIPS 140-2 Certificate DB',
             )
           }
         end

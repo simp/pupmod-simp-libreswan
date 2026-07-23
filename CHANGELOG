@@ -1,4 +1,4 @@
-* Tue May 26 2026 Steven Pritchard <steve@sicura.us> - 4.0.0
+* Thu Jul 23 2026 Steven Pritchard <steve@sicura.us> - 5.0.0
 - BREAKING: A bare `include libreswan` now only installs the libreswan package.
   All other resources (the `ipsec.conf` file, policy files, the `ipsec`
   service, firewall rules, PKI, NSS DB, haveged) require explicit opt-in via
@@ -17,19 +17,31 @@
   that relied on automatic opt-in to firewall/PKI/FIPS/haveged must now wire
   those parameters explicitly.
 - Many parameters that previously had concrete defaults (`protostack`,
-  `plutodebug`, `dumpdir`, `virtual_private`, `private_clear_cidrs`,
-  `klipsdebug`, `perpeerlog*`, etc.) are now `Optional[...]` and default to
-  `undef`, meaning "not managed."
+  `plutodebug`, `dumpdir`, `virtual_private`, `private_clear_cidrs`, etc.)
+  are now `Optional[...]` and default to `undef`, meaning "not managed."
+- Removed the `klipsdebug` and deprecated `perpeerlog`/`perpeerlogdir`
+  parameters.
+- The `ipsecdir` and `nssdir` lines are no longer written to `ipsec.conf`;
+  the module data matches each OS's package default, so the operational
+  paths are unchanged.
 - The NSS password-update helper script is no longer installed on bare
   `include`; it is now installed by `libreswan::nss` and pulled in
   automatically by `libreswan::nss::init_db`. A new `libreswan::nss_scripts`
   Boolean parameter (default `false`) can be set to install them directly.
 - Ships a `simp:defaults` compliance_engine profile under
-  `SIMP/compliance_profiles/` that restores pre-4.0.0 behavior for SIMP
-  sites (config file fields, policy files, service running+enabled,
-  firewall, PKI, haveged, NSS scripts). Activate by installing the
-  `simp-compliance_engine` gem and setting `compliance_engine::enforcement:
-  [simp:defaults]` in Hiera.
+  `SIMP/compliance_profiles/` that restores the pre-refactor (4.0.0)
+  behavior for SIMP sites (config file fields, policy files, service
+  running+enabled, firewall, PKI, haveged, NSS scripts). Activate by
+  installing the `simp-compliance_engine` gem and setting
+  `compliance_engine::enforcement: [simp:defaults]` in Hiera.
+
+* Mon Jun 08 2026 Steven Pritchard <steven.pritchard@gmail.com> - 4.0.0
+- Switch `requirements` from `puppet` to `openvox` (>= 8 < 9)
+- Point `issues_url` at GitHub Issues
+- Drop end-of-life OS support (CentOS 8, EL7); list EL10 across all supported distros
+- Allow newer SIMP module dependencies (see metadata.json diff)
+- Sync Gemfile with current puppetsync baseline (adds OpenVox to test gems)
+- Drop Puppet 7 / Ruby 2.7 from GitHub Actions; use Ruby 3.2.11 with OpenVox 8 and 3.4.9 elsewhere
 
 * Wed Jun 18 2025 nunomigsilva <nunomigsilva@deloitte.pt> - 3.11.0
 - Enable setting parameters vti_interface, vti_routing, mark, vti_shared,
