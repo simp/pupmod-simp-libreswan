@@ -72,6 +72,7 @@ describe 'libreswan::config' do
                   ensure: 'present',
                   path:  '/etc/ipsec.conf',
                   line:  "  #{key} = #{value}",
+                  after: '^config setup\s*$',
                 )
             end
           end

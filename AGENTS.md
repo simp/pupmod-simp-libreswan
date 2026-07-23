@@ -54,6 +54,10 @@ guards; the public API for *tunnels* is the `libreswan::connection` define.
   class parameters and declares one `libreswan::config::setting` per
   **non-`undef`** entry, editing `/etc/ipsec.conf` in place with `file_line`
   (the `config setup` header is expected from the package-provided file).
+  New lines are inserted immediately **after the `config setup` header**
+  (`after => '^config setup\s*$'`), never appended: the stock file ends with
+  `include /etc/ipsec.d/*.conf`, and libreswan rejects parameter lines after
+  a top-level `include` with a syntax error.
   Policy files under `${ipsecdir}/policies/` are written only when their
   `$*_cidrs` parameter is set. `$purge_settings`/`$purge_policies` remove
   fields/files; a key appearing in both the managed set and a purge list is a

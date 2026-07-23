@@ -562,7 +562,11 @@ resources here.
 The `config setup` section header is expected to already exist in the
 package-provided `/etc/ipsec.conf`. Each managed field is set as a
 `<key> = <value>` line; `file_line` matches and replaces an existing line
-with the same key, or appends if absent.
+with the same key, or inserts a new line immediately after the
+`config setup` header. New lines must NOT simply be appended: the stock
+`/etc/ipsec.conf` ends with `include /etc/ipsec.d/*.conf`, and libreswan
+rejects parameter lines that appear after a top-level `include` with a
+syntax error.
 
 To remove fields or policy files, use `libreswan::purge_settings` and
 `libreswan::purge_policies` respectively.
@@ -675,6 +679,7 @@ The following parameters are available in the `libreswan::config::setting` defin
 * [`value`](#-libreswan--config--setting--value)
 * [`key`](#-libreswan--config--setting--key)
 * [`ensure`](#-libreswan--config--setting--ensure)
+* [`after`](#-libreswan--config--setting--after)
 
 ##### <a name="-libreswan--config--setting--path"></a>`path`
 
@@ -706,6 +711,16 @@ Data type: `Enum['present', 'absent']`
 `present` to set the line, `absent` to remove it.
 
 Default value: `'present'`
+
+##### <a name="-libreswan--config--setting--after"></a>`after`
+
+Data type: `Optional[String[1]]`
+
+Regex matching the line a *new* line is inserted after (an existing line
+with the same key is replaced in place wherever it is). When unset, or
+when no line matches, new lines are appended at end of file.
+
+Default value: `undef`
 
 ### <a name="libreswan--connection"></a>`libreswan::connection`
 

@@ -16,11 +16,17 @@
 # @param ensure
 #   `present` to set the line, `absent` to remove it.
 #
+# @param after
+#   Regex matching the line a *new* line is inserted after (an existing line
+#   with the same key is replaced in place wherever it is). When unset, or
+#   when no line matches, new lines are appended at end of file.
+#
 define libreswan::config::setting (
   Stdlib::Absolutepath          $path,
   Optional[ScalarData]          $value  = undef,
   String[1]                     $key    = $title,
   Enum['present', 'absent']     $ensure = 'present',
+  Optional[String[1]]           $after  = undef,
 ) {
   if $ensure == 'present' and $value =~ Undef {
     fail("libreswan::config::setting[${title}]: \$value is required when ensure => 'present'")
@@ -38,6 +44,7 @@ define libreswan::config::setting (
     path   => $path,
     line   => "  ${key} = ${value}",
     match  => $_match,
+    after  => $after,
     *      => $_extra,
   }
 }

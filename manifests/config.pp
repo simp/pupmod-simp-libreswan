@@ -8,7 +8,11 @@
 # The `config setup` section header is expected to already exist in the
 # package-provided `/etc/ipsec.conf`. Each managed field is set as a
 # `<key> = <value>` line; `file_line` matches and replaces an existing line
-# with the same key, or appends if absent.
+# with the same key, or inserts a new line immediately after the
+# `config setup` header. New lines must NOT simply be appended: the stock
+# `/etc/ipsec.conf` ends with `include /etc/ipsec.d/*.conf`, and libreswan
+# rejects parameter lines that appear after a top-level `include` with a
+# syntax error.
 #
 # To remove fields or policy files, use `libreswan::purge_settings` and
 # `libreswan::purge_policies` respectively.
@@ -72,6 +76,7 @@ class libreswan::config {
       libreswan::config::setting { $key:
         path  => $ipsec_conf,
         value => $value,
+        after => '^config setup\s*$',
       }
     }
   }
