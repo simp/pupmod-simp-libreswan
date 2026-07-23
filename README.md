@@ -10,6 +10,9 @@
 
 * [Overview](#overview)
 * [This is a SIMP module](#this-is-a-simp-module)
+* [Breaking changes in 5.0.0](#breaking-changes-in-500)
+  * [Path 1: opt in per-parameter](#path-1-opt-in-per-parameter)
+  * [Path 2: bulk restore via the `simp:defaults` compliance_engine profile](#path-2-bulk-restore-via-the-simpdefaults-compliance_engine-profile)
 * [Module Description](#module-description)
 * [Beginning with ipsec](#beginning-with-ipsec)
 * [Setup](#setup)
@@ -37,11 +40,79 @@ If you find any issues, they can be submitted to our [JIRA](https://simp-project
 
 Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
 
-This module is optimally designed for use within a larger SIMP ecosystem, but it can be used independently:
-* When included within the SIMP ecosystem, security compliance settings will be managed from the Puppet server.
-* If used independently, all SIMP-managed security subsystems are disabled by
-  default and must be explicitly opted into by administrators.  Please see
-  parameters mapped to `simp_options::*` items in `init.pp` for details.
+## Breaking changes in 5.0.0
+
+`include libreswan` is now safe to apply on a system that already has libreswan
+configured. A bare include installs the libreswan package and **nothing else**.
+The following used to happen automatically before 5.0.0 and now do not:
+
+* `/etc/ipsec.conf` is no longer written from a template. Individual fields
+  are managed in place with `file_line`, but only for the parameters you set.
+* The five policy files under `/etc/ipsec.d/policies/` are no longer written.
+* The `ipsec` service is no longer enabled or started.
+* Firewall rules (IKE/NAT-T/ESP/AH) are no longer declared.
+* The PKI subsystem and NSS database wiring are no longer configured.
+* `haveged` is no longer included.
+* The NSS helper scripts under `/usr/local/scripts/nss/` are no longer
+  installed by a bare include. They are still installed automatically by
+  `libreswan::nss::init_db`.
+* `simp_options::*` Hiera keys (`simp_options::firewall`, `simp_options::pki`,
+  `simp_options::fips`, `simp_options::haveged`) are no longer consulted.
+
+There are two ways to restore any subset of the old behavior.
+
+### Path 1: opt in per-parameter
+
+Set the specific `libreswan::*` parameters you want managed. The module's
+behavior is now driven entirely by which parameters you provide. For example:
+
+```yaml
+---
+libreswan::service_ensure: running
+libreswan::service_enable: true
+libreswan::firewall:       true
+libreswan::trusted_nets:   ['<desired client nets>']
+libreswan::pki:            simp
+libreswan::haveged:        true
+libreswan::plutodebug:     'none'
+libreswan::protostack:     'netkey'
+
+classes:
+  - 'libreswan'
+```
+
+Only the fields you list are written to `/etc/ipsec.conf`. To remove a
+previously-managed field, list its key in `libreswan::purge_settings`. To
+remove a policy file, list its name in `libreswan::purge_policies`.
+
+### Path 2: bulk restore via the `simp:defaults` compliance_engine profile
+
+For SIMP sites that want pre-5.0.0 behavior wholesale, the module ships a
+`simp:defaults` profile under `SIMP/compliance_profiles/`. Activating it
+restores: service running+enabled, the five hardcoded `ipsec.conf` fields
+(`protostack`, `dumpdir`, `plutodebug`, `virtual_private`,
+`private_clear_cidrs`), the five policy files, firewall, PKI (`'simp'` mode),
+haveged, and the NSS helper scripts.
+
+To activate, install the
+[`simp-compliance_engine`](https://github.com/simp/rubygem-simp-compliance_engine)
+gem (it provides a Hiera backend) and set:
+
+```yaml
+---
+compliance_engine::enforcement:
+  - simp:defaults
+
+classes:
+  - 'libreswan'
+```
+
+The profile values sit at middle Hiera priority: explicit site Hiera entries
+still override them, so you can layer the bulk restore with targeted opt-outs.
+
+The profile is opinionated for SIMP sites — in particular it enables firewall,
+PKI, and haveged. Non-SIMP adopters should use Path 1 with only the parameters
+they actually want.
 
 ## Module Description
 
@@ -77,11 +148,23 @@ After reading the introduction, select the [Main Wiki Page](https://libreswan.or
 * Libreswan starts an "ipsec" service, but it is listed as "pluto" in the process list.
 
 ### Configure the IPSEC service
-Add the following to hiera:
+
+See [Breaking changes in 5.0.0](#breaking-changes-in-500) for the two ways to
+opt in to configuration management.
+
+A minimal hiera example that actually configures something:
+
 ```yaml
 ---
-simp_options::pki: true
-simp_options::trusted_nets : <desired client nets>
+libreswan::service_ensure: running
+libreswan::service_enable: true
+libreswan::firewall:       true
+libreswan::trusted_nets:   ['<desired client nets>']
+libreswan::pki:            true
+
+# Individual ipsec.conf fields you want managed:
+libreswan::plutodebug: 'none'
+libreswan::uniqueids:  'yes'
 
 classes:
   - 'libreswan'

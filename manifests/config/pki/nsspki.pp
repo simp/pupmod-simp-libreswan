@@ -28,7 +28,6 @@ class libreswan::config::pki::nsspki (
     nsspassword => $libreswan::nsspassword,
     token       => $libreswan::token,
     fips        => $_fips,
-    require     => File['/etc/ipsec.conf'],
   }
 
   libreswan::nss::loadcacerts { 'CA_for_connections' :

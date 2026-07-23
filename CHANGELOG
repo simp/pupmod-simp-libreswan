@@ -1,3 +1,40 @@
+* Thu Jul 23 2026 Steven Pritchard <steve@sicura.us> - 5.0.0
+- BREAKING: A bare `include libreswan` now only installs the libreswan package.
+  All other resources (the `ipsec.conf` file, policy files, the `ipsec`
+  service, firewall rules, PKI, NSS DB, haveged) require explicit opt-in via
+  class parameters.
+- `/etc/ipsec.conf` is no longer written from a template. Individual fields
+  are managed in place with `file_line` and only when the corresponding
+  parameter is non-`undef`. Removed `templates/etc/ipsec.conf.erb` and the
+  five policy templates under `templates/etc/ipsec.d/policies/`.
+- Service management is opt-in via the new `service_ensure` and
+  `service_enable` parameters (both default to `undef` — unmanaged).
+- Policy files in `${ipsecdir}/policies/{block,clear,clear-or-private,
+  private,private-or-clear}` are written only when their corresponding
+  `*_cidrs` parameter is set, and removed when listed in `purge_policies`.
+- Configuration fields can be removed via the new `purge_settings` array.
+- `simp_options::*` Hiera lookups are no longer consulted for defaults; sites
+  that relied on automatic opt-in to firewall/PKI/FIPS/haveged must now wire
+  those parameters explicitly.
+- Many parameters that previously had concrete defaults (`protostack`,
+  `plutodebug`, `dumpdir`, `virtual_private`, `private_clear_cidrs`, etc.)
+  are now `Optional[...]` and default to `undef`, meaning "not managed."
+- Removed the `klipsdebug` and deprecated `perpeerlog`/`perpeerlogdir`
+  parameters.
+- The `ipsecdir` and `nssdir` lines are no longer written to `ipsec.conf`;
+  the module data matches each OS's package default, so the operational
+  paths are unchanged.
+- The NSS password-update helper script is no longer installed on bare
+  `include`; it is now installed by `libreswan::nss` and pulled in
+  automatically by `libreswan::nss::init_db`. A new `libreswan::nss_scripts`
+  Boolean parameter (default `false`) can be set to install them directly.
+- Ships a `simp:defaults` compliance_engine profile under
+  `SIMP/compliance_profiles/` that restores the pre-refactor (4.0.0)
+  behavior for SIMP sites (config file fields, policy files, service
+  running+enabled, firewall, PKI, haveged, NSS scripts). Activate by
+  installing the `simp-compliance_engine` gem and setting
+  `compliance_engine::enforcement: [simp:defaults]` in Hiera.
+
 * Mon Jun 08 2026 Steven Pritchard <steven.pritchard@gmail.com> - 4.0.0
 - Switch `requirements` from `puppet` to `openvox` (>= 8 < 9)
 - Point `issues_url` at GitHub Issues

@@ -1,6 +1,15 @@
 require 'spec_helper'
 
 shared_examples_for 'a libreswan connection config file generator' do
+  let(:pre_condition) do
+    <<~EOM
+      class { 'libreswan':
+        service_ensure => 'running',
+        service_enable => true,
+      }
+    EOM
+  end
+
   let(:connection_conf_content) do
     {
       'default' =>
