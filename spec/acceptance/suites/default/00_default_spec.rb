@@ -118,13 +118,21 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
         }
   EOS
     end
+    # As of 5.0.0 a bare `include libreswan` only installs the package, and the
+    # `simp_options::*` lookups no longer drive this module's defaults. Opt in
+    # to the pre-5.0.0 behavior the tunnel tests rely on via the direct class
+    # parameters (the same knobs the shipped `simp:defaults` compliance profile
+    # flips). `simp_options::pki::source` is still consulted by
+    # `libreswan::config::pki`.
     let(:hieradata_left) do
       <<~EOS
         ---
         libreswan::service_name : 'ipsec'
         libreswan::interfaces : ["ipsec0=#{leftip}"]
         libreswan::listen : '#{leftip}'
-        simp_options::pki: true
+        libreswan::service_ensure : 'running'
+        libreswan::service_enable : true
+        libreswan::pki : true
         simp_options::pki::source: '/etc/pki/simp-testing/pki'
       EOS
     end
@@ -134,7 +142,9 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
         libreswan::service_name : 'ipsec'
         libreswan::interfaces : ["ipsec0=#{rightip}"]
         libreswan::listen : '#{rightip}'
-        simp_options::pki: true
+        libreswan::service_ensure : 'running'
+        libreswan::service_enable : true
+        libreswan::pki : true
         simp_options::pki::source: '/etc/pki/simp-testing/pki'
       EOM
     end
@@ -294,15 +304,23 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
           quads[3] = '0'
           quads.join('.') + '/16'
         end
+        # `libreswan::firewall`/`libreswan::trusted_nets` opt this module in to
+        # firewall management (the simp_options::* equivalents no longer do);
+        # the simp_options::* keys stay because simp_firewalld/iptables
+        # resources in the test manifests still consume them.
         let(:hieradata_with_firewall_left) do
           hieradata_left +
             "simp_options::firewall: true\n" \
-            "simp_options::trusted_nets : ['#{client_net}']\n"
+            "simp_options::trusted_nets : ['#{client_net}']\n" \
+            "libreswan::firewall: true\n" \
+            "libreswan::trusted_nets : ['#{client_net}']\n"
         end
         let(:hieradata_with_firewall_right) do
           hieradata_right +
             "simp_options::firewall: true\n" \
-            "simp_options::trusted_nets : ['#{client_net}']\n"
+            "simp_options::trusted_nets : ['#{client_net}']\n" \
+            "libreswan::firewall: true\n" \
+            "libreswan::trusted_nets : ['#{client_net}']\n"
         end
         let(:leftconnection_with_iptables) do
           leftconnection +
