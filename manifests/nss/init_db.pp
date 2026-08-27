@@ -31,6 +31,8 @@ define libreswan::nss::init_db (
   Stdlib::Absolutepath $nsspassword     = "${dbdir}/nsspassword",
   Optional[String[1]]  $init_command    = simplib::lookup('libreswan::nss::init_db::init_command', { 'default_value' => undef }),
 ) {
+  include 'libreswan::nss'
+
   # Because this is an initialization, the current password should be none.
   $oldpassword = 'none'
   $dbfile = "${dbdir}/cert9.db"
@@ -88,5 +90,6 @@ define libreswan::nss::init_db (
     command     => "/usr/local/scripts/nss/update_nssdb_password.sh ${dbdir} \"${password}\" \"${oldpassword}\" \"${token}\"",
     path        => ['/bin','/sbin'],
     refreshonly => true,
+    require     => File['/usr/local/scripts/nss/update_nssdb_password.sh'],
   }
 }

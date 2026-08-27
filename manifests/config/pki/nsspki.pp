@@ -22,13 +22,19 @@ class libreswan::config::pki::nsspki (
 
   $_fips = $libreswan::fips or $facts['fips_enabled']
 
+  # Generated here rather than as a class-parameter default so that a bare
+  # `include libreswan` never persists passgen state on the server
+  $_nssdb_password = $libreswan::nssdb_password ? {
+    Undef   => simplib::passgen('nssdb_password'),
+    default => $libreswan::nssdb_password,
+  }
+
   libreswan::nss::init_db { "NSSDB ${libreswan::nssdir}":
     dbdir       => $libreswan::nssdir,
-    password    => $libreswan::nssdb_password,
+    password    => $_nssdb_password,
     nsspassword => $libreswan::nsspassword,
     token       => $libreswan::token,
     fips        => $_fips,
-    require     => File['/etc/ipsec.conf'],
   }
 
   libreswan::nss::loadcacerts { 'CA_for_connections' :

@@ -1,0 +1,4 @@
+---
+simp_options::trusted_nets:
+  - '10.1.2.0/24'
+simp_options::fips: true

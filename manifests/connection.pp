@@ -225,6 +225,9 @@ define libreswan::connection (
     mode    => '0600',
     owner   => root,
     content => template('libreswan/etc/ipsec.d/connection.conf.erb'),
-    notify  => Class['libreswan::service']
+  }
+
+  if $libreswan::manage_service {
+    File[$conn_name] ~> Class['libreswan::service']
   }
 }

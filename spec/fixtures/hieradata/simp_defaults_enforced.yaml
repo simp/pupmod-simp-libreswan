@@ -1,0 +1,7 @@
+---
+compliance_engine::enforcement:
+  - simp:defaults
+# Site data consumed via the retained simp_options::* data lookups; the
+# profile itself cannot carry site-specific values like these.
+simp_options::trusted_nets:
+  - '192.168.100.0/24'
