@@ -16,6 +16,8 @@ profiles:
       'simp:defaults.libreswan.private_clear_cidrs': true
       'simp:defaults.libreswan.firewall': true
       'simp:defaults.libreswan.pki': true
-      'simp:defaults.libreswan.haveged': true
+      'simp:defaults.libreswan.rngd': true
+      'simp:defaults.libreswan.rngd_service_ensure': true
+      'simp:defaults.libreswan.rngd_service_enable': true
       'simp:defaults.libreswan.nss_scripts': true
       'simp:defaults.libreswan.manage_file_permissions': true

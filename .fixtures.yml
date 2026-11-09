@@ -9,6 +9,7 @@ fixtures:
     haveged: https://github.com/simp/pupmod-simp-haveged.git
     iptables: https://github.com/simp/pupmod-simp-iptables.git
     pki: https://github.com/simp/pupmod-simp-pki.git
+    rngd: https://github.com/simp/pupmod-simp-rngd.git
     simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld.git
     simplib: https://github.com/simp/pupmod-simp-simplib.git
     stdlib: https://github.com/simp/puppetlabs-stdlib.git

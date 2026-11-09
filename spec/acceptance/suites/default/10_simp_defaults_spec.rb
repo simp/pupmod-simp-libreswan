@@ -27,11 +27,10 @@ describe 'simp:defaults compliance_engine profile' do
     }
   end
 
-  # The two libreswan::* keys demonstrate the documented opt-out pattern:
+  # The libreswan::pki key demonstrates the documented opt-out pattern:
   # explicit site Hiera wins over the profile. `pki: true` (manually-supplied
   # certs) is used instead of the profile's 'simp' because these SUTs have no
-  # Puppet server to serve the `pki` class's keydist; `haveged: false`
-  # because the haveged package is not available without EPEL.
+  # Puppet server to serve the `pki` class's keydist.
   let(:hieradata) do
     <<~EOS
       ---
@@ -40,7 +39,6 @@ describe 'simp:defaults compliance_engine profile' do
       simp_options::pki::source: '/etc/pki/simp-testing/pki'
       simp_options::trusted_nets: ['0.0.0.0/0']
       libreswan::pki: true
-      libreswan::haveged: false
     EOS
   end
 
@@ -62,6 +60,11 @@ describe 'simp:defaults compliance_engine profile' do
       it 'runs and enables the ipsec service' do
         on host, 'systemctl is-active ipsec'
         on host, 'systemctl is-enabled ipsec'
+      end
+
+      it 'runs and enables the rngd service' do
+        on host, 'systemctl is-active rngd'
+        on host, 'systemctl is-enabled rngd'
       end
 
       it 'manages the restored ipsec.conf fields in place' do

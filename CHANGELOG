@@ -1,3 +1,12 @@
+* Mon Nov 09 2026 Hazel Caballero <hazel@sicura.us> - 5.2.0
+- Add `libreswan::rngd` to include `simp/rngd`, which replaces `simp/haveged`
+- Deprecate `libreswan::haveged`; it will be removed in the next major release
+- `simp/haveged` is now an optional dependency; sites that keep
+  `libreswan::haveged: true` must install it themselves
+- The `simp:defaults` profile now enables `libreswan::rngd` and runs the
+  `rngd` service instead of enabling haveged. haveged is not removed from
+  nodes where it was installed
+
 * Thu Oct 08 2026 Steven Pritchard <steve@sicura.us> - 5.1.0
 - Add support for OpenVox 9
 - Update metadata.json dependency ranges from the Forge

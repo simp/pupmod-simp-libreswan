@@ -62,6 +62,7 @@ The following parameters are available in the `libreswan` class:
 * [`fips`](#-libreswan--fips)
 * [`pki`](#-libreswan--pki)
 * [`haveged`](#-libreswan--haveged)
+* [`rngd`](#-libreswan--rngd)
 * [`nss_scripts`](#-libreswan--nss_scripts)
 * [`manage_file_permissions`](#-libreswan--manage_file_permissions)
 * [`nssdb_password`](#-libreswan--nssdb_password)
@@ -181,9 +182,22 @@ Default value: `false`
 
 ##### <a name="-libreswan--haveged"></a>`haveged`
 
+Data type: `Optional[Boolean]`
+
+Deprecated; use `rngd` instead. When `true`, include `haveged` to provide
+entropy. `simp/haveged` is an optional dependency, so the module must be
+installed separately. This parameter will be removed in the next major
+release.
+
+Default value: `undef`
+
+##### <a name="-libreswan--rngd"></a>`rngd`
+
 Data type: `Boolean`
 
-When `true`, include `haveged` to provide entropy.
+When `true`, include `rngd` to install `rng-tools`. Set
+`rngd::service_ensure` and `rngd::service_enable` to run the `rngd`
+service; it is ordered before the `ipsec` service when both are managed.
 
 Default value: `false`
 

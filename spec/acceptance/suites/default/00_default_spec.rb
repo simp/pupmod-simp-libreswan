@@ -73,7 +73,7 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
   context 'with left and right hosts' do
     let(:left)  { only_host_with_role(hosts, 'left') }
     let(:right) { only_host_with_role(hosts, 'right') }
-    let(:haveged) { 'include haveged' }
+    let(:rngd) { "class { 'rngd': service_ensure => 'running', service_enable => true }" }
 
     let(:disable_firewalld) { "service { 'firewalld': ensure => 'stopped', enable => false }" }
     let(:disable_iptables) { "service { 'iptables': ensure => 'stopped', enable => false }" }
@@ -168,10 +168,9 @@ describe "libreswan class for EL #{el_major_version(only_host_with_role(hosts, '
     end
 
     context 'test prep' do
-      it 'installs haveged, nmap-ncat, screen, and tcpdump' do
+      it 'installs rngd, nmap-ncat, screen, and tcpdump' do
         [left, right].flatten.each do |node|
-          # Generate ALL of the entropy .
-          apply_manifest_on(node, haveged, catch_failures: true)
+          apply_manifest_on(node, rngd, catch_failures: true)
           node.install_package('nmap-ncat')
         end
         left.install_package('screen')

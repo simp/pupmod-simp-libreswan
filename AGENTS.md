@@ -9,7 +9,7 @@ IPsec/VPN implementation) on Enterprise Linux and, **only when explicitly asked
 to**, manages its configuration. As of 5.0.0 the module is safe-by-default: a
 bare `include libreswan` installs the libreswan package and declares *nothing
 else* — no `/etc/ipsec.conf` changes, no policy files, no service, no
-firewall, no PKI/NSS, no haveged. Every behavior beyond package install is
+firewall, no PKI/NSS, no entropy daemon. Every behavior beyond package install is
 opt-in via class parameters. The `libreswan::connection` defined type remains
 the public API for defining individual IPsec tunnels.
 
@@ -30,8 +30,10 @@ guards; the public API for *tunnels* is the `libreswan::connection` define.
   - When `$firewall` (Boolean, default `false`), contains
     `libreswan::config::firewall`; when `$pki` (`false`/`true`/`'simp'`,
     default `false`), contains `libreswan::config::pki` ~>
-    `libreswan::config::pki::nsspki`; when `$haveged` (default `false`),
-    includes `haveged`; when `$nss_scripts` (default `false`), includes
+    `libreswan::config::pki::nsspki`; when `$rngd` (default `false`),
+    includes `rngd`; when the deprecated `$haveged` is `true`, warns,
+    asserts the optional `simp/haveged` dependency and includes `haveged`;
+    when `$nss_scripts` (default `false`), includes
     `libreswan::nss`.
   - Sets the NSS `$token` based on FIPS: `'NSS FIPS 140-2 Certificate DB'`
     when `$fips or $facts['fips_enabled']`, else `'NSS Certificate DB'`.
@@ -111,7 +113,8 @@ guards; the public API for *tunnels* is the `libreswan::connection` define.
 (`profile-simp_defaults.yaml` + `checks.yaml`, one `puppet-class-parameter`
 check per value) that restores the pre-refactor (4.0.0) behavior wholesale:
 service running+enabled, the previously-hardcoded `ipsec.conf` fields, the
-five policy files, `firewall=true`, `pki='simp'`, `haveged=true`,
+five policy files, `firewall=true`, `pki='simp'`, `rngd=true` (plus
+`rngd::service_ensure: running` and `rngd::service_enable: true`),
 `nss_scripts=true`. Sites activate it by installing the
 `simp-compliance_engine` gem and setting
 `compliance_engine::enforcement: [simp:defaults]` in Hiera. Profile values
@@ -128,7 +131,7 @@ profile flips — never re-widen the module's defaults.**
 - **The `simp_options::*` feature toggles are gone from `init.pp`.** Hiera
   keys like `simp_options::firewall`, `simp_options::pki`,
   `simp_options::haveged` no longer turn features on — set
-  `libreswan::firewall`, `libreswan::pki`, `libreswan::haveged`, etc.
+  `libreswan::firewall`, `libreswan::pki`, `libreswan::rngd`, etc.
   directly (or use the `simp:defaults` profile). The *data* lookups stay:
   `simp_options::trusted_nets` and `simp_options::fips` (`init.pp` — they
   only shape opted-in behavior and declare nothing by themselves; the
@@ -166,8 +169,13 @@ Module dependencies (from `metadata.json`):
   `iptables::use_firewalld`)
 - `simp/simp_firewalld` `>= 0.1.3 < 3.0.0` (the firewalld backend)
 - `simp/pki` `>= 6.2.0 < 8.0.0` (`pki::copy`; used only when `$pki`)
-- `simp/haveged` `>= 0.4.5 < 1.0.0` (entropy daemon; included only when
-  `$haveged`)
+- `simp/rngd` `>= 0.2.0 < 1.0.0` (entropy daemon; included only when
+  `$rngd`)
+
+Optional dependency (`simp.optional_dependencies`):
+
+- `simp/haveged` `>= 0.4.5 < 1.0.0` (included only when the deprecated
+  `$haveged` is `true`; checked with `simplib::assert_optional_dependency`)
 
 `simp-compliance_engine` (the Ruby gem) is deliberately **not** a
 `metadata.json` dependency — it is the activation mechanism for the

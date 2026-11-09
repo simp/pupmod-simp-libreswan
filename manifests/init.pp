@@ -49,7 +49,15 @@
 #   * `false`   — do not manage certs at all.
 #
 # @param haveged
-#   When `true`, include `haveged` to provide entropy.
+#   Deprecated; use `rngd` instead. When `true`, include `haveged` to provide
+#   entropy. `simp/haveged` is an optional dependency, so the module must be
+#   installed separately. This parameter will be removed in the next major
+#   release.
+#
+# @param rngd
+#   When `true`, include `rngd` to install `rng-tools`. Set
+#   `rngd::service_ensure` and `rngd::service_enable` to run the `rngd`
+#   service; it is ordered before the `ipsec` service when both are managed.
 #
 # @param nss_scripts
 #   When `true`, install the NSS helper scripts under `/usr/local/scripts/nss/`.
@@ -147,7 +155,8 @@ class libreswan (
   Boolean                                            $firewall                   = false,
   Boolean                                            $fips                       = simplib::lookup('simp_options::fips', { 'default_value' => false }),
   Variant[Boolean,Enum['simp']]                      $pki                        = false,
-  Boolean                                            $haveged                    = false,
+  Optional[Boolean]                                  $haveged                    = undef,
+  Boolean                                            $rngd                       = false,
   Boolean                                            $nss_scripts                = false,
   Boolean                                            $manage_file_permissions    = false,
   Optional[String[1]]                                $nssdb_password             = undef,
@@ -223,9 +232,23 @@ class libreswan (
   }
 
   if $haveged {
+    deprecation(
+      'libreswan::haveged',
+      "${module_name}: 'libreswan::haveged' is deprecated and will be removed in the next major release. Use 'libreswan::rngd' instead.",
+      false
+    )
+    simplib::assert_optional_dependency($module_name, 'simp/haveged')
+
     include 'haveged'
     if $manage_service {
       Class['haveged'] -> Class['libreswan::service']
+    }
+  }
+
+  if $rngd {
+    include 'rngd'
+    if $manage_service {
+      Class['rngd'] -> Class['libreswan::service']
     }
   }
 

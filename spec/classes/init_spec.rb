@@ -16,12 +16,13 @@ describe 'libreswan' do
           it { is_expected.to contain_package('libreswan').with_ensure('present') }
 
           # A bare include must declare NO service, file (besides nothing), or
-          # firewall/PKI/haveged resources.
+          # firewall/PKI/entropy-daemon resources.
           it { is_expected.not_to contain_class('libreswan::service') }
           it { is_expected.not_to contain_class('libreswan::config::firewall') }
           it { is_expected.not_to contain_class('libreswan::config::pki') }
           it { is_expected.not_to contain_class('libreswan::config::pki::nsspki') }
           it { is_expected.not_to contain_class('haveged') }
+          it { is_expected.not_to contain_class('rngd') }
           it { is_expected.not_to contain_service('ipsec') }
           it { is_expected.not_to contain_file('/etc/ipsec.conf') }
           it { is_expected.not_to contain_file('/etc/ipsec.d/policies/block') }
@@ -313,10 +314,29 @@ describe 'libreswan' do
           }
         end
 
-        context 'with haveged => true' do
+        context 'with haveged => true (deprecated)' do
           let(:params) { { haveged: true } }
 
+          it { is_expected.to compile.with_all_deps }
           it { is_expected.to contain_class('haveged') }
+          it { is_expected.not_to contain_class('rngd') }
+        end
+
+        context 'with rngd => true' do
+          let(:params) { { rngd: true } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_class('rngd') }
+          it { is_expected.to contain_package('rng-tools') }
+          it { is_expected.not_to contain_service('rngd') }
+          it { is_expected.not_to contain_class('haveged') }
+        end
+
+        context 'with rngd => true and the ipsec service managed' do
+          let(:params) { { rngd: true, service_ensure: 'running' } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_class('rngd').that_comes_before('Class[libreswan::service]') }
         end
 
         context 'with nss_scripts => true' do
