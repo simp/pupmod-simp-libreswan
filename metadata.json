@@ -1,6 +1,6 @@
 {
   "name": "simp-libreswan",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "author": "SIMP Team",
   "summary": "Manages IPSec VPN Tunnels",
   "license": "Apache-2.0",
@@ -14,10 +14,6 @@
   ],
   "dependencies": [
     {
-      "name": "simp/haveged",
-      "version_requirement": ">= 0.4.5 < 1.0.0"
-    },
-    {
       "name": "puppetlabs/stdlib",
       "version_requirement": ">= 8.0.0 < 11.0.0"
     },
@@ -28,6 +24,10 @@
     {
       "name": "simp/pki",
       "version_requirement": ">= 6.2.0 < 8.0.0"
+    },
+    {
+      "name": "simp/rngd",
+      "version_requirement": ">= 0.2.0 < 1.0.0"
     },
     {
       "name": "simp/simp_firewalld",
@@ -84,5 +84,13 @@
       "name": "openvox",
       "version_requirement": ">= 8.0.0 < 10.0.0"
     }
-  ]
+  ],
+  "simp": {
+    "optional_dependencies": [
+      {
+        "name": "simp/haveged",
+        "version_requirement": ">= 0.4.5 < 1.0.0"
+      }
+    ]
+  }
 }

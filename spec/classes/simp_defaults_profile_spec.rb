@@ -10,10 +10,7 @@ describe 'libreswan' do
 
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
-        # Some factsets ship haveged__rngd_enabled=true, which sends the
-        # haveged fixture down its stop-and-mask path instead of running the
-        # service the profile restores.
-        let(:facts) { os_facts.merge(haveged__rngd_enabled: false) }
+        let(:facts) { os_facts }
 
         it { is_expected.to compile.with_all_deps }
 
@@ -55,11 +52,17 @@ describe 'libreswan' do
           )
         end
 
-        it 'contains the firewall, pki, and haveged classes' do
+        it 'contains the firewall, pki, and rngd classes' do
           is_expected.to contain_class('libreswan::config::firewall')
           is_expected.to contain_class('libreswan::config::pki')
           is_expected.to contain_class('libreswan::config::pki::nsspki')
-          is_expected.to contain_class('haveged')
+          is_expected.to contain_class('rngd')
+          is_expected.not_to contain_class('haveged')
+        end
+
+        it 'runs the rngd service before the ipsec service' do
+          is_expected.to contain_service('rngd').with(ensure: 'running', enable: true)
+          is_expected.to contain_class('rngd').that_comes_before('Class[libreswan::service]')
         end
 
         it 'honors site simp_options::trusted_nets in the restored firewall rules' do
@@ -85,7 +88,7 @@ describe 'libreswan' do
 
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
-        let(:facts) { os_facts.merge(haveged__rngd_enabled: false) }
+        let(:facts) { os_facts }
 
         it { is_expected.to compile.with_all_deps }
 

@@ -10,6 +10,7 @@
 
 * [Overview](#overview)
 * [This is a SIMP module](#this-is-a-simp-module)
+* [Deprecated in 5.2.0: `libreswan::haveged`](#deprecated-in-520-libreswanhaveged)
 * [Breaking changes in 5.0.0](#breaking-changes-in-500)
   * [Path 1: opt in per-parameter](#path-1-opt-in-per-parameter)
   * [Path 2: bulk restore via the `simp:defaults` compliance_engine profile](#path-2-bulk-restore-via-the-simpdefaults-compliance_engine-profile)
@@ -39,6 +40,21 @@ a compliance-management framework built on Puppet.
 If you find any issues, they can be submitted to our [JIRA](https://simp-project.atlassian.net/).
 
 Please read our [Contribution Guide](https://simp.readthedocs.io/en/stable/contributors_guide/index.html).
+
+## Deprecated in 5.2.0: `libreswan::haveged`
+
+`libreswan::haveged` is deprecated and will be removed in the next major
+release. Use `libreswan::rngd` instead, which includes
+[`simp/rngd`](https://github.com/simp/pupmod-simp-rngd). By default `rngd`
+only installs `rng-tools`; set `rngd::service_ensure` and
+`rngd::service_enable` to run the daemon. On kernels 5.6 and later (EL9,
+EL10) a userspace entropy daemon is rarely needed.
+
+`simp/haveged` is now an optional dependency. Sites that keep
+`libreswan::haveged: true` must install the `haveged` module themselves.
+
+Switching does not remove haveged from nodes where it was installed; remove
+the package and service yourself if you no longer want it.
 
 ## Breaking changes in 5.0.0
 
@@ -86,7 +102,9 @@ libreswan::service_enable: true
 libreswan::firewall:       true
 libreswan::trusted_nets:   ['<desired client nets>']
 libreswan::pki:            simp
-libreswan::haveged:        true
+libreswan::rngd:           true
+rngd::service_ensure:      running
+rngd::service_enable:      true
 libreswan::plutodebug:     'none'
 libreswan::protostack:     'netkey'
 
@@ -107,8 +125,9 @@ For SIMP sites that want pre-5.0.0 behavior wholesale, the module ships a
 restores: service running+enabled, the five hardcoded `ipsec.conf` fields
 (`protostack`, `dumpdir`, `plutodebug`, `virtual_private`,
 `private_clear_cidrs`), the five policy files, firewall, PKI (`'simp'` mode),
-haveged, the NSS helper scripts, and the pre-5.0.0 file ownership/permission
-enforcement (`manage_file_permissions`).
+an entropy daemon (`rngd`, installed and running), the NSS helper scripts,
+and the pre-5.0.0 file ownership/permission enforcement
+(`manage_file_permissions`).
 
 To activate, install the
 [`simp-compliance_engine`](https://github.com/simp/rubygem-simp-compliance_engine)
@@ -129,7 +148,7 @@ your `hiera.yaml`), so explicit `libreswan::*` keys always win and you can
 layer the bulk restore with targeted opt-outs.
 
 The profile is opinionated for SIMP sites — in particular it enables
-firewall, PKI, and haveged **unconditionally**. Pre-5.0.0, those subsystems
+firewall, PKI, and rngd **unconditionally**. Pre-5.0.0, those subsystems
 followed the `simp_options::firewall`/`simp_options::pki`/
 `simp_options::haveged` Hiera keys; those keys are no longer consulted, so a
 site that had them set to `false` must opt out with the `libreswan::*` keys
@@ -142,7 +161,7 @@ compliance_engine::enforcement:
 
 # Targeted opt-outs — explicit site Hiera beats the profile:
 libreswan::firewall: false
-libreswan::haveged: false
+libreswan::rngd: false
 # The profile sets pki to 'simp' (include the `pki` class and copy certs).
 # If your site used `simp_options::pki: true` (manually-supplied certs,
 # no `pki` class), set that mode explicitly:

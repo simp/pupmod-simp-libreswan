@@ -70,10 +70,20 @@ checks:
     settings:
       parameter: libreswan::pki
       value: simp
-  'simp:defaults.libreswan.haveged':
+  'simp:defaults.libreswan.rngd':
     type: puppet-class-parameter
     settings:
-      parameter: libreswan::haveged
+      parameter: libreswan::rngd
+      value: true
+  'simp:defaults.libreswan.rngd_service_ensure':
+    type: puppet-class-parameter
+    settings:
+      parameter: rngd::service_ensure
+      value: running
+  'simp:defaults.libreswan.rngd_service_enable':
+    type: puppet-class-parameter
+    settings:
+      parameter: rngd::service_enable
       value: true
   'simp:defaults.libreswan.nss_scripts':
     type: puppet-class-parameter
