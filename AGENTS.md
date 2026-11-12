@@ -162,12 +162,12 @@ profile flips — never re-widen the module's defaults.**
 
 Module dependencies (from `metadata.json`):
 
-- `simp/simplib` `>= 4.9.0 < 6.0.0` (provides `simplib::lookup`,
+- `simp/simplib` `>= 4.9.0 < 8.0.0` (provides `simplib::lookup`,
   `simplib::assert_metadata`, `simplib::passgen`, and the `Simplib::*` types)
-- `puppetlabs/stdlib` `>= 8.0.0 < 10.0.0` (`file_line`)
-- `simp/iptables` `>= 6.5.3 < 9.0.0` (iptables firewall backend +
+- `puppetlabs/stdlib` `>= 9.2.0 < 11.0.0` (`file_line`)
+- `simp/iptables` `>= 6.5.3 < 10.0.0` (iptables firewall backend +
   `iptables::use_firewalld`)
-- `simp/simp_firewalld` `>= 0.1.3 < 3.0.0` (the firewalld backend)
+- `simp/simp_firewalld` `>= 0.1.3 < 4.0.0` (the firewalld backend)
 - `simp/pki` `>= 6.2.0 < 8.0.0` (`pki::copy`; used only when `$pki`)
 - `simp/rngd` `>= 0.2.0 < 1.0.0` (entropy daemon; included only when
   `$rngd`)
@@ -186,7 +186,7 @@ Fixture-only dependencies (from `.fixtures.yml`, for test compilation only):
 `simp-compliance_engine`.
 
 Runtime requirement (from `metadata.json` `requirements`): `openvox
->= 8.0.0 < 9.0.0`.
+>= 8.0.0 < 10.0.0`.
 
 Supported OS matrix (from `metadata.json`): CentOS 9/10; RedHat 8/9/10;
 OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
