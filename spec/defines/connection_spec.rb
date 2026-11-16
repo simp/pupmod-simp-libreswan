@@ -105,7 +105,7 @@ shared_examples_for 'a libreswan connection config file generator' do
         "  ike = aes_gcm256-sha2;dh23\n" \
         "  ikev2 = insist\n" \
         "  phase2 = ah\n" \
-        "  esp = 3des-md5;modp1024\n" \
+        "  ah = 3des-md5;modp1024\n" \
         "  sareftrack = conntrack\n" \
         "  narrowing = yes\n" \
         "  ikepad = no\n" \
