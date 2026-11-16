@@ -160,36 +160,20 @@ profile flips — never re-widen the module's defaults.**
 
 ## Dependencies
 
-Module dependencies (from `metadata.json`):
+`metadata.json` is the source of truth for module dependencies, the
+optional dependencies (`simp.optional_dependencies`), the OpenVox
+requirement and the supported OS matrix. Read it directly; don't copy
+version ranges into this file, where they drift.
 
-- `simp/simplib` `>= 4.9.0 < 8.0.0` (provides `simplib::lookup`,
-  `simplib::assert_metadata`, `simplib::passgen`, and the `Simplib::*` types)
-- `puppetlabs/stdlib` `>= 9.2.0 < 11.0.0` (`file_line`)
-- `simp/iptables` `>= 6.5.3 < 10.0.0` (iptables firewall backend +
-  `iptables::use_firewalld`)
-- `simp/simp_firewalld` `>= 0.1.3 < 4.0.0` (the firewalld backend)
-- `simp/pki` `>= 6.2.0 < 8.0.0` (`pki::copy`; used only when `$pki`)
-- `simp/rngd` `>= 0.2.0 < 1.0.0` (entropy daemon; included only when
-  `$rngd`)
+Not visible there:
 
-Optional dependency (`simp.optional_dependencies`):
-
-- `simp/haveged` `>= 0.4.5 < 1.0.0` (included only when the deprecated
-  `$haveged` is `true`; checked with `simplib::assert_optional_dependency`)
-
-`simp-compliance_engine` (the Ruby gem) is deliberately **not** a
-`metadata.json` dependency — it is the activation mechanism for the
-`simp:defaults` profile, installed by sites that want it.
-
-Fixture-only dependencies (from `.fixtures.yml`, for test compilation only):
-`simp_options`, `augeas_core`, `firewalld`, `systemd`, and
-`simp-compliance_engine`.
-
-Runtime requirement (from `metadata.json` `requirements`): `openvox
->= 8.0.0 < 10.0.0`.
-
-Supported OS matrix (from `metadata.json`): CentOS 9/10; RedHat 8/9/10;
-OracleLinux 8/9/10; Rocky 8/9/10; AlmaLinux 8/9/10.
+- `simp-compliance_engine` (the Ruby gem) is deliberately **not** a
+  `metadata.json` dependency. It is the activation mechanism for the
+  `simp:defaults` profile, installed by sites that want it.
+- Optional dependencies are checked at compile time with
+  `simplib::assert_optional_dependency` before they're used.
+- `.fixtures.yml` adds modules needed only to compile the tests, such as
+  `simp_options`.
 
 ## Repository layout
 
@@ -251,15 +235,15 @@ bundle exec rake lint
 # Ruby lint
 bundle exec rake rubocop
 
-# Regenerate REFERENCE.md from puppet-strings docstrings
-puppet strings generate --format markdown --out REFERENCE.md
+# Regenerate REFERENCE.md from openvox-strings docstrings (never hand-edit it)
+bundle update openvox-strings
+bundle exec rake strings:generate:reference
 
 # Run the default beaker acceptance suite
 bundle exec rake beaker:suites[default]
 ```
 
-Relevant gem pins (from `Gemfile`): `simp-rake-helpers ~> 6.0`,
-`simp-rspec-puppet-facts ~> 4.0.0`, `simp-beaker-helpers ~> 3.1`.
+Gem versions come from the `Gemfile`.
 `spec/spec_helper.rb` requires `voxpupuli/test/spec_helper` (this module has
 moved to the voxpupuli-test harness rather than `puppetlabs_spec_helper`).
 
