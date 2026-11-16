@@ -10,6 +10,9 @@
   Environments on stdlib 9.0.x or 9.1.x must upgrade stdlib; with those
   versions the catalog fails to compile when the deprecated haveged
   parameter is in effect.
+- Write `libreswan::connection`'s `phase2alg` to the connection file as
+  `esp`. libreswan 5.4 (EL10.3) refuses to load a connection that sets
+  `phase2alg` while the system crypto policy sets `esp` in `conn %default`
 
 * Thu Oct 08 2026 Steven Pritchard <steve@sicura.us> - 5.1.0
 - Add support for OpenVox 9

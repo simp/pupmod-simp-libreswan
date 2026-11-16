@@ -143,8 +143,9 @@ conn <%= @conn_name %>
 <% if @phase2 then -%>
   phase2 = <%= @phase2 %>
 <% end -%>
+<%-# libreswan >= 5.4 rejects phase2alg= next to the esp= that the system crypto policy sets in conn %default -%>
 <% if @phase2alg then -%>
-  phase2alg = <%= @phase2alg %>
+  esp = <%= @phase2alg %>
 <% end -%>
 <% if @sareftrack then -%>
   sareftrack = <%= @sareftrack %>
@@ -214,9 +215,6 @@ conn <%= @conn_name %>
 <% end -%>
 <% if @mark then -%>
   mark = <%= @mark %>
-<% end -%>
-<% if @esp then -%>
-  esp = <%= @esp %>
 <% end -%>
 <% if @ikelifetime then -%>
   ikelifetime = <%= @ikelifetime %>

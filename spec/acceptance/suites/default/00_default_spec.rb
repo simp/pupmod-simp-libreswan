@@ -54,7 +54,7 @@ rescue Timeout::Error
   [
     'journalctl -u ipsec -b --no-pager | tail -n 100',
     'ipsec status | grep -vE "algorithm"',
-    'ausearch -m avc -ts boot',
+    'ausearch --input-logs -m avc -ts boot',
     'ls -lZ /etc/ipsec.conf /etc/ipsec.secrets /etc/ipsec.d /var/lib/ipsec/nss',
   ].each { |diag| on host, diag, accept_all_exit_codes: true }
 
