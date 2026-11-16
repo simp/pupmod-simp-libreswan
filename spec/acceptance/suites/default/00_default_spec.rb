@@ -50,6 +50,14 @@ def wait_for_command_success(
     end
   end
 rescue Timeout::Error
+  # Leave pluto's own account of the failure in the log
+  [
+    'journalctl -u ipsec -b --no-pager | tail -n 100',
+    'ipsec status | grep -vE "algorithm"',
+    'ausearch -m avc -ts boot',
+    'ls -lZ /etc/ipsec.conf /etc/ipsec.secrets /etc/ipsec.d /var/lib/ipsec/nss',
+  ].each { |diag| on host, diag, accept_all_exit_codes: true }
+
   error_msg = "Command '#{cmd}' failed to succeed within #{max_wait_seconds} seconds:\n"
   error_msg += "\texit_code = #{result.exit_code}\n"
   error_msg += "\tstdout = \"#{result.stdout}\"\n" unless result.stdout.nil? || result.stdout.strip.empty?
