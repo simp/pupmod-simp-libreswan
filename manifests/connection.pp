@@ -27,7 +27,10 @@
 #   The ciphers used in the connection.
 #
 # @param phase2alg
-#   The ciphers used in the second part of the connection.
+#   The ciphers used in the second part of the connection. Written as
+#   `esp` (or `ah` when `phase2` is `ah`), because libreswan >= 5.4 rejects
+#   `phase2alg` alongside the `esp` that the system crypto policy sets in
+#   `conn %default`.
 #
 # The rest of the parameters map one-to-one to libreswan settings and
 # are `undef`.

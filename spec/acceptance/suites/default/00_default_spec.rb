@@ -50,6 +50,23 @@ def wait_for_command_success(
     end
   end
 rescue Timeout::Error
+  # Leave pluto's own account of the failure in the log, from both ends: a
+  # connection usually fails to come up because the other end rejected it.
+  # Each diagnostic is bounded and can't replace the failure message below.
+  hosts.each do |h|
+    nssdir = (el_major_version(h).to_i >= 9) ? '/var/lib/ipsec/nss' : '/etc/ipsec.d'
+    [
+      'journalctl -u ipsec -b --no-pager | tail -n 100',
+      'ipsec status | grep -vE "algorithm"',
+      'ausearch --input-logs -m avc -ts boot',
+      "ls -lZ /etc/ipsec.conf /etc/ipsec.secrets /etc/ipsec.d #{nssdir}",
+    ].each do |diag|
+      Timeout.timeout(30) { on h, diag, accept_all_exit_codes: true }
+    rescue StandardError => e
+      logger.warn("diagnostic '#{diag}' on #{h} failed: #{e.message}")
+    end
+  end
+
   error_msg = "Command '#{cmd}' failed to succeed within #{max_wait_seconds} seconds:\n"
   error_msg += "\texit_code = #{result.exit_code}\n"
   error_msg += "\tstdout = \"#{result.stdout}\"\n" unless result.stdout.nil? || result.stdout.strip.empty?

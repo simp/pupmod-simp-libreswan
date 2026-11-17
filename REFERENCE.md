@@ -890,7 +890,10 @@ Default value: `'aes-sha2'`
 
 Data type: `String`
 
-The ciphers used in the second part of the connection.
+The ciphers used in the second part of the connection. Written as
+`esp` (or `ah` when `phase2` is `ah`), because libreswan >= 5.4 rejects
+`phase2alg` alongside the `esp` that the system crypto policy sets in
+`conn %default`.
 
 Default value: `'aes-sha2'`
 
