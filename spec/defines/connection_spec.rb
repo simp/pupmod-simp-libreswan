@@ -20,7 +20,7 @@ shared_examples_for 'a libreswan connection config file generator' do
         "\n" \
         "# Universal Settings\n" \
         "  ike = aes-sha2\n" \
-        "  phase2alg = aes-sha2\n" \
+        "  esp = aes-sha2\n" \
         "  fragmentation = force\n" \
         "  xauthby = pam\n" \
         "  xauthfail = hard\n" \
@@ -37,7 +37,7 @@ shared_examples_for 'a libreswan connection config file generator' do
         "\n" \
         "# Universal Settings\n" \
         "  ike = aes-sha2\n" \
-        "  phase2alg = aes-sha2\n" \
+        "  esp = aes-sha2\n" \
         "  keyingtries = 10\n",
 
       # This content is NOT a usable connection file, but exercises default logic
@@ -49,7 +49,7 @@ shared_examples_for 'a libreswan connection config file generator' do
         "\n" \
         "# Universal Settings\n" \
         "  ike = aes-sha2\n" \
-        "  phase2alg = aes-sha2\n" \
+        "  esp = aes-sha2\n" \
         "  keyingtries = 10\n",
 
       # This content is NOT a usable connection file, but exercises non-default logic
@@ -105,7 +105,7 @@ shared_examples_for 'a libreswan connection config file generator' do
         "  ike = aes_gcm256-sha2;dh23\n" \
         "  ikev2 = insist\n" \
         "  phase2 = ah\n" \
-        "  phase2alg = 3des-md5;modp1024\n" \
+        "  ah = 3des-md5;modp1024\n" \
         "  sareftrack = conntrack\n" \
         "  narrowing = yes\n" \
         "  ikepad = no\n" \
