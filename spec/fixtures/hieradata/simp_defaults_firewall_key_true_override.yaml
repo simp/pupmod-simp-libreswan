@@ -1,0 +1,5 @@
+---
+compliance_engine::enforcement:
+  - simp:defaults
+simp_options::firewall: true
+libreswan::firewall: false

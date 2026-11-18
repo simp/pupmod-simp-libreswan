@@ -124,10 +124,11 @@ For SIMP sites that want pre-5.0.0 behavior wholesale, the module ships a
 `simp:defaults` profile under `SIMP/compliance_profiles/`. Activating it
 restores: service running+enabled, the five hardcoded `ipsec.conf` fields
 (`protostack`, `dumpdir`, `plutodebug`, `virtual_private`,
-`private_clear_cidrs`), the five policy files, firewall, PKI (`'simp'` mode),
+`private_clear_cidrs`), the five policy files, PKI (`'simp'` mode),
 an entropy daemon (`rngd`, installed and running), the NSS helper scripts,
 and the pre-5.0.0 file ownership/permission enforcement
-(`manage_file_permissions`).
+(`manage_file_permissions`). The firewall integration follows
+`simp_options::firewall` (see below).
 
 To activate, install the
 [`simp-compliance_engine`](https://github.com/simp/rubygem-simp-compliance_engine)
@@ -147,20 +148,32 @@ exact position depends on where you place the `compliance_engine` level in
 your `hiera.yaml`), so explicit `libreswan::*` keys always win and you can
 layer the bulk restore with targeted opt-outs.
 
-The profile is opinionated for SIMP sites — in particular it enables
-firewall, PKI, and rngd **unconditionally**. Pre-5.0.0, those subsystems
-followed the `simp_options::firewall`/`simp_options::pki`/
-`simp_options::haveged` Hiera keys; those keys are no longer consulted, so a
-site that had them set to `false` must opt out with the `libreswan::*` keys
-instead:
+The profile sets `libreswan::firewall` to the value of
+`simp_options::firewall`, so the IPsec firewall rules are managed only when
+that key is `true`. A site that enforces `simp:defaults` needs either the
+`simp_options` module installed (it ships `simp_options::firewall: false` as
+module data) or `simp_options::firewall` set in its own Hiera. Otherwise the
+catalog fails to compile with `parameter 'firewall' expects a Boolean value,
+got String`. To get the firewall rules from the profile, set
+`simp_options::firewall: true`. An explicit `libreswan::firewall` still wins
+over the profile.
+
+The profile is opinionated for SIMP sites — in particular it enables PKI and
+rngd **unconditionally**. Pre-5.0.0, those subsystems followed the
+`simp_options::pki`/`simp_options::haveged` Hiera keys; those keys are no
+longer consulted, so a site that had them set to `false` must opt out with the
+`libreswan::*` keys instead:
 
 ```yaml
 ---
 compliance_engine::enforcement:
   - 'simp:defaults'
 
+# The firewall rules follow simp_options::firewall (false when unset);
+# set it to true to get them:
+simp_options::firewall: true
+
 # Targeted opt-outs — explicit site Hiera beats the profile:
-libreswan::firewall: false
 libreswan::rngd: false
 # The profile sets pki to 'simp' (include the `pki` class and copy certs).
 # If your site used `simp_options::pki: true` (manually-supplied certs,

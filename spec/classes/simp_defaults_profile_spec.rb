@@ -52,8 +52,7 @@ describe 'libreswan' do
           )
         end
 
-        it 'contains the firewall, pki, and rngd classes' do
-          is_expected.to contain_class('libreswan::config::firewall')
+        it 'contains the pki and rngd classes' do
           is_expected.to contain_class('libreswan::config::pki')
           is_expected.to contain_class('libreswan::config::pki::nsspki')
           is_expected.to contain_class('rngd')
@@ -65,9 +64,9 @@ describe 'libreswan' do
           is_expected.to contain_class('rngd').that_comes_before('Class[libreswan::service]')
         end
 
-        it 'honors site simp_options::trusted_nets in the restored firewall rules' do
-          is_expected.to contain_simp_firewalld__rule('ipsec_allow')
-            .with_trusted_nets(['192.168.100.0/24'])
+        it 'follows the unset simp_options::firewall key and leaves the firewall off' do
+          is_expected.to contain_class('libreswan').with_firewall(false)
+          is_expected.not_to contain_class('libreswan::config::firewall')
         end
 
         it 'installs the NSS helper script' do
@@ -98,6 +97,45 @@ describe 'libreswan' do
 
         it 'still applies the profile values that were not overridden' do
           is_expected.to contain_service('ipsec').with(ensure: 'running')
+        end
+      end
+    end
+  end
+
+  context 'with simp:defaults enforced and simp_options::firewall true' do
+    let(:hieradata) { 'simp_defaults_firewall_key_true' }
+
+    on_supported_os.each do |os, os_facts|
+      context "on #{os}" do
+        let(:facts) { os_facts }
+
+        it { is_expected.to compile.with_all_deps }
+
+        it 'enables the firewall integration' do
+          is_expected.to contain_class('libreswan').with_firewall(true)
+          is_expected.to contain_class('libreswan::config::firewall')
+        end
+
+        it 'honors site simp_options::trusted_nets in the firewall rules' do
+          is_expected.to contain_simp_firewalld__rule('ipsec_allow')
+            .with_trusted_nets(['192.168.100.0/24'])
+        end
+      end
+    end
+  end
+
+  context 'with simp:defaults enforced, simp_options::firewall true and libreswan::firewall false' do
+    let(:hieradata) { 'simp_defaults_firewall_key_true_override' }
+
+    on_supported_os.each do |os, os_facts|
+      context "on #{os}" do
+        let(:facts) { os_facts }
+
+        it { is_expected.to compile.with_all_deps }
+
+        it 'lets the explicit libreswan::firewall win over the profile' do
+          is_expected.to contain_class('libreswan').with_firewall(false)
+          is_expected.not_to contain_class('libreswan::config::firewall')
         end
       end
     end
