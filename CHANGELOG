@@ -1,3 +1,11 @@
+* Wed Nov 18 2026 Steven Pritchard <steve@sicura.us> - 5.3.0
+- The `simp:defaults` profile now sets `libreswan::firewall` to the value of
+  `simp_options::firewall` instead of `true`. Sites enforcing the profile
+  with that key unset or `false` no longer get the IPsec firewall rules; set
+  `simp_options::firewall: true` to keep them. The profile now needs the
+  `simp_options` module installed (it ships `simp_options::firewall: false`
+  as module data) or `simp_options::firewall` set in the site's Hiera
+
 * Mon Nov 09 2026 Hazel Caballero <hazel@sicura.us> - 5.2.0
 - Add `libreswan::rngd` to include `simp/rngd`, which replaces `simp/haveged`
 - Deprecate `libreswan::haveged`; it will be removed in the next major release
