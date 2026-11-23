@@ -1,4 +1,11 @@
 ---
+# The `simp:defaults.libreswan.firewall` check follows the site's
+# `simp_options::firewall` instead of pinning a value. A site that enforces
+# `simp:defaults` needs either the `simp_options` module installed (it ships
+# `simp_options::firewall: false` as module data) or `simp_options::firewall`
+# set in its own Hiera. Otherwise the alias resolves to an empty string and
+# compilation fails with `parameter 'firewall' expects a Boolean value, got
+# String`.
 version: 2.0.0
 checks:
   'simp:defaults.libreswan.service_ensure':
@@ -64,7 +71,7 @@ checks:
     type: puppet-class-parameter
     settings:
       parameter: libreswan::firewall
-      value: true
+      value: "%{alias('simp_options::firewall')}"
   'simp:defaults.libreswan.pki':
     type: puppet-class-parameter
     settings:

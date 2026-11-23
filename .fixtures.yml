@@ -12,5 +12,11 @@ fixtures:
     rngd: https://github.com/simp/pupmod-simp-rngd.git
     simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld.git
     simplib: https://github.com/simp/pupmod-simp-simplib.git
+    # TEMPORARY: this fork branch ships the `simp_options::firewall: false`
+    # module data. Switch back to https://github.com/simp/pupmod-simp-simp_options.git
+    # (default ref) once that change is released.
+    simp_options:
+      repo: https://github.com/silug/pupmod-simp-simp_options.git
+      branch: firewall-module-data
     stdlib: https://github.com/simp/puppetlabs-stdlib.git
     systemd: https://github.com/simp/puppet-systemd.git
